@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Influencer 100 — Video Overview (Feb 26, 2026)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+         background: #f5f7fa; color: #333; padding: 24px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .header h1 { font-size: 22px; color: #1a1a2e; }
+  .header .meta { color: #666; font-size: 14px; margin-top: 6px; }
+
+  .summary { display: flex; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+  .summary .card { background: #fff; border-radius: 10px; padding: 14px 20px;
+                    box-shadow: 0 1px 4px rgba(0,0,0,0.08); min-width: 120px; text-align: center; }
+  .summary .card .num { font-size: 28px; font-weight: 700; color: #4361ee; }
+  .summary .card .label { font-size: 12px; color: #888; margin-top: 2px; }
+
+  .charts-section { display: flex; gap: 30px; margin: 24px 0; flex-wrap: wrap; align-items: flex-start; }
+  .pie-container { background: #fff; border-radius: 12px; padding: 24px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.06); flex: 0 0 460px; }
+  .pie-container h3 { font-size: 15px; color: #333; margin-bottom: 16px; }
+  .pie-canvas-wrap { display: flex; align-items: center; gap: 24px; }
+  .pie-legend { font-size: 12px; line-height: 2.2; }
+  .pie-legend .dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px;
+                      margin-right: 6px; vertical-align: middle; }
+  .pie-legend .cnt { color: #666; margin-left: 4px; }
+
+  .platform-bar { background: #fff; border-radius: 12px; padding: 24px;
+                   box-shadow: 0 2px 8px rgba(0,0,0,0.06); flex: 1; min-width: 300px; }
+  .platform-bar h3 { font-size: 15px; color: #333; margin-bottom: 16px; }
+  .bar-row { display: flex; align-items: center; margin: 10px 0; }
+  .bar-label { width: 100px; font-size: 13px; }
+  .bar-fill { height: 28px; border-radius: 6px; display: flex; align-items: center;
+               padding-left: 12px; color: #fff; font-size: 13px; font-weight: 600;
+               min-width: 30px; }
+
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px;
+           overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-top: 24px; }
+  th { background: #4361ee; color: #fff; font-weight: 600; font-size: 13px;
+       padding: 12px 14px; text-align: left; position: sticky; top: 0; z-index: 2; }
+  td { padding: 10px 14px; border-bottom: 1px solid #eee; vertical-align: top;
+       font-size: 13px; line-height: 1.5; }
+  tr:hover { background: #f8f9ff; }
+  tr.product-row { background: #e8f5e9; }
+  tr.product-row:hover { background: #c8e6c9; }
+  .idx { width: 36px; text-align: center; color: #aaa; }
+  .name { width: 200px; }
+  .name .profile { font-size: 11px; margin-top: 2px; }
+  .name .profile a { color: #4361ee; text-decoration: none; }
+  .name .tags { margin-top: 6px; }
+  .platform { width: 80px; text-transform: capitalize; }
+  .content { min-width: 300px; }
+  .content .title a { color: #222; text-decoration: none; font-weight: 500; }
+  .content .title a:hover { color: #4361ee; text-decoration: underline; }
+  .content .brand-info { font-size: 11px; color: #888; margin-top: 4px;
+                          max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stats { width: 100px; white-space: nowrap; }
+  .stats div { margin-bottom: 2px; }
+
+  .tag { display: inline-block; background: #e8ecff; color: #4361ee; font-size: 10px;
+          padding: 2px 8px; border-radius: 10px; margin: 1px 2px; }
+  .fail-badge { display: inline-block; background: #fff3e0; color: #e65100;
+                 font-size: 11px; padding: 2px 8px; border-radius: 8px; }
+  .ok-badge { display: inline-block; background: #e8f5e9; color: #2e7d32;
+               font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 600; }
+
+  @media print {
+    body { padding: 0; background: #fff; }
+    .summary .card, .pie-container, .platform-bar { box-shadow: none; border: 1px solid #ddd; }
+    table { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+  <h1>📊 Influencer Top 100 — Video Overview (Feb 26, 2026)</h1>
+  <div class="meta">Data: influencers_with_nox.csv #1–#100 | 📸 instagram: 24 | 🎵 tiktok: 56 | ▶️ youtube: 1 | Generated 2026-02-27 16:43</div>
+</div>
+
+<div class="summary">
+  <div class="card"><div class="num">81</div><div class="label">Total Videos</div></div>
+  <div class="card"><div class="num">41</div><div class="label">Influencers (posted)</div></div>
+  <div class="card"><div class="num">100</div><div class="label">Influencers (tracked)</div></div>
+  <div class="card"><div class="num">24</div><div class="label">📸 Instagram</div></div>
+  <div class="card"><div class="num">56</div><div class="label">🎵 TikTok</div></div>
+  <div class="card"><div class="num">1</div><div class="label">▶️ YouTube</div></div>
+  <div class="card"><div class="num">1</div><div class="label">✅ Products Found</div></div>
+</div>
+
+<div class="charts-section">
+
+  <div class="pie-container">
+    <h3>🥧 Video Content Analysis</h3>
+    <div class="pie-canvas-wrap">
+      <canvas id="pieChart" width="200" height="200"></canvas>
+      <div class="pie-legend" id="pieLegend"></div>
+    </div>
+  </div>
+
+  <div class="platform-bar">
+    <h3>📊 Videos by Platform</h3>
+    
+    <div class="bar-row">
+      <div class="bar-label">🎵 tiktok</div>
+      <div class="bar-fill" style="width:100%; background:#000000;">56</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">📸 instagram</div>
+      <div class="bar-fill" style="width:43%; background:#e1306c;">24</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">▶️ youtube</div>
+      <div class="bar-fill" style="width:8%; background:#ff0000;">1</div>
+    </div>
+  </div>
+
+</div>
+
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>Influencer / Profile / Tags</th>
+  <th>Platform</th>
+  <th>Video Title / Content</th>
+  <th>Stats</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td class="idx">1</td>
+  <td class="name">
+    <div>📸 <strong>Cindy</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/cindymello/" target="_blank">https://www.instagram.com/cindymello/</a></div>
+    <div class="tags"><span class="tag">Paid Top Tier</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMddUxkgMq/" target="_blank">spring @lobawoman drop is now live on @revolve</a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;fashion&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;https://www.revolve.com&quot;, &quot;http://www.revolve.com&quot;, &quot;https://www.revolveclothing.co.jp&quot;, &quot;https://www.revolveclothing.es&quot;, &quot;https://www.revolveclot</div>
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 60.9K</div>
+    <div>💬 125</div>
+  </td>
+</tr><tr>
+  <td class="idx">2</td>
+  <td class="name">
+    <div>📸 <strong>Delaney</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/deeglazer/" target="_blank">https://www.instagram.com/deeglazer/</a></div>
+    <div class="tags"><span class="tag">Celebrity</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMG1P2DHoq/" target="_blank">Heatin up   📸 @samcahill</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 1.6K</div>
+    <div>💬 40</div>
+  </td>
+</tr><tr>
+  <td class="idx">3</td>
+  <td class="name">
+    <div>📸 <strong>Georgia</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/geesteelx/" target="_blank">https://www.instagram.com/geesteelx/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMK_T2CDFY/" target="_blank">Slow mornings, soft light, and even softer moments — made with @opa.living ☁️🤍</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 5.8K</div>
+    <div>💬 75</div>
+  </td>
+</tr><tr>
+  <td class="idx">4</td>
+  <td class="name">
+    <div>📸 <strong>Laura</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/lauraclery/" target="_blank">https://www.instagram.com/lauraclery/</a></div>
+    <div class="tags"><span class="tag">To be TTS</span> <span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVM59qYgVaM/" target="_blank">The audacity of everyone and everything 😡😭 #pms #pmdd</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 122.3K</div>
+    <div>❤️ 5.0K</div>
+    <div>💬 224</div>
+  </td>
+</tr><tr>
+  <td class="idx">5</td>
+  <td class="name">
+    <div>📸 <strong>Madi</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/madimonroe/" target="_blank">https://www.instagram.com/madimonroe/</a></div>
+    <div class="tags"><span class="tag">LA</span> <span class="tag">Love Wonderland Campaign</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMOdjcDjTG/" target="_blank">📍 bahamas with @pacsun #pacsun #pacswim #pacpartner 🏝️ shop now 👙</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 0</div>
+    <div>💬 518</div>
+  </td>
+</tr><tr>
+  <td class="idx">6</td>
+  <td class="name">
+    <div>📸 <strong>Milena</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/milenalife.style/" target="_blank">https://www.instagram.com/milenalife.style/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVOcHrrDnKW/" target="_blank">Just styling Basics 🌸   Comment ‘Link’ below &amp; I’ll send all the outfit links straight to your DM’s! 😘😘</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 176.4K</div>
+    <div>❤️ 5.3K</div>
+    <div>💬 191</div>
+  </td>
+</tr><tr>
+  <td class="idx">7</td>
+  <td class="name">
+    <div>📸 <strong>Milena</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/milenalife.style/" target="_blank">https://www.instagram.com/milenalife.style/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMkJdGCUQ4/" target="_blank">#GRWM for a day when I want to feel classy but still make a statement 🖤  Comment ‘Link’ below &amp; I’ll send all the outfit</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 232.4K</div>
+    <div>❤️ 7.1K</div>
+    <div>💬 315</div>
+  </td>
+</tr><tr>
+  <td class="idx">8</td>
+  <td class="name">
+    <div>📸 <strong>Nabela</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/nabela/" target="_blank">https://www.instagram.com/nabela/</a></div>
+    <div class="tags"><span class="tag">Plus Size</span> <span class="tag">Cottage core</span> <span class="tag">Love Wonderland Campaign</span> <span class="tag">Plus Size - Regular</span> <span class="tag">Mom</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVNEV6CjKb2/" target="_blank">Carolyn Bessette Kennedy made minimalism iconic. But does that kind of minimalism love every body?  Today, I am explorin</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 286.7K</div>
+    <div>❤️ 8.4K</div>
+    <div>💬 203</div>
+  </td>
+</tr><tr>
+  <td class="idx">9</td>
+  <td class="name">
+    <div>🎵 <strong>Ariel</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@babyariel" target="_blank">https://www.tiktok.com/@babyariel</a></div>
+    <div class="tags"><span class="tag">Celebrity</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@babyariel/video/7610841415303712013" target="_blank">i saw wuthering heights</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 382.5K</div>
+    <div>❤️ 53.4K</div>
+    <div>💬 107</div>
+  </td>
+</tr><tr>
+  <td class="idx">10</td>
+  <td class="name">
+    <div>🎵 <strong>elliana</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@ellianawalmsley" target="_blank">https://www.tiktok.com/@ellianawalmsley</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@ellianawalmsley/video/7610920359927254285" target="_blank">now i have only $5 left… 😓😓 BEST HAIR EVERR 😍😍 i love u soooo much @Hairby_chrissy #fyp #funny #hairbychrissy #hair #for</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 96.8K</div>
+    <div>❤️ 10.2K</div>
+    <div>💬 190</div>
+  </td>
+</tr><tr>
+  <td class="idx">11</td>
+  <td class="name">
+    <div>🎵 <strong>Emily</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@emilyshak5" target="_blank">https://www.tiktok.com/@emilyshak5</a></div>
+    <div class="tags"><span class="tag">August Edit</span> <span class="tag">Swimwear Outreach</span> <span class="tag">Paid influencer</span> <span class="tag">FW &#x27;23</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@didonatoemily/video/7610836413826796814" target="_blank">The duality of the second trimester </a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 12.9K</div>
+    <div>❤️ 687</div>
+    <div>💬 7</div>
+  </td>
+</tr><tr>
+  <td class="idx">12</td>
+  <td class="name">
+    <div>🎵 <strong>Gianina</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@gianina" target="_blank">https://www.tiktok.com/@gianina</a></div>
+    <div class="tags"><span class="tag">Dance</span> <span class="tag">Celebrity</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@gianina/video/7611050522467994910" target="_blank"><em>N/A</em></a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 8.9K</div>
+    <div>❤️ 1.1K</div>
+    <div>💬 6</div>
+  </td>
+</tr><tr>
+  <td class="idx">13</td>
+  <td class="name">
+    <div>🎵 <strong>Gianina</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@gianina" target="_blank">https://www.tiktok.com/@gianina</a></div>
+    <div class="tags"><span class="tag">Dance</span> <span class="tag">Celebrity</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@gianina/video/7611014552494427423" target="_blank">i am most definitely far from perfect, but one thing i know is that it’s always about perspective🥲</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 9.6K</div>
+    <div>❤️ 1.5K</div>
+    <div>💬 13</div>
+  </td>
+</tr><tr>
+  <td class="idx">14</td>
+  <td class="name">
+    <div>🎵 <strong>Laura</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@lauraclery" target="_blank">https://www.tiktok.com/@lauraclery</a></div>
+    <div class="tags"><span class="tag">To be TTS</span> <span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@lauraclery/video/7610957494315175198" target="_blank">The audacity of everyone. #pms #pmdd </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 13.3K</div>
+    <div>❤️ 1.2K</div>
+    <div>💬 38</div>
+  </td>
+</tr><tr>
+  <td class="idx">15</td>
+  <td class="name">
+    <div>🎵 <strong>Lily</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@lilychee" target="_blank">https://www.tiktok.com/@lilychee</a></div>
+    <div class="tags"><span class="tag">April Campaign‘23 Outreach</span> <span class="tag">FW &#x27;23</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@lilychee/video/7610874013711174943" target="_blank">fun 24hr #erewhon </a></div>
+    
+    <div class="status"><span class="fail-badge">Restaurant / Food</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 129.3K</div>
+    <div>❤️ 19.5K</div>
+    <div>💬 42</div>
+  </td>
+</tr><tr>
+  <td class="idx">16</td>
+  <td class="name">
+    <div>🎵 <strong>Madi</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@madi" target="_blank">https://www.tiktok.com/@madi</a></div>
+    <div class="tags"><span class="tag">LA</span> <span class="tag">Love Wonderland Campaign</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@madi/video/7610918207980932382" target="_blank">BYE HAHAHAH</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 109.2K</div>
+    <div>❤️ 6.5K</div>
+    <div>💬 11</div>
+  </td>
+</tr><tr>
+  <td class="idx">17</td>
+  <td class="name">
+    <div>🎵 <strong>Madi</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@madi" target="_blank">https://www.tiktok.com/@madi</a></div>
+    <div class="tags"><span class="tag">LA</span> <span class="tag">Love Wonderland Campaign</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@madi/video/7610877540449799454" target="_blank">in paradise with @pacsun #pacsun #pacswim #pacpartner 🏝️ shop now 👙 </a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;fashion&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;http://pacsun.com&quot;], &quot;name&quot;: &quot;Pacsun&quot;, &quot;id&quot;: &quot;17319&quot;, &quot;logo&quot;: &quot;https://res-kol.noxgroup.com/noxinfluencer/youtube/avatar/f88616050c2911f6c9585f4f54</div>
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 72.0K</div>
+    <div>❤️ 4.0K</div>
+    <div>💬 8</div>
+  </td>
+</tr><tr>
+  <td class="idx">18</td>
+  <td class="name">
+    <div>🎵 <strong>Madi</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@madi" target="_blank">https://www.tiktok.com/@madi</a></div>
+    <div class="tags"><span class="tag">LA</span> <span class="tag">Love Wonderland Campaign</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@madi/video/7610859813592960286" target="_blank">yuhhhh</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 64.5K</div>
+    <div>❤️ 3.8K</div>
+    <div>💬 6</div>
+  </td>
+</tr><tr>
+  <td class="idx">19</td>
+  <td class="name">
+    <div>🎵 <strong>Milena</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@milenalife.style" target="_blank">https://www.tiktok.com/@milenalife.style</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@milenalife.style/video/7611194182652136726" target="_blank">Just styling Basics 🌸</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 90.8K</div>
+    <div>❤️ 2.8K</div>
+    <div>💬 14</div>
+  </td>
+</tr><tr>
+  <td class="idx">20</td>
+  <td class="name">
+    <div>🎵 <strong>Milena</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@milenalife.style" target="_blank">https://www.tiktok.com/@milenalife.style</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@milenalife.style/video/7610928369818963223" target="_blank">#GRWM for a day when I want to feel classy but still make a statement 🖤</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 63.8K</div>
+    <div>❤️ 2.5K</div>
+    <div>💬 13</div>
+  </td>
+</tr><tr>
+  <td class="idx">21</td>
+  <td class="name">
+    <div>🎵 <strong>Nabela</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@nabela" target="_blank">https://www.tiktok.com/@nabela</a></div>
+    <div class="tags"><span class="tag">Plus Size</span> <span class="tag">Cottage core</span> <span class="tag">Love Wonderland Campaign</span> <span class="tag">Plus Size - Regular</span> <span class="tag">Mom</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@nabela/video/7610995208272022797" target="_blank">Carolyn Bessette Kennedy made minimalism iconic. But does that kind of minimalism love every body? Today, I am exploring</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 108.6K</div>
+    <div>❤️ 4.8K</div>
+    <div>💬 62</div>
+  </td>
+</tr><tr>
+  <td class="idx">22</td>
+  <td class="name">
+    <div>📸 <strong>Amanda</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/amandaensing/" target="_blank">https://www.instagram.com/amandaensing/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMOYHjklf2/" target="_blank">saw this and knew I needed one @dijie.me 🤩🤩🤩</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 22.4K</div>
+    <div>❤️ 0</div>
+    <div>💬 6</div>
+  </td>
+</tr><tr>
+  <td class="idx">23</td>
+  <td class="name">
+    <div>📸 <strong>andrea</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/andreaespadatv/" target="_blank">https://www.instagram.com/andreaespadatv/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVM3PfVgfP2/" target="_blank">Making snowy memories with my forever friend ❄️🥶 @kingferran   #bonding #winter #snow #ski</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 4.7K</div>
+    <div>💬 76</div>
+  </td>
+</tr><tr>
+  <td class="idx">24</td>
+  <td class="name">
+    <div>📸 <strong>Beabadoobee</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/radvxz/" target="_blank">https://www.instagram.com/radvxz/</a></div>
+    <div class="tags"><span class="tag">mimi</span> <span class="tag">mimi-pipline</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMLtwVCMOC/" target="_blank">▶︎•၊၊||၊|။||⌖𝄞⨾💿✮ ̊.⋆၊|။•</a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 3.5M</div>
+    <div>❤️ 262.9K</div>
+    <div>💬 3.4K</div>
+  </td>
+</tr><tr>
+  <td class="idx">25</td>
+  <td class="name">
+    <div>📸 <strong>Claudia</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/claudiasulewski/" target="_blank">https://www.instagram.com/claudiasulewski/</a></div>
+    <div class="tags"><span class="tag">music festival outreach</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMscMmkjE6/" target="_blank">rose bud season 🌹🌹🌹</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 0</div>
+    <div>💬 103</div>
+  </td>
+</tr><tr>
+  <td class="idx">26</td>
+  <td class="name">
+    <div>📸 <strong>Hannah</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/hannahg11/" target="_blank">https://www.instagram.com/hannahg11/</a></div>
+    <div class="tags"><span class="tag">Reconnect</span> <span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVM0dArEd2Y/" target="_blank">@intimissimi in the snow! #ad</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 9.2K</div>
+    <div>💬 20</div>
+  </td>
+</tr><tr>
+  <td class="idx">27</td>
+  <td class="name">
+    <div>📸 <strong>Indiana</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/indiana/" target="_blank">https://www.instagram.com/indiana/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVM1QDvAZAe/" target="_blank">Cool girls on an iPhone 4 📱</a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;consumer electronic&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;https://apple.com&quot;, &quot;https://www.apple.com&quot;, &quot;https://support.apple.com&quot;, &quot;http://www.apple.com&quot;], &quot;name&quot;: &quot;Apple&quot;, &quot;id&quot;: &quot;17143&quot;, &quot;log</div>
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 3.1K</div>
+    <div>💬 45</div>
+  </td>
+</tr><tr>
+  <td class="idx">28</td>
+  <td class="name">
+    <div>📸 <strong>Isabella</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/onlyjayus/" target="_blank">https://www.instagram.com/onlyjayus/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMXSgBEm9H/" target="_blank">“the lies stop here” no i have a feeling they’ll continue them</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 365.1K</div>
+    <div>❤️ 15.2K</div>
+    <div>💬 344</div>
+  </td>
+</tr><tr>
+  <td class="idx">29</td>
+  <td class="name">
+    <div>📸 <strong>JENA</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/jenafrumes/" target="_blank">https://www.instagram.com/jenafrumes/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVNMOsWEbXJ/" target="_blank">You already know what it issssthhhh 🥰 @jasonking</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 151.6K</div>
+    <div>❤️ 0</div>
+    <div>💬 71</div>
+  </td>
+</tr><tr>
+  <td class="idx">30</td>
+  <td class="name">
+    <div>📸 <strong>Lele</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/lelepons/" target="_blank">https://www.instagram.com/lelepons/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMHiDEDrdr/" target="_blank">“Be my mistress” EN ESPAÑOL !! @bridgertonnetflix PARTE 2 MAÑANA !! 😻</a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 4.8M</div>
+    <div>❤️ 236.4K</div>
+    <div>💬 3.5K</div>
+  </td>
+</tr><tr>
+  <td class="idx">31</td>
+  <td class="name">
+    <div>📸 <strong>Lexi</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/lexijayde/" target="_blank">https://www.instagram.com/lexijayde/</a></div>
+    <div class="tags"><span class="tag">Musician</span> <span class="tag">April Campaign‘23 Outreach</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMImRDj_VT/" target="_blank">I wonder who the diamond of the season will be this year 🤍 Thank you @netflix &amp; @bridgertonnetflix for this insane exper</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 99.0K</div>
+    <div>❤️ 7.1K</div>
+    <div>💬 16</div>
+  </td>
+</tr><tr>
+  <td class="idx">32</td>
+  <td class="name">
+    <div>📸 <strong>Lydia</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/fashioninflux/" target="_blank">https://www.instagram.com/fashioninflux/</a></div>
+    <div class="tags"><span class="tag">branding</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMR0fMCEsO/" target="_blank">Roll on June 🥹🥹🥹</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 683.7K</div>
+    <div>❤️ 26.4K</div>
+    <div>💬 189</div>
+  </td>
+</tr><tr>
+  <td class="idx">33</td>
+  <td class="name">
+    <div>📸 <strong>Maja</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/majamalnar/" target="_blank">https://www.instagram.com/majamalnar/</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMZpC2E1Vf/" target="_blank">Life lately.. 😌🫶🏼 it’s been a bit intense and emotional rollercoaster so I took some time off to take care of myslef.. T</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 12.6K</div>
+    <div>💬 532</div>
+  </td>
+</tr><tr>
+  <td class="idx">34</td>
+  <td class="name">
+    <div>📸 <strong>Nicole</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/nicolelaeno/" target="_blank">https://www.instagram.com/nicolelaeno/</a></div>
+    <div class="tags"><span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMehQZgV0L/" target="_blank">Soft life looks like this 🤍✨ ¿A ustedes también les recarga el alma la nieve?”</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 73.3K</div>
+    <div>💬 272</div>
+  </td>
+</tr><tr>
+  <td class="idx">35</td>
+  <td class="name">
+    <div>📸 <strong>Niki</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/niki/" target="_blank">https://www.instagram.com/niki/</a></div>
+    <div class="tags"><span class="tag">Celebrity</span> <span class="tag">Musician</span> <span class="tag">LA</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMnniUElRy/" target="_blank">the Olympics has us like ⛸️✨ @amberscholl #figureskating</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 266.2K</div>
+    <div>❤️ 14.4K</div>
+    <div>💬 125</div>
+  </td>
+</tr><tr>
+  <td class="idx">36</td>
+  <td class="name">
+    <div>📸 <strong>Sienna</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/siennamaegomez/" target="_blank">https://www.instagram.com/siennamaegomez/</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMcwpHErAA/" target="_blank">i wanna be with you night &amp; day!!! 💃🪩🫧🌜🩰🦢👖</a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 27.4K</div>
+    <div>💬 28</div>
+  </td>
+</tr><tr>
+  <td class="idx">37</td>
+  <td class="name">
+    <div>📸 <strong>Summer</strong></div>
+    <div class="profile"><a href="https://www.instagram.com/summermckeen/" target="_blank">https://www.instagram.com/summermckeen/</a></div>
+    <div class="tags"><span class="tag">TT SHOP - US</span> <span class="tag">To be TTS</span> </div>
+  </td>
+  <td class="platform">instagram</td>
+  <td class="content">
+    <div class="title"><a href="https://www.instagram.com/p/DVMdqhtkqCx/" target="_blank">PFP!!!!🐒</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 -</div>
+    <div>❤️ 5.4K</div>
+    <div>💬 30</div>
+  </td>
+</tr><tr>
+  <td class="idx">38</td>
+  <td class="name">
+    <div>🎵 <strong>Celina</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@celinaspookyboo" target="_blank">https://www.tiktok.com/@celinaspookyboo</a></div>
+    <div class="tags"><span class="tag">Plus Size</span> <span class="tag">Plus Size - Cute</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@celinaspookyboo/video/7610876375070690580" target="_blank">It’s almost time #scream7partner @Ghostface </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 34.6K</div>
+    <div>❤️ 4.7K</div>
+    <div>💬 62</div>
+  </td>
+</tr><tr>
+  <td class="idx">39</td>
+  <td class="name">
+    <div>🎵 <strong>Dev</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@devvyyy_" target="_blank">https://www.tiktok.com/@devvyyy_</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@devvyyy_/video/7610833324298358030" target="_blank">MY QUEEEEEN 💗✨🧚 Dc: @Derlin Angel </a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 21.0K</div>
+    <div>❤️ 4.2K</div>
+    <div>💬 14</div>
+  </td>
+</tr><tr>
+  <td class="idx">40</td>
+  <td class="name">
+    <div>🎵 <strong>Emily</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@emilyshak5" target="_blank">https://www.tiktok.com/@emilyshak5</a></div>
+    <div class="tags"><span class="tag">August Edit</span> <span class="tag">Swimwear Outreach</span> <span class="tag">Paid influencer</span> <span class="tag">FW &#x27;23</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@emilyshak5/video/7611173093578591510" target="_blank">@DeMellier 🤎🤎🤎🤎🤎</a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 2.0K</div>
+    <div>❤️ 81</div>
+    <div>💬 5</div>
+  </td>
+</tr><tr>
+  <td class="idx">41</td>
+  <td class="name">
+    <div>🎵 <strong>Hannah</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@hannahg11" target="_blank">https://www.tiktok.com/@hannahg11</a></div>
+    <div class="tags"><span class="tag">Reconnect</span> <span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@hannahmelochewhy/video/7610988937305263390" target="_blank">CRYING </a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 60.3K</div>
+    <div>❤️ 6.9K</div>
+    <div>💬 34</div>
+  </td>
+</tr><tr>
+  <td class="idx">42</td>
+  <td class="name">
+    <div>🎵 <strong>Hannah</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@hannahg11" target="_blank">https://www.tiktok.com/@hannahg11</a></div>
+    <div class="tags"><span class="tag">Reconnect</span> <span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@hannahmelochewhy/video/7610960825448221983" target="_blank">Girlllsss trip?!?! Fr 🫣 @lucy @marla fay </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 306.2K</div>
+    <div>❤️ 56.5K</div>
+    <div>💬 31</div>
+  </td>
+</tr><tr>
+  <td class="idx">43</td>
+  <td class="name">
+    <div>🎵 <strong>Isabella</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@onlyjayus" target="_blank">https://www.tiktok.com/@onlyjayus</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@onlyjayus/video/7610878471828442381" target="_blank">“the lies stop here” 😮‍💨 no I have a feeling they continue them </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 690.2K</div>
+    <div>❤️ 71.4K</div>
+    <div>💬 539</div>
+  </td>
+</tr><tr>
+  <td class="idx">44</td>
+  <td class="name">
+    <div>🎵 <strong>JENA</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@jena" target="_blank">https://www.tiktok.com/@jena</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@jena/video/7611007671986162975" target="_blank">You already know what it isth🤭</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 54.4K</div>
+    <div>❤️ 6.3K</div>
+    <div>💬 48</div>
+  </td>
+</tr><tr>
+  <td class="idx">45</td>
+  <td class="name">
+    <div>🎵 <strong>Kady</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@kadymcdermott" target="_blank">https://www.tiktok.com/@kadymcdermott</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@kadymcdermott/video/7610910618484329750" target="_blank">any excuse to not wash my hair 👹 </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 26.5K</div>
+    <div>❤️ 958</div>
+    <div>💬 3</div>
+  </td>
+</tr><tr>
+  <td class="idx">46</td>
+  <td class="name">
+    <div>🎵 <strong>Kady</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@kadymcdermott" target="_blank">https://www.tiktok.com/@kadymcdermott</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@kadymcdermott/video/7610894460183940374" target="_blank"><em>N/A</em></a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 8.6K</div>
+    <div>❤️ 231</div>
+    <div>💬 2</div>
+  </td>
+</tr><tr>
+  <td class="idx">47</td>
+  <td class="name">
+    <div>🎵 <strong>Kendall</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@kendallvertes" target="_blank">https://www.tiktok.com/@kendallvertes</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@kendallvertes/video/7611177431860366623" target="_blank">After pink lemonade this hat is going nowhere </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 37.0K</div>
+    <div>❤️ 2.8K</div>
+    <div>💬 42</div>
+  </td>
+</tr><tr>
+  <td class="idx">48</td>
+  <td class="name">
+    <div>🎵 <strong>Lele</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@lelepons" target="_blank">https://www.tiktok.com/@lelepons</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@lelepons/video/7610857815753657631" target="_blank">“Be my mistress” EN ESPAÑOL 🔥🔥🔥 @Bridgerton </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 3.9M</div>
+    <div>❤️ 690.3K</div>
+    <div>💬 5.0K</div>
+  </td>
+</tr><tr>
+  <td class="idx">49</td>
+  <td class="name">
+    <div>🎵 <strong>Lexi</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@lexijayde" target="_blank">https://www.tiktok.com/@lexijayde</a></div>
+    <div class="tags"><span class="tag">Musician</span> <span class="tag">April Campaign‘23 Outreach</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@lexihensler/video/7610859633242033439" target="_blank">Who will be the diamond of the season?👀 @Bridgerton #Bridgerton </a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 15.6K</div>
+    <div>❤️ 2.7K</div>
+    <div>💬 20</div>
+  </td>
+</tr><tr>
+  <td class="idx">50</td>
+  <td class="name">
+    <div>🎵 <strong>Lola</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@scoobiezoobie" target="_blank">https://www.tiktok.com/@scoobiezoobie</a></div>
+    <div class="tags"><span class="tag">music festival outreach</span> <span class="tag">Brand Campaign - outreach</span> <span class="tag">🍩BF</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@scoobiezoobie/video/7610877922576043286" target="_blank">So ready for summer with my @KURT GEIGER jelly Kensington  In collaboration with #kurtgeigerSS26 #ad </a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 34.3K</div>
+    <div>❤️ 1.2K</div>
+    <div>💬 12</div>
+  </td>
+</tr><tr>
+  <td class="idx">51</td>
+  <td class="name">
+    <div>🎵 <strong>Lola</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@scoobiezoobie" target="_blank">https://www.tiktok.com/@scoobiezoobie</a></div>
+    <div class="tags"><span class="tag">music festival outreach</span> <span class="tag">Brand Campaign - outreach</span> <span class="tag">🍩BF</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@scoobiezoobie/video/7610875570280287510" target="_blank">#mood </a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 18.0K</div>
+    <div>❤️ 905</div>
+    <div>💬 9</div>
+  </td>
+</tr><tr>
+  <td class="idx">52</td>
+  <td class="name">
+    <div>🎵 <strong>Lola</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@scoobiezoobie" target="_blank">https://www.tiktok.com/@scoobiezoobie</a></div>
+    <div class="tags"><span class="tag">music festival outreach</span> <span class="tag">Brand Campaign - outreach</span> <span class="tag">🍩BF</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@scoobiezoobie/video/7610875184878226710" target="_blank">Jenny I’m in the car get in </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 107.9K</div>
+    <div>❤️ 9.2K</div>
+    <div>💬 15</div>
+  </td>
+</tr><tr>
+  <td class="idx">53</td>
+  <td class="name">
+    <div>🎵 <strong>Lola</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@scoobiezoobie" target="_blank">https://www.tiktok.com/@scoobiezoobie</a></div>
+    <div class="tags"><span class="tag">music festival outreach</span> <span class="tag">Brand Campaign - outreach</span> <span class="tag">🍩BF</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@scoobiezoobie/video/7610846080481103126" target="_blank">My thrift finds in 2026 so far teheheheeee !! Which is your fav 🎀</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 25.0K</div>
+    <div>❤️ 2.2K</div>
+    <div>💬 17</div>
+  </td>
+</tr><tr>
+  <td class="idx">54</td>
+  <td class="name">
+    <div>🎵 <strong>Lola</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@scoobiezoobie" target="_blank">https://www.tiktok.com/@scoobiezoobie</a></div>
+    <div class="tags"><span class="tag">music festival outreach</span> <span class="tag">Brand Campaign - outreach</span> <span class="tag">🍩BF</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@scoobiezoobie/video/7610837443641675030" target="_blank">Finishing touches 😝😝😝   Mascara @pradabeauty  Lip combo @M·A·C Cosmetics @maccosmeticsuki  Hair spray @Bumble and bumble</a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;gaming&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;https://bumble.com&quot;, &quot;http://bumble.com&quot;], &quot;name&quot;: &quot;Bumble&quot;, &quot;id&quot;: &quot;228207&quot;, &quot;logo&quot;: &quot;https://res-kol.noxgroup.com/noxinfluencer/exportPDF/noxinflue</div>
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 8.3K</div>
+    <div>❤️ 234</div>
+    <div>💬 5</div>
+  </td>
+</tr><tr>
+  <td class="idx">55</td>
+  <td class="name">
+    <div>🎵 <strong>Lydia</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@fashioninflux" target="_blank">https://www.tiktok.com/@fashioninflux</a></div>
+    <div class="tags"><span class="tag">branding</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@fashioninflux/video/7610878803509775638" target="_blank">Roll on summer 🥹🥹🥹 #pregnancyannouncement #genderreveal </a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 6.9K</div>
+    <div>❤️ 593</div>
+    <div>💬 20</div>
+  </td>
+</tr><tr>
+  <td class="idx">56</td>
+  <td class="name">
+    <div>🎵 <strong>Nia</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@niasioux" target="_blank">https://www.tiktok.com/@niasioux</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@niasioux/video/7611177514374860046" target="_blank">There’s no escaping… Doing a book signing tomorrow in my fabulous hometown of Pittsburgh. Join me tomorrow and we can ch</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 480.5K</div>
+    <div>❤️ 89.4K</div>
+    <div>💬 116</div>
+  </td>
+</tr><tr>
+  <td class="idx">57</td>
+  <td class="name">
+    <div>🎵 <strong>Nicole</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@nicolelaeno" target="_blank">https://www.tiktok.com/@nicolelaeno</a></div>
+    <div class="tags"><span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@nicolegarcia/video/7610976971715005710" target="_blank">Pov: vamos🙂‍↔️</a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 875.3K</div>
+    <div>❤️ 105.0K</div>
+    <div>💬 335</div>
+  </td>
+</tr><tr>
+  <td class="idx">58</td>
+  <td class="name">
+    <div>🎵 <strong>Nicole</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@nicolelaeno" target="_blank">https://www.tiktok.com/@nicolelaeno</a></div>
+    <div class="tags"><span class="tag">TT SHOP - US</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@nicolegarcia/video/7610933235391925518" target="_blank">Me estaba congelando ☃️ 🧊 🥶 ❄️ </a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 541.7K</div>
+    <div>❤️ 67.4K</div>
+    <div>💬 109</div>
+  </td>
+</tr><tr>
+  <td class="idx">59</td>
+  <td class="name">
+    <div>🎵 <strong>Noa</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@noakirel" target="_blank">https://www.tiktok.com/@noakirel</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@noakirel/video/7611109549713427730" target="_blank">התבקש</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 646.1K</div>
+    <div>❤️ 76.8K</div>
+    <div>💬 450</div>
+  </td>
+</tr><tr class="product-row">
+  <td class="idx">60</td>
+  <td class="name">
+    <div>🎵 <strong>Noa</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@noakirel" target="_blank">https://www.tiktok.com/@noakirel</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@noakirel/video/7610868859502939399" target="_blank">🤫 #GalaxyUnpacked #GalaxyS26Ultra #TeamGalaxy #ByGalaxy @Samsung Israel </a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;consumer electronic&quot;, &quot;lifestyle&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;https://www.samsung.com&quot;, &quot;https://www.samsungsvc.co.kr&quot;, &quot;http://www.samsungstore.mx&quot;, &quot;http://www.samsungparavoce.com.br</div>
+    <div class="status"><span class="ok-badge">✅ Galaxy S26 Ultra</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 171.1K</div>
+    <div>❤️ 8.4K</div>
+    <div>💬 204</div>
+  </td>
+</tr><tr>
+  <td class="idx">61</td>
+  <td class="name">
+    <div>🎵 <strong>PAMIBABY</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@pamibabyy" target="_blank">https://www.tiktok.com/@pamibabyy</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@pamibabyy/video/7610928169058618637" target="_blank">wakey wakey</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 23.6K</div>
+    <div>❤️ 2.9K</div>
+    <div>💬 13</div>
+  </td>
+</tr><tr>
+  <td class="idx">62</td>
+  <td class="name">
+    <div>🎵 <strong>PAMIBABY</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@pamibabyy" target="_blank">https://www.tiktok.com/@pamibabyy</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@pamibabyy/video/7610889398225341709" target="_blank">💇🏻‍♀️</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 32.5K</div>
+    <div>❤️ 3.5K</div>
+    <div>💬 19</div>
+  </td>
+</tr><tr>
+  <td class="idx">63</td>
+  <td class="name">
+    <div>🎵 <strong>Remi</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@missremiashten" target="_blank">https://www.tiktok.com/@missremiashten</a></div>
+    <div class="tags"><span class="tag">Plus Size</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@missremiashten/video/7610906933909785869" target="_blank">my birthday dinner feat. my orange hand because I overslept on my self tan  — #birthday #dinner #whatiate #tastetest </a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 36.2K</div>
+    <div>❤️ 5.1K</div>
+    <div>💬 23</div>
+  </td>
+</tr><tr>
+  <td class="idx">64</td>
+  <td class="name">
+    <div>🎵 <strong>Sienna</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@siennamae" target="_blank">https://www.tiktok.com/@siennamae</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@siennamae/video/7611024134839045389" target="_blank">finding an old song and becoming obsessed with it again &gt;</a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 28.3K</div>
+    <div>❤️ 2.7K</div>
+    <div>💬 17</div>
+  </td>
+</tr><tr>
+  <td class="idx">65</td>
+  <td class="name">
+    <div>🎵 <strong>Sienna</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@siennamae" target="_blank">https://www.tiktok.com/@siennamae</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@siennamae/video/7610990791225380110" target="_blank">Excuse my voice I have been sick but YAY</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 56.8K</div>
+    <div>❤️ 6.2K</div>
+    <div>💬 10</div>
+  </td>
+</tr><tr>
+  <td class="idx">66</td>
+  <td class="name">
+    <div>🎵 <strong>Sienna</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@siennamae" target="_blank">https://www.tiktok.com/@siennamae</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@siennamae/video/7610981717309934862" target="_blank"><em>N/A</em></a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 252.8K</div>
+    <div>❤️ 25.2K</div>
+    <div>💬 67</div>
+  </td>
+</tr><tr>
+  <td class="idx">67</td>
+  <td class="name">
+    <div>🎵 <strong>Sienna</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@siennamae" target="_blank">https://www.tiktok.com/@siennamae</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@siennamae/video/7610921950097034510" target="_blank">She wants my man</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 22.3K</div>
+    <div>❤️ 1.6K</div>
+    <div>💬 25</div>
+  </td>
+</tr><tr>
+  <td class="idx">68</td>
+  <td class="name">
+    <div>🎵 <strong>Sienna</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@siennamae" target="_blank">https://www.tiktok.com/@siennamae</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@siennamae/video/7610852557207899405" target="_blank">Down bad at the moment</a></div>
+    
+    <div class="status"><span class="fail-badge">Lifestyle Only</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 14.2K</div>
+    <div>❤️ 614</div>
+    <div>💬 6</div>
+  </td>
+</tr><tr>
+  <td class="idx">69</td>
+  <td class="name">
+    <div>🎵 <strong>Sissy</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@itssissysheridan" target="_blank">https://www.tiktok.com/@itssissysheridan</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@itssissysheridan/video/7611010268579007775" target="_blank">Annual Wednesday night TikTok’s @chichi veronika :) </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 84.1K</div>
+    <div>❤️ 12.2K</div>
+    <div>💬 35</div>
+  </td>
+</tr><tr>
+  <td class="idx">70</td>
+  <td class="name">
+    <div>🎵 <strong>Sissy</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@itssissysheridan" target="_blank">https://www.tiktok.com/@itssissysheridan</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@itssissysheridan/video/7611008087062760734" target="_blank">We all got that octobuddy NO MIRRORS ARE SAFE</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 13.4K</div>
+    <div>❤️ 1.2K</div>
+    <div>💬 10</div>
+  </td>
+</tr><tr>
+  <td class="idx">71</td>
+  <td class="name">
+    <div>🎵 <strong>Sissy</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@itssissysheridan" target="_blank">https://www.tiktok.com/@itssissysheridan</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@itssissysheridan/video/7611007180623465759" target="_blank">WAKE UP IN THE MORNING THEN I WHAT? @chichi veronika :) </a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 17.9K</div>
+    <div>❤️ 2.3K</div>
+    <div>💬 14</div>
+  </td>
+</tr><tr>
+  <td class="idx">72</td>
+  <td class="name">
+    <div>🎵 <strong>Sissy</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@itssissysheridan" target="_blank">https://www.tiktok.com/@itssissysheridan</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@itssissysheridan/video/7611003525342039327" target="_blank">For meeee</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 11.5K</div>
+    <div>❤️ 1.7K</div>
+    <div>💬 14</div>
+  </td>
+</tr><tr>
+  <td class="idx">73</td>
+  <td class="name">
+    <div>🎵 <strong>Sissy</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@itssissysheridan" target="_blank">https://www.tiktok.com/@itssissysheridan</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@itssissysheridan/video/7611002911966973215" target="_blank">She looks a LOT LIKE MEEEE</a></div>
+    
+    <div class="status"><span class="fail-badge">Music / Dance</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 96.4K</div>
+    <div>❤️ 16.0K</div>
+    <div>💬 71</div>
+  </td>
+</tr><tr>
+  <td class="idx">74</td>
+  <td class="name">
+    <div>🎵 <strong>Sissy</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@itssissysheridan" target="_blank">https://www.tiktok.com/@itssissysheridan</a></div>
+    <div class="tags"><span class="tag">Swimwear</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@itssissysheridan/video/7610862951590907167" target="_blank">Keep the chat related to Fortnite please </a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;gaming&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;https://www.fortnite.com&quot;, &quot;https://fortnite.com&quot;, &quot;https://fortnite.gg&quot;], &quot;name&quot;: &quot;Fortnite&quot;, &quot;id&quot;: &quot;3126089&quot;, &quot;logo&quot;: &quot;https://res06.bignox.com/no</div>
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 17.5K</div>
+    <div>❤️ 2.3K</div>
+    <div>💬 16</div>
+  </td>
+</tr><tr>
+  <td class="idx">75</td>
+  <td class="name">
+    <div>🎵 <strong>Summer</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@summermckeen" target="_blank">https://www.tiktok.com/@summermckeen</a></div>
+    <div class="tags"><span class="tag">TT SHOP - US</span> <span class="tag">To be TTS</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@summermckeen/video/7610988593565191455" target="_blank">❤️❤️❤️❤️❤️</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 2.1K</div>
+    <div>❤️ 152</div>
+    <div>💬 5</div>
+  </td>
+</tr><tr>
+  <td class="idx">76</td>
+  <td class="name">
+    <div>🎵 <strong>Tessa</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@tessabrooks" target="_blank">https://www.tiktok.com/@tessabrooks</a></div>
+    <div class="tags"><span class="tag">Brand Campaign - outreach</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@tessabrooks/video/7611150437542071583" target="_blank">Showed up and showed out @BOSS </a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 11.1K</div>
+    <div>❤️ 774</div>
+    <div>💬 10</div>
+  </td>
+</tr><tr>
+  <td class="idx">77</td>
+  <td class="name">
+    <div>🎵 <strong>Tessa</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@tessabrooks" target="_blank">https://www.tiktok.com/@tessabrooks</a></div>
+    <div class="tags"><span class="tag">Brand Campaign - outreach</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@tessabrooks/video/7611084762991594782" target="_blank">9am full glam let’s go @Max Mara </a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 21.9K</div>
+    <div>❤️ 2.0K</div>
+    <div>💬 21</div>
+  </td>
+</tr><tr>
+  <td class="idx">78</td>
+  <td class="name">
+    <div>🎵 <strong>Tessa</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@tessabrooks" target="_blank">https://www.tiktok.com/@tessabrooks</a></div>
+    <div class="tags"><span class="tag">Brand Campaign - outreach</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@tessabrooks/video/7610851052493098271" target="_blank">It’s great 🤷‍♀️ @Missoni </a></div>
+    
+    <div class="status"><span class="fail-badge">No Specific Product Name</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 13.9K</div>
+    <div>❤️ 828</div>
+    <div>💬 9</div>
+  </td>
+</tr><tr>
+  <td class="idx">79</td>
+  <td class="name">
+    <div>🎵 <strong>Tessa</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@tessabrooks" target="_blank">https://www.tiktok.com/@tessabrooks</a></div>
+    <div class="tags"><span class="tag">Brand Campaign - outreach</span> </div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@tessabrooks/video/7610833702976900382" target="_blank">I’m OBSESSED with this look</a></div>
+    
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 15.6K</div>
+    <div>❤️ 1.2K</div>
+    <div>💬 12</div>
+  </td>
+</tr><tr>
+  <td class="idx">80</td>
+  <td class="name">
+    <div>🎵 <strong>Zoe</strong></div>
+    <div class="profile"><a href="https://www.tiktok.com/@zoelaverne" target="_blank">https://www.tiktok.com/@zoelaverne</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">tiktok</td>
+  <td class="content">
+    <div class="title"><a href="https://www.tiktok.com/@zoelaverne/video/7610860202518138126" target="_blank">🙂</a></div>
+    
+    <div class="status"><span class="fail-badge">Empty / No Content</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 68.3K</div>
+    <div>❤️ 1.6K</div>
+    <div>💬 82</div>
+  </td>
+</tr><tr>
+  <td class="idx">81</td>
+  <td class="name">
+    <div>▶️ <strong>Victoria</strong></div>
+    <div class="profile"><a href="https://www.youtube.com/c/Inthefrowpage/videos" target="_blank">https://www.youtube.com/c/Inthefrowpage/videos</a></div>
+    <div class="tags"></div>
+  </td>
+  <td class="platform">youtube</td>
+  <td class="content">
+    <div class="title"><a href="https://www.youtube.com/watch?v=vYt5hy-EoWI" target="_blank">JUST ONE MORE THING... #shorts</a></div>
+    <div class="brand-info">🏷️ [{&quot;type&quot;: [&quot;lifestyle&quot;], &quot;sourceLink&quot;: null, &quot;link&quot;: [&quot;https://www.dyson.com/en&quot;, &quot;https://www.dyson.hk&quot;, &quot;https://www.dyson.com&quot;, &quot;https://dysonvacuumspares.co.uk&quot;, &quot;https://www.dyson.in&quot;, &quot;https://w</div>
+    <div class="status"><span class="fail-badge">No Product Mentioned</span></div>
+  </td>
+  <td class="stats">
+    <div>👁 10.0K</div>
+    <div>❤️ 183</div>
+    <div>💬 3</div>
+  </td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<script>
+(function() {
+  var data = {"labels": ["No Specific Product Name", "Empty / No Content", "No Product Mentioned", "Lifestyle Only", "Restaurant / Food", "Music / Dance", "✅ Product Found"], "values": [15, 16, 28, 13, 1, 7, 1], "colors": ["#ff9f40", "#9966ff", "#ff6384", "#36a2eb", "#4bc0c0", "#c9cbcf", "#2ecc71"]};
+  var canvas = document.getElementById('pieChart');
+  var ctx = canvas.getContext('2d');
+  var total = data.values.reduce(function(a,b){return a+b}, 0);
+  var cx = 100, cy = 100, r = 90;
+  var startAngle = -Math.PI / 2;
+
+  for (var i = 0; i < data.values.length; i++) {
+    var slice = (data.values[i] / total) * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, startAngle + slice);
+    ctx.closePath();
+    ctx.fillStyle = data.colors[i];
+    ctx.fill();
+
+    // White border between slices
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Percentage label on slice
+    var mid = startAngle + slice / 2;
+    var lx = cx + (r * 0.6) * Math.cos(mid);
+    var ly = cy + (r * 0.6) * Math.sin(mid);
+    var pct = ((data.values[i] / total) * 100).toFixed(0);
+    if (parseInt(pct) >= 5) {
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(pct + '%', lx, ly);
+    }
+
+    startAngle += slice;
+  }
+
+  // Legend
+  var legend = document.getElementById('pieLegend');
+  var lhtml = '';
+  for (var i = 0; i < data.labels.length; i++) {
+    var pct = ((data.values[i] / total) * 100).toFixed(1);
+    lhtml += '<div><span class="dot" style="background:' + data.colors[i] + '"></span>'
+           + data.labels[i] + '<span class="cnt">(' + data.values[i] + ', ' + pct + '%)</span></div>';
+  }
+  legend.innerHTML = lhtml;
+})();
+</script>
+
+</body>
+</html>
