@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hashtag Search Report</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+<style>
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #1E3A78 0%, #1B5E40 100%);
+  min-height: 100vh; padding: 20px;
+}
+.container { max-width:1400px; margin:0 auto; }
+.fnav-btn {
+  position:fixed; top:20px; left:20px; width:42px; height:42px;
+  background:rgba(15,31,61,.92); color:white; border:none; border-radius:50%;
+  font-size:1.2em; cursor:pointer; z-index:1100; display:flex; align-items:center;
+  justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,.35);
+  transition:transform .2s ease, background .2s ease;
+}
+.fnav-btn:hover { background:rgba(65,105,225,.9); transform:scale(1.1); }
+.fnav-panel {
+  position:fixed; top:70px; left:20px; width:220px;
+  background:rgba(15,31,61,.96); border-radius:12px; padding:10px 0;
+  box-shadow:0 8px 30px rgba(0,0,0,.4); z-index:1099;
+  transform:translateX(-260px); opacity:0;
+  transition:transform .3s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+  backdrop-filter:blur(12px);
+}
+.fnav-panel.open { transform:translateX(0); opacity:1; }
+.fnav-panel a {
+  display:flex; align-items:center; gap:8px;
+  padding:9px 16px; color:rgba(255,255,255,.8); text-decoration:none;
+  font-size:.82em; transition:all .15s ease; border-left:3px solid transparent;
+}
+.fnav-panel a:hover { background:rgba(255,255,255,.1); color:white; border-left-color:#4169E1; }
+.fnav-panel a.active { background:rgba(65,105,225,.25); color:white; border-left-color:#4169E1; font-weight:600; }
+.fnav-panel .nav-icon { font-size:1.05em; flex-shrink:0; width:18px; text-align:center; }
+h1 { color:white; text-align:center; margin-bottom:8px; text-shadow:2px 2px 4px rgba(0,0,0,.3); font-size:1.8em; }
+.subtitle { color:rgba(255,255,255,.85); text-align:center; margin-bottom:25px; font-size:.9em; }
+.card { background:#FFFFFF; border-radius:15px; padding:25px; margin-bottom:20px; box-shadow:0 8px 30px rgba(0,0,0,.12); }
+.card h2 { color:#1E3A78; font-size:1.25em; margin-bottom:15px; padding-bottom:8px; border-bottom:2px solid #E8ECF1; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:900px) { .two-col { grid-template-columns:1fr; } }
+.mini-stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+.mini-stat { background:white; padding:6px 14px; border-radius:8px; font-size:.85em; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+.funnel { display:flex; flex-direction:column; align-items:center; gap:6px; margin:10px 0 20px; }
+.f-step { text-align:center; padding:14px; border-radius:12px; color:white; font-weight:600; box-shadow:0 2px 8px rgba(0,0,0,.15); width:100%; max-width:600px; }
+.f-num { font-size:1.6em; display:block; }
+.f-label { font-size:.85em; opacity:.9; }
+.f-arrow { color:rgba(255,255,255,.6); font-size:1.3em; }
+.bar { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.bar-label { width:140px; font-size:.8em; color:#555; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bar-track { flex:1; height:18px; background:#EEE; border-radius:4px; overflow:hidden; }
+.bar-fill-green { height:100%; background:linear-gradient(90deg,#2E8B57,#3CB371); border-radius:4px; transition:width .6s ease; }
+.bar-fill-blue { height:100%; background:linear-gradient(90deg,#4169E1,#6495ED); border-radius:4px; transition:width .6s ease; }
+.bar-fill-red { height:100%; background:linear-gradient(90deg,#C0392B,#E74C3C); border-radius:4px; transition:width .6s ease; }
+.bar-fill-orange { height:100%; background:linear-gradient(90deg,#E67E22,#F39C12); border-radius:4px; transition:width .6s ease; }
+.bar-value { width:36px; text-align:right; font-size:.8em; font-weight:600; color:#333; }
+.pie-wrapper { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.pie-chart { width:140px; height:140px; border-radius:50%; flex-shrink:0; }
+.pie-legend { font-size:.82em; line-height:1.8; }
+.legend-item { display:flex; align-items:center; gap:6px; }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.pcard { border:1px solid #E0E0E0; border-radius:12px; padding:18px; margin-bottom:14px; transition:box-shadow .2s ease; }
+.pcard:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); }
+.pcard.catalog-yes { border-left:4px solid #2E8B57; background:#FAFFF8; }
+.pcard.fail { border-left:4px solid #E74C3C; background:#FFF8F8; }
+.pc-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
+.pc-tag { display:inline-block; padding:2px 10px; border-radius:4px; font-size:.75em; font-weight:bold; color:white; }
+.pc-tag-matched { background:#2E8B57; margin-left:6px; }
+.pc-tag-unmatched { background:#E67E22; margin-left:6px; }
+.pc-meta { font-size:.82em; color:#7F8C8D; }
+.pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:800px) { .pc-grid { grid-template-columns:1fr; } }
+.pc-sec h4 { font-size:.88em; margin-bottom:8px; padding:4px 8px; border-radius:6px; }
+.h-video { background:#EBF5FB; color:#2E86C1; }
+.h-serp { background:#FEF3E2; color:#9A6700; }
+.pc-kv { font-size:.83em; line-height:1.8; }
+.pc-kv .k { color:#7F8C8D; font-weight:600; }
+.pc-kv .v { color:#2C3E50; }
+.pc-link { color:#2E86C1; word-break:break-all; font-size:.9em; }
+.pc-title { margin-top:8px; font-weight:600; color:#2C3E50; font-size:.9em; }
+.pc-desc { font-size:.82em; color:#666; margin-top:4px; max-height:60px; overflow:hidden; line-height:1.5; }
+.serp-item { padding:6px 8px; margin-bottom:6px; background:#FFFBE6; border-radius:6px; font-size:.83em; }
+.serp-item a { color:#2E86C1; text-decoration:none; }
+.sr { display:inline-block; background:#4169E1; color:white; width:24px; height:24px; border-radius:50%; text-align:center; line-height:24px; font-size:.75em; font-weight:700; margin-right:6px; }
+.ss { font-size:.78em; color:#27AE60; margin-top:3px; }
+.catalog-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.73em; font-weight:bold; margin-left:4px; }
+.cb-yes { background:#D5F5E3; color:#1E8449; }
+.fail-reason { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.78em; font-weight:600; color:white; background:#E74C3C; }
+
+</style>
+</head>
+<body>
+<button class="fnav-btn" id="fnavBtn">&times;</button>
+<div class="fnav-panel open" id="fnavPanel">
+  <a href="#sec-funnel"><span class="nav-icon">&#x1F4CA;</span> Funnel</a>
+  <a href="#sec-platform"><span class="nav-icon">&#x1F4CA;</span> Platform</a>
+  <a href="#sec-category"><span class="nav-icon">&#x1F3F7;</span> Category</a>
+  <a href="#sec-products"><span class="nav-icon">&#x2705;</span> Products</a>
+</div>
+<div class="container">
+  <h1>&#x1F4CA; CC Hashtag Search Report</h1>
+  <p class="subtitle">9 hashtags &nbsp;|&nbsp; 76 videos &nbsp;|&nbsp; 11 unique products &nbsp;|&nbsp; Generated 2026-03-03 14:23</p>
+  <div class="card" data-aos="fade-up" id="sec-funnel">
+    <h2>Extraction Funnel</h2>
+    <div class="funnel">
+      <div class="f-step" style="background:#4169E1;max-width:580px;">
+        <span class="f-num">9</span><span class="f-label">Hashtags Searched</span></div>
+      <div class="f-arrow">&#x25BC;</div>
+      <div class="f-step" style="background:#3A7BD5;max-width:500px;">
+        <span class="f-num">76</span><span class="f-label">Videos Found</span></div>
+      <div class="f-arrow">&#x25BC;</div>
+      <div class="f-step" style="background:#2E8B57;max-width:420px;">
+        <span class="f-num">12</span><span class="f-label">Products Extracted</span></div>
+      <div class="f-arrow">&#x25BC;</div>
+      <div class="f-step" style="background:#27AE60;max-width:340px;">
+        <span class="f-num">11</span><span class="f-label">Unique Products</span></div>
+      <div class="f-arrow">&#x25BC;</div>
+      <div class="f-step" style="background:#1E8449;max-width:260px;">
+        <span class="f-num">3</span><span class="f-label">Hashtags with Products</span></div>
+    </div>
+  </div>
+  <div class="card" data-aos="fade-up" data-aos-delay="80" id="sec-platform">
+    <h2>Platform Breakdown</h2>
+    <div class="two-col">
+      <div><h3>Videos by Platform</h3><div class="chart-container"><div class="bar"><div class="bar-label" title="instagram">instagram</div><div class="bar-track"><div class="bar-fill-blue" style="width:100.0%"></div></div><div class="bar-value">71</div></div>
+<div class="bar"><div class="bar-label" title="youtube">youtube</div><div class="bar-track"><div class="bar-fill-blue" style="width:4.2%"></div></div><div class="bar-value">3</div></div>
+<div class="bar"><div class="bar-label" title="tiktok">tiktok</div><div class="bar-track"><div class="bar-fill-blue" style="width:2.8%"></div></div><div class="bar-value">2</div></div></div></div>
+      <div><h3>Products by Platform</h3><div class="chart-container"><div class="bar"><div class="bar-label" title="instagram">instagram</div><div class="bar-track"><div class="bar-fill-green" style="width:100.0%"></div></div><div class="bar-value">9</div></div>
+<div class="bar"><div class="bar-label" title="youtube">youtube</div><div class="bar-track"><div class="bar-fill-green" style="width:22.2%"></div></div><div class="bar-value">2</div></div>
+<div class="bar"><div class="bar-label" title="tiktok">tiktok</div><div class="bar-track"><div class="bar-fill-green" style="width:11.1%"></div></div><div class="bar-value">1</div></div></div></div>
+    </div>
+  </div>
+  <div class="card" data-aos="fade-up" data-aos-delay="100" id="sec-category">
+    <h2>Category Breakdown</h2>
+    <div class="two-col">
+      <div><h3>Videos by Category</h3><div class="chart-container"><div class="bar"><div class="bar-label" title="sports">sports</div><div class="bar-track"><div class="bar-fill-blue" style="width:100.0%"></div></div><div class="bar-value">63</div></div>
+<div class="bar"><div class="bar-label" title="electronics">electronics</div><div class="bar-track"><div class="bar-fill-blue" style="width:15.9%"></div></div><div class="bar-value">10</div></div>
+<div class="bar"><div class="bar-label" title="Category">Category</div><div class="bar-track"><div class="bar-fill-blue" style="width:4.8%"></div></div><div class="bar-value">3</div></div></div></div>
+      <div><h3>Products by Category</h3><div class="chart-container"><div class="bar"><div class="bar-label" title="sports">sports</div><div class="bar-track"><div class="bar-fill-green" style="width:100.0%"></div></div><div class="bar-value">7</div></div>
+<div class="bar"><div class="bar-label" title="electronics">electronics</div><div class="bar-track"><div class="bar-fill-green" style="width:71.4%"></div></div><div class="bar-value">5</div></div></div></div>
+    </div>
+  </div>
+  <div class="card" data-aos="fade-up" data-aos-delay="120">
+    <h2>Extraction Failure Reasons — 64 failed</h2>
+    <div style="display:flex;justify-content:center;">
+      <div class="pie-wrapper"><div class="pie-chart" style="background:conic-gradient(#4169E1 0.0% 40.6%, #2E8B57 40.6% 73.4%, #E74C3C 73.4% 85.9%, #F39C12 85.9% 96.9%, #1ABC9C 96.9% 100.0%)"></div><div class="pie-legend"><div class="legend-item"><span class="legend-dot" style="background:#4169E1"></span><span class="legend-text">lifestyle_only: <strong>26</strong> (40.6%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#2E8B57"></span><span class="legend-text">no_spec_prod: <strong>21</strong> (32.8%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#E74C3C"></span><span class="legend-text">no_product: <strong>8</strong> (12.5%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#F39C12"></span><span class="legend-text">non_commercial: <strong>7</strong> (10.9%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#1ABC9C"></span><span class="legend-text">restaurant_food: <strong>2</strong> (3.1%)</span></div></div></div>
+    </div>
+  </div>
+  <div class="card" data-aos="fade-up" data-aos-delay="150" id="sec-products">
+    <h2>Products by Hashtag</h2>
+    <div style="background:#F0F4FF;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-size:1.1em;font-weight:700;color:#2C3E50;">&#x1F3F7; ##3dprinter</span>
+        <span style="background:#4169E1;color:white;padding:3px 10px;border-radius:12px;font-size:.78em;font-weight:600;">1 product(s)</span>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#1 Dowell — DL12-16</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">tiktok · 3D printer · Dowell 3d Printer ✨Model：DL12-16</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.jitfastener.com/products/dp0664?variant=46280014758145&amp;country=US&amp;currency=USD&amp;utm_medium=product_sync&amp;utm_source=google&amp;utm_content=sag_organic&amp;utm_campaign=sag_organic&amp;srsltid=AfmBOoq8U0Xh8_82euoN5y4nMNZ-Zogw1bl_DoMomFePbV8rklgbWBQJjdo" target="_blank" style="color:#2E86C1;text-decoration:none;">JIT Fastener</a> <span style="color:#27AE60;font-weight:600;">$169.60</span>
+            <div style="font-size:.78em;color:#888;">https://www.jitfastener.com/products/dp0664?variant=46280014758145&amp;country=US&amp;cu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#F0F4FF;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-size:1.1em;font-weight:700;color:#2C3E50;">&#x1F3F7; ##protein</span>
+        <span style="background:#4169E1;color:white;padding:3px 10px;border-radius:12px;font-size:.78em;font-weight:600;">7 product(s)</span>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#2 Clean Simple Eats — white chocolate peppermint protein powder</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · protein powder · @cleansimpleeats white chocolate peppermint protein powder</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.tiktok.com/shop/pdp/1730703994978865848" target="_blank" style="color:#2E86C1;text-decoration:none;">TikTok Shop</a> <span style="color:#27AE60;font-weight:600;">$32.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.tiktok.com/shop/pdp/1730703994978865848</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.cleansimpleeats.com/products/cookies-and-cream-protein-powder-packets?variant=39579363344462&amp;srsltid=AfmBOopcE1zJavlY3wBQV_IIx7FWKMkT33Z0bmHXl5v2XbGvlFKkVScqqog" target="_blank" style="color:#2E86C1;text-decoration:none;">Clean Simple Eats</a> <span style="color:#27AE60;font-weight:600;">$32.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.cleansimpleeats.com/products/cookies-and-cream-protein-powder-packet</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://thenutgarden.com/products/clean-simple-eats-protein-powder?variant=49291135123773&amp;country=US&amp;currency=USD&amp;utm_medium=product_sync&amp;utm_source=google&amp;utm_content=sag_organic&amp;utm_campaign=sag_organic&amp;srsltid=AfmBOoq-qW4EriBUxX5fadst2XnMRaL2LycBpn0bhBbKc8AQJt1656F4UZo" target="_blank" style="color:#2E86C1;text-decoration:none;">The Nut Garden</a> <span style="color:#27AE60;font-weight:600;">$32.99</span>
+            <div style="font-size:.78em;color:#888;">https://thenutgarden.com/products/clean-simple-eats-protein-powder?variant=49291</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#3 Alouette — Garlic &amp; Herb</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · cheese spread · Alouette Garlic &amp; Herb</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://gostorenc.com/products/alouette-garlic-herb-spread-6-5oz" target="_blank" style="color:#2E86C1;text-decoration:none;">Gostore</a> <span style="color:#27AE60;font-weight:600;">$7.49</span>
+            <div style="font-size:.78em;color:#888;">https://gostorenc.com/products/alouette-garlic-herb-spread-6-5oz</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.lundsandbyerlys.com/product/alouette-garlic-&amp;-herbs-spreadable-cheese-id-00071448300144" target="_blank" style="color:#2E86C1;text-decoration:none;">lundsandbyerlys.com</a> <span style="color:#27AE60;font-weight:600;">$7.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.lundsandbyerlys.com/product/alouette-garlic-&amp;-herbs-spreadable-chees</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.buschs.com/shop/deli/dips_spreads/alouette_spreadable_cheese_garlic_herb/p/39047?srsltid=AfmBOopmSYY7MWkJTxy4od7MbMyLjADkYh5lw9m49qAXAu0t2nU00F9tXqg" target="_blank" style="color:#2E86C1;text-decoration:none;">Busch&#x27;s Fresh Food Market</a> <span style="color:#27AE60;font-weight:600;">$8.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.buschs.com/shop/deli/dips_spreads/alouette_spreadable_cheese_garlic_</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#4 Balmain Beauty — Destin</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · perfume · Destin by @balmainbeauty</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.ulta.com/p/destin-de-balmain-eau-de-parfum-pimprod2057562?sku=2654022" target="_blank" style="color:#2E86C1;text-decoration:none;">Ulta Beauty</a> <span style="color:#27AE60;font-weight:600;">$155.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.ulta.com/p/destin-de-balmain-eau-de-parfum-pimprod2057562?sku=265402</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.ulta.com/p/destin-de-balmain-eau-de-parfum-pimprod2057562?sku=2654021&amp;cmpid=PS_Non!google!Product_Listing_Ads" target="_blank" style="color:#2E86C1;text-decoration:none;">Ulta Beauty</a> <span style="color:#27AE60;font-weight:600;">$130.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.ulta.com/p/destin-de-balmain-eau-de-parfum-pimprod2057562?sku=265402</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.selfridges.com/US/en/product/balmain-beauty-destin-de-balmain-eau-de-parfum-100ml_R04602274/" target="_blank" style="color:#2E86C1;text-decoration:none;">Selfridges</a> <span style="color:#27AE60;font-weight:600;">$155.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.selfridges.com/US/en/product/balmain-beauty-destin-de-balmain-eau-de</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#5 Cheetos — Cheetos</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · snack food · This bag of Cheetos (9 servings at 160 cal each)</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.walmart.com/ip/Cheetos-Crunchy-Cheese-Flavored-Snack-Chips-8-5-oz-Bag/49909687?wl13=3292&amp;selectedSellerId=0&amp;wmlspartner=wlpa" target="_blank" style="color:#2E86C1;text-decoration:none;">Walmart</a> <span style="color:#27AE60;font-weight:600;">$3.97</span>
+            <div style="font-size:.78em;color:#888;">https://www.walmart.com/ip/Cheetos-Crunchy-Cheese-Flavored-Snack-Chips-8-5-oz-Ba</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.cvs.com/shop/cheetos-crunchy-cheese-flavored-snack-8-5-oz-prodid-480044?skuId=480044&amp;cgaa=QWxsb3dHb29nbGVUb0FjY2Vzc0NWU1BhZ2Vz" target="_blank" style="color:#2E86C1;text-decoration:none;">CVS Pharmacy</a> <span style="color:#27AE60;font-weight:600;">$3.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.cvs.com/shop/cheetos-crunchy-cheese-flavored-snack-8-5-oz-prodid-480</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.target.com/p/cheetos-crunchy-cheese-flavored-snacks-8-5oz/-/A-12992571?sid=2881S&amp;afid=google&amp;TCID=OGS&amp;CPNG=Snacks+Candy&amp;adgroup=71-5" target="_blank" style="color:#2E86C1;text-decoration:none;">Target</a> <span style="color:#27AE60;font-weight:600;">$4.79</span>
+            <div style="font-size:.78em;color:#888;">https://www.target.com/p/cheetos-crunchy-cheese-flavored-snacks-8-5oz/-/A-129925</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#6 High Noon — High Noon Vodka Iced Tea</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · alcoholic beverage · High Noon Vodka Iced Tea = 90 calories each</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.freeholdliquor.com/p/high-noon-vodka-iced-tea-variety-pack/65849" target="_blank" style="color:#2E86C1;text-decoration:none;">Freehold Liquor &amp; Wine</a> <span style="color:#27AE60;font-weight:600;">$21.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.freeholdliquor.com/p/high-noon-vodka-iced-tea-variety-pack/65849</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#7 Quest — Quest Protein Chips</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · snack food · Quest Protein Chips (per bag):</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.samsclub.com/p/quest-tortilla-chips-variety-pack-nacho-and-chili-lime-14-count/P990348706?itemNumber=990373562" target="_blank" style="color:#2E86C1;text-decoration:none;">Sam&#x27;s Club</a> <span style="color:#27AE60;font-weight:600;">$27.15</span>
+            <div style="font-size:.78em;color:#888;">https://www.samsclub.com/p/quest-tortilla-chips-variety-pack-nacho-and-chili-lim</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.bjs.com/product/quest-tortilla-style-protein-chips-18-20g-protein-14-ct/3000000000004596263?fulfillment=shipping" target="_blank" style="color:#2E86C1;text-decoration:none;">BJ&#x27;s Wholesale Club</a> <span style="color:#27AE60;font-weight:600;">$31.99</span>
+            <div style="font-size:.78em;color:#888;">https://www.bjs.com/product/quest-tortilla-style-protein-chips-18-20g-protein-14</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.walmart.com/ip/Quest-Tortilla-Style-18-20g-Protein-Chips-Variety-Pack-14-ct-21pk/15221121203?wmlspartner=wlpa&amp;selectedSellerId=101606212" target="_blank" style="color:#2E86C1;text-decoration:none;">Walmart - Iandsexpress</a> <span style="color:#27AE60;font-weight:600;">$34.44</span>
+            <div style="font-size:.78em;color:#888;">https://www.walmart.com/ip/Quest-Tortilla-Style-18-20g-Protein-Chips-Variety-Pac</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#8 Coca‐Cola — Coca‐Cola Zero Sugar</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · soft drink · Coca‐Cola Zero Sugar</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.walmart.com/ip/Coca-Cola-Zero-Cola-12-fl-oz-12-pack/10291651?wmlspartner=wlpa&amp;selectedSellerId=0" target="_blank" style="color:#2E86C1;text-decoration:none;">Walmart</a> <span style="color:#27AE60;font-weight:600;">$8.42</span>
+            <div style="font-size:.78em;color:#888;">https://www.walmart.com/ip/Coca-Cola-Zero-Cola-12-fl-oz-12-pack/10291651?wmlspar</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.homedepot.com/p/12-fl-oz-Coca-Cola-Zero-Sugar-Fridge-Pack-Cans-12-Pack-049000042559/202612721" target="_blank" style="color:#2E86C1;text-decoration:none;">Home Depot</a> <span style="color:#27AE60;font-weight:600;">$8.98</span>
+            <div style="font-size:.78em;color:#888;">https://www.homedepot.com/p/12-fl-oz-Coca-Cola-Zero-Sugar-Fridge-Pack-Cans-12-Pa</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://hannaford.com/groceries/beverages/soft-drinks/cola-soda/diet-cola-soda/coca-cola-zero-sugar-cola-soda-12-pk-12-oz-cans.html" target="_blank" style="color:#2E86C1;text-decoration:none;">hannaford.com</a> <span style="color:#27AE60;font-weight:600;">$6.99</span>
+            <div style="font-size:.78em;color:#888;">https://hannaford.com/groceries/beverages/soft-drinks/cola-soda/diet-cola-soda/c</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#F0F4FF;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-size:1.1em;font-weight:700;color:#2C3E50;">&#x1F3F7; ##tcl</span>
+        <span style="background:#4169E1;color:white;padding:3px 10px;border-radius:12px;font-size:.78em;font-weight:600;">4 product(s)</span>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#9 TCL — MoveTime (MT48) Kids Watch</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">youtube · smartwatch · TCL&#x27;s MoveTime (MT48) Kids Watch</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.ebay.com/itm/184994851734" target="_blank" style="color:#2E86C1;text-decoration:none;">eBay</a> <span style="color:#27AE60;font-weight:600;">$58.41</span>
+            <div style="font-size:.78em;color:#888;">https://www.ebay.com/itm/184994851734</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#10 TCL — Tbot</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">youtube · smartwatch · meet TBot</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.walmart.com/ip/TCL-NXTPAPER-11-Plus/14687819013?wmlspartner=wlpa&amp;selectedSellerId=0" target="_blank" style="color:#2E86C1;text-decoration:none;">Walmart</a> <span style="color:#27AE60;font-weight:600;">$224.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.walmart.com/ip/TCL-NXTPAPER-11-Plus/14687819013?wmlspartner=wlpa&amp;sel</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.instacart.com/products/77636777-tcl-nxtpaper-11-plus-11-tablet-256gb-android-15-onyx-black" target="_blank" style="color:#2E86C1;text-decoration:none;">Instacart</a> <span style="color:#27AE60;font-weight:600;">$172.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.instacart.com/products/77636777-tcl-nxtpaper-11-plus-11-tablet-256gb</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.ebay.com/itm/127232737240" target="_blank" style="color:#2E86C1;text-decoration:none;">eBay</a> <span style="color:#27AE60;font-weight:600;">$397.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.ebay.com/itm/127232737240</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#11 TCL — TCL Crystal Clip</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · earbuds · TCL Crystal Clip</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.ebay.com/itm/177590254494?chn=ps&amp;mkevt=1&amp;mkcid=28&amp;google_free_listing_action=view_item&amp;srsltid=AfmBOoo5WT0nptGrgwOiKvxParENQcNBlIBs7b6yjPmr3VflM0ruRrYinQI" target="_blank" style="color:#2E86C1;text-decoration:none;">eBay - theborderbusiness</a> <span style="color:#27AE60;font-weight:600;">$12.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.ebay.com/itm/177590254494?chn=ps&amp;mkevt=1&amp;mkcid=28&amp;google_free_listin</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border-left:4px solid #4169E1;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <strong style="font-size:.95em;color:#2C3E50;">#12 TCL — TBot</strong>
+        </div>
+        <div style="font-size:.8em;color:#7F8C8D;margin-bottom:6px;">instagram · smartwatch · A new TCL smartwatch for your kids is coming to town. And it can transform into a robot. Releasing first in Europe and America, meet TBot.</div>
+        <div style="margin-bottom:4px;">
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.walmart.com/ip/TCL-NXTPAPER-11-Plus/14687819013?wmlspartner=wlpa&amp;selectedSellerId=0" target="_blank" style="color:#2E86C1;text-decoration:none;">Walmart</a> <span style="color:#27AE60;font-weight:600;">$224.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.walmart.com/ip/TCL-NXTPAPER-11-Plus/14687819013?wmlspartner=wlpa&amp;sel</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.instacart.com/products/77636777-tcl-nxtpaper-11-plus-11-tablet-256gb-android-15-onyx-black" target="_blank" style="color:#2E86C1;text-decoration:none;">Instacart</a> <span style="color:#27AE60;font-weight:600;">$172.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.instacart.com/products/77636777-tcl-nxtpaper-11-plus-11-tablet-256gb</div>
+          </div>
+          <div style="font-size:.83em;margin:3px 0;padding:4px 8px;background:#F8F9FA;border-radius:4px;">
+            <a href="https://www.ebay.com/itm/127232737240" target="_blank" style="color:#2E86C1;text-decoration:none;">eBay</a> <span style="color:#27AE60;font-weight:600;">$397.00</span>
+            <div style="font-size:.78em;color:#888;">https://www.ebay.com/itm/127232737240</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:rgba(255,255,255,.6);padding:20px;font-size:.8em;">
+    Generated by Hashtag Search Report &nbsp;|&nbsp; 2026-03-03 14:23
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.min.js"></script>
+<script>
+  AOS.init({ duration: 600, easing: 'ease-out-cubic', once: true });
+  document.querySelectorAll('.f-num').forEach(function(el) {
+    var target = parseInt(el.textContent, 10);
+    if (isNaN(target)) return;
+    el.textContent = '0';
+    var cu = new countUp.CountUp(el, target, { duration: 1.8, useGrouping: true });
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { cu.start(); obs.unobserve(el); }
+      });
+    }, { threshold: 0.5 });
+    obs.observe(el);
+  });
+  var btn = document.createElement('div');
+  btn.innerHTML = '&uarr;';
+  btn.style.cssText = 'position:fixed;bottom:30px;right:30px;width:44px;height:44px;background:rgba(30,58,120,.85);color:white;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:1.4em;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .2s ease;z-index:999;';
+  btn.onmouseover = function() { btn.style.transform='scale(1.15)'; };
+  btn.onmouseout  = function() { btn.style.transform='scale(1)'; };
+  btn.onclick = function() { window.scrollTo({top:0,behavior:"smooth"}); };
+  document.body.appendChild(btn);
+  window.addEventListener('scroll', function() {
+    btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+  });
+  var sections = document.querySelectorAll('[id^="sec-"]');
+  var navLinks = document.querySelectorAll('.fnav-panel a');
+  var fnavBtn = document.getElementById('fnavBtn');
+  var fnavPanel = document.getElementById('fnavPanel');
+  var navOpen = true;
+  fnavBtn.addEventListener('click', function() {
+    navOpen = !navOpen;
+    fnavPanel.classList.toggle('open', navOpen);
+    fnavBtn.innerHTML = navOpen ? '&times;' : '&#x2630;';
+  });
+  document.addEventListener('click', function(e) {
+    if (navOpen && !fnavPanel.contains(e.target) && e.target !== fnavBtn) {
+      navOpen = false; fnavPanel.classList.remove('open'); fnavBtn.innerHTML = '&#x2630;';
+    }
+  });
+  function updateNav() {
+    var scrollPos = window.scrollY + 120;
+    var current = '';
+    sections.forEach(function(s) { if (s.offsetTop <= scrollPos) current = s.id; });
+    navLinks.forEach(function(a) { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  }
+  window.addEventListener('scroll', updateNav);
+  updateNav();
+  navLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+      navOpen = false; fnavPanel.classList.remove('open'); fnavBtn.innerHTML = '&#x2630;';
+    });
+  });
+</script>
+
+</body>
+</html>
