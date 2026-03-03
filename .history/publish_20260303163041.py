@@ -6,7 +6,6 @@ publish.py - 自动更新 index.html 并推送到 GitHub Pages
 """
 
 import os
-import re
 import sys
 import argparse
 import subprocess
@@ -222,30 +221,6 @@ def generate_html(blocks: list[str]) -> str:
 </body>
 </html>'''
 
-# --- 为所有报告 HTML 注入返回主页按钮 ---
-def inject_home_button():
-    count = 0
-    for html_file in ROOT.rglob("*.html"):
-        if html_file.name == "index.html" or ".git" in html_file.parts:
-            continue
-        content = html_file.read_text(encoding="utf-8", errors="ignore")
-        if INJECT_MARKER in content:
-            continue  # 已注入，跳过
-
-        # 在 <body> 标签后注入（兼容 <body ...> 带属性的情况）
-        new_content = re.sub(
-            r"(<body[^>]*>)",
-            r"\1\n" + INJECT_SNIPPET,
-            content,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-        if new_content != content:
-            html_file.write_text(new_content, encoding="utf-8")
-            count += 1
-
-    print(f"[OK] 已为 {count} 个报告注入返回主页按钮" if count else "[OK] 所有报告已有返回按钮，无需更新")
-
 # --- Git 推送 ---
 def git_push(message: str):
     os.chdir(ROOT)
@@ -267,9 +242,6 @@ def main():
     index_path.write_text(html, encoding="utf-8")
     total = count_total()
     print(f"[OK] index.html 已更新 (共 {total} 份报告)")
-
-    # 注入返回主页按钮
-    inject_home_button()
 
     if not args.no_push:
         git_push(args.message)

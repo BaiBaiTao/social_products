@@ -6,7 +6,6 @@ publish.py - 自动更新 index.html 并推送到 GitHub Pages
 """
 
 import os
-import re
 import sys
 import argparse
 import subprocess
@@ -233,6 +232,7 @@ def inject_home_button():
             continue  # 已注入，跳过
 
         # 在 <body> 标签后注入（兼容 <body ...> 带属性的情况）
+        import re
         new_content = re.sub(
             r"(<body[^>]*>)",
             r"\1\n" + INJECT_SNIPPET,
