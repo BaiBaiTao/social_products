@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Flowcharts — 3 Data Pipelines</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e0e0e0;
+    --muted: #8890a0;
+    --accent1: #667eea;
+    --accent2: #f093fb;
+    --accent3: #4fd1c5;
+    --accent4: #f6ad55;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a1040 0%, #0f1117 50%, #0a1628 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 20px 30px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header .sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* ── Nav tabs ── */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { border-color: var(--accent1); color: var(--text); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(240,147,251,0.08));
+    border-color: var(--accent1);
+    color: #fff;
+  }
+
+  /* ── Sections ── */
+  .section { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    color: var(--muted);
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
+
+  /* ── Flowchart containers ── */
+  .flow-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+  }
+  .flow-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: var(--accent3);
+  }
+
+  /* ── Custom flowchart ── */
+  .flowchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-step {
+    position: relative;
+    width: 100%;
+    max-width: 540px;
+    padding: 18px 24px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .flow-step .label { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+  .flow-step .detail { color: var(--muted); font-size: 0.82rem; }
+  .flow-step .detail code {
+    background: rgba(255,255,255,0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.78rem;
+  }
+
+  /* step colors */
+  .step-input    { background: linear-gradient(135deg, #1a3a5c, #162840); border: 1px solid #2a5a8a; }
+  .step-nox      { background: linear-gradient(135deg, #2d1a4e, #1e1235); border: 1px solid #5a3a8a; }
+  .step-llm      { background: linear-gradient(135deg, #1a4e3a, #122e25); border: 1px solid #3a8a5a; }
+  .step-serp     { background: linear-gradient(135deg, #4e3a1a, #2e2512); border: 1px solid #8a6a3a; }
+  .step-scope    { background: linear-gradient(135deg, #4e1a2a, #2e1218); border: 1px solid #8a3a4a; }
+  .step-output   { background: linear-gradient(135deg, #1a3a3a, #122828); border: 1px solid #3a7a7a; }
+  .step-dedup    { background: linear-gradient(135deg, #3a3a1a, #282812); border: 1px solid #7a7a3a; }
+
+  /* decision diamond */
+  .step-decision {
+    background: linear-gradient(135deg, #3a2a1a, #2a1e12);
+    border: 2px solid #c09040;
+    border-radius: 10px;
+    position: relative;
+  }
+  .step-decision::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
+    width: 10px; height: 10px;
+    background: #c09040;
+  }
+
+  /* loop container */
+  .loop-box {
+    position: relative;
+    border: 2px dashed rgba(240,147,251,0.35);
+    border-radius: 16px;
+    padding: 24px 20px 20px;
+    margin: 4px 0;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    background: rgba(240,147,251,0.03);
+  }
+  .loop-label {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--bg);
+    padding: 2px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent2);
+    border-radius: 4px;
+  }
+  .loop-back-arrow {
+    position: relative;
+    width: 100%;
+    height: 36px;
+    margin-top: 4px;
+  }
+  .loop-back-arrow::before {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--accent2), rgba(240,147,251,0.3));
+  }
+  .loop-back-arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 0;
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(to left, var(--accent2), transparent);
+    border-radius: 0 4px 0 0;
+  }
+  .loop-back-label {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    opacity: 0.8;
+    text-align: right;
+    writing-mode: horizontal-tb;
+  }
+
+  /* arrow */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.75rem;
+    padding: 4px 0;
+  }
+  .arrow .line {
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, var(--accent1), var(--accent2));
+    border-radius: 1px;
+  }
+  .arrow .head {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--accent2);
+  }
+  .arrow .arrow-label {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Stats badges ── */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    justify-content: center;
+  }
+  .stat-badge {
+    background: rgba(102,126,234,0.1);
+    border: 1px solid rgba(102,126,234,0.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 100px;
+  }
+  .stat-badge .num { font-size: 1.3rem; font-weight: 700; color: var(--accent1); }
+  .stat-badge .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+  /* orange for junyao */
+  .stats-junyao .stat-badge { background: rgba(246,173,85,0.08); border-color: rgba(246,173,85,0.2); }
+  .stats-junyao .stat-badge .num { color: var(--accent4); }
+
+  /* teal for hashtag */
+  .stats-hashtag .stat-badge { background: rgba(79,209,197,0.08); border-color: rgba(79,209,197,0.2); }
+  .stats-hashtag .stat-badge .num { color: var(--accent3); }
+
+  /* purple for vertical */
+  .stats-vertical .stat-badge { background: rgba(240,147,251,0.08); border-color: rgba(240,147,251,0.2); }
+  .stats-vertical .stat-badge .num { color: var(--accent2); }
+
+  /* ── Overview comparison table ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.88rem;
+  }
+  .compare-table th, .compare-table td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .compare-table th {
+    background: rgba(102,126,234,0.1);
+    color: var(--accent1);
+    font-weight: 600;
+  }
+  .compare-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .pipe-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .pipe-tag.vertical { background: rgba(240,147,251,0.15); color: var(--accent2); }
+  .pipe-tag.junyao   { background: rgba(246,173,85,0.15); color: var(--accent4); }
+  .pipe-tag.hashtag  { background: rgba(79,209,197,0.15); color: var(--accent3); }
+
+  /* ── Shared steps highlight ── */
+  .shared-box {
+    background: rgba(102,126,234,0.06);
+    border: 1px dashed rgba(102,126,234,0.3);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 20px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .shared-box strong { color: var(--accent1); }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .flow-step { max-width: 100%; font-size: 0.82rem; padding: 14px 16px; }
+    .tabs { gap: 6px; }
+    .tab-btn { padding: 8px 14px; font-size: 0.85rem; }
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<!-- ── Header ── -->
+<div class="header">
+  <h1>Pipeline Flowcharts</h1>
+  <div class="sub">3 Data Pipelines: Vertical · Junyao TopInfluencer · Hashtag Search</div>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+  <button class="tab-btn" onclick="showTab('vertical')">Vertical Pipeline</button>
+  <button class="tab-btn" onclick="showTab('junyao')">Junyao Pipeline</button>
+  <button class="tab-btn" onclick="showTab('hashtag')">Hashtag Pipeline</button>
+</div>
+
+<!-- ============================================================ -->
+<!--  OVERVIEW                                                     -->
+<!-- ============================================================ -->
+<div id="overview" class="section active">
+  <h2 class="section-title">Pipeline Overview</h2>
+  <p class="section-desc">All 3 pipelines share the same core flow: NOX → LLM → SERP → SCOPE. The difference is the data source and how videos are discovered.</p>
+
+  <div class="flow-card">
+    <h3>Shared Architecture</h3>
+    <div class="flowchart">
+      <div class="flow-step step-input">
+        <div class="label">📥 Data Source (differs per pipeline)</div>
+        <div class="detail">Vertical: 5 category influencers &nbsp;|&nbsp; Junyao: 391 influencers list &nbsp;|&nbsp; Hashtag: 73 hashtags</div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">fetch videos</div></div>
+      <div class="flow-step step-nox">
+        <div class="label">🔍 NOX API — Video Discovery</div>
+        <div class="detail">Different API endpoints per pipeline, 3 platforms: TikTok / Instagram / YouTube</div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">video title + description</div></div>
+      <div class="flow-step step-llm">
+        <div class="label">🤖 Azure OpenAI (GPT-5.1) — Product Extraction</div>
+        <div class="detail">Extract product_name, brand, category, evidence from each video</div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">raw products (Vertical: dedup + loop if &lt;14)</div></div>
+      <div class="flow-step step-dedup">
+        <div class="label">🔄 Dedup (Vertical only) — check ≥ 14 unique?</div>
+        <div class="detail">String + LLM semantic dedup → if &lt; target, loop back to NOX for more videos</div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">unique products</div></div>
+      <div class="flow-step step-serp">
+        <div class="label">🛍️ SERP API — Google Shopping Search</div>
+        <div class="detail">Search each product → top 3 shopping results with price, link, snippet</div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">16-column vertical format TSV</div></div>
+      <div class="flow-step step-scope">
+        <div class="label">📊 SCOPE — Catalog Matching</div>
+        <div class="detail">Match extracted products against Microsoft Shopping catalog</div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">matched results</div></div>
+      <div class="flow-step step-output">
+        <div class="label">📄 HTML Report</div>
+        <div class="detail">Funnel stats, breakdowns, product verification tables</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="flow-card">
+    <h3>Pipeline Comparison</h3>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th><span class="pipe-tag vertical">Vertical</span></th>
+          <th><span class="pipe-tag junyao">Junyao</span></th>
+          <th><span class="pipe-tag hashtag">Hashtag</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Input Source</td>
+          <td>all_influencers.tsv<br><small>5 categories</small></td>
+          <td>influencers_with_nox.csv<br><small>391 influencers</small></td>
+          <td>cchashtags.tsv<br><small>73 hashtags</small></td>
+        </tr>
+        <tr>
+          <td>NOX API</td>
+          <td>categoryTag → video</td>
+          <td>channelId → video</td>
+          <td>searchVideo by tag</td>
+        </tr>
+        <tr>
+          <td>Discovery Unit</td>
+          <td>Category + Influencer</td>
+          <td>Influencer</td>
+          <td>Hashtag</td>
+        </tr>
+        <tr>
+          <td>Platforms</td>
+          <td>YouTube, TikTok, IG</td>
+          <td>YouTube, TikTok, IG</td>
+          <td>YouTube, TikTok, IG</td>
+        </tr>
+        <tr>
+          <td>Dedup</td>
+          <td>✅ String + LLM dedup</td>
+          <td>— (inline)</td>
+          <td>— (inline)</td>
+        </tr>
+        <tr>
+          <td>SERP Output</td>
+          <td>merge_vertical.tsv</td>
+          <td>merge_junyao_topinfluencer.tsv</td>
+          <td>merge_hashtag_search.tsv</td>
+        </tr>
+        <tr>
+          <td>Funnel (actual)</td>
+          <td>5 cats → 260 videos → 57 matched</td>
+          <td>130 influencers → 223 videos → 38 matched</td>
+          <td>8 hashtags → 70 videos → 7 matched</td>
+        </tr>
+        <tr>
+          <td>Report Script</td>
+          <td>generate_report.py</td>
+          <td>generate_report_junyao.py</td>
+          <td>generate_report_hashtag.py</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  VERTICAL PIPELINE                                            -->
+<!-- ============================================================ -->
+<div id="vertical" class="section">
+  <h2 class="section-title">Vertical Pipeline <span class="pipe-tag vertical">5-Category</span></h2>
+  <p class="section-desc">Discover products by browsing top influencers across 5 verticals: Beauty, 3C, Apparel, HomeImprovement, Outdoor</p>
+
+  <div class="flow-card">
+    <div class="flowchart">
+      <div class="flow-step step-input">
+        <div class="label">📥 Input: all_influencers.tsv</div>
+        <div class="detail">Influencer list with category tags, nox links across 3 platforms<br><code>data/input/all_influencers.tsv</code></div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">per category, round-robin platforms</div></div>
+
+      <!-- ── Loop container ── -->
+      <div class="loop-box">
+        <div class="loop-label">🔁 LOOP — repeat until ≥ 14 unique products (or influencers exhausted)</div>
+
+        <div class="flow-step step-input" style="background: linear-gradient(135deg, #1a2a4c, #141e30); border-color: #3a5a7a;">
+          <div class="label">📋 Pick Next Batch (10 influencers)</div>
+          <div class="detail">Round-robin across YouTube → TikTok → Instagram<br>Move cursor forward, skip exhausted platforms</div>
+        </div>
+        <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">batch of 10 influencers</div></div>
+
+        <div class="flow-step step-nox">
+          <div class="label">🔍 NOX API — Fetch Videos by Channel</div>
+          <div class="detail">
+            API: <code>/nox/v1/{platform}/video?channelId=…</code><br>
+            Per influencer × platform, fetch recent videos (date filtered)<br>
+            4 parallel workers
+          </div>
+        </div>
+        <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">video title + description</div></div>
+
+        <div class="flow-step step-llm">
+          <div class="label">🤖 GPT-5.1 — Extract Products</div>
+          <div class="detail">
+            Prompt extracts: product_name, brand, category, evidence<br>
+            Fail types: no_product, empty_content, unclear, llm_error<br>
+            <code>product_extractor.py</code>
+          </div>
+        </div>
+        <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">accumulated raw products (all batches)</div></div>
+
+        <div class="flow-step step-dedup">
+          <div class="label">🔄 Dedup — String + LLM Dedup</div>
+          <div class="detail">
+            Step 1: String similarity dedup (normalized names)<br>
+            Step 2: LLM semantic dedup (GPT groups duplicates)<br>
+            <code>dedup.py</code>
+          </div>
+        </div>
+        <div class="arrow"><div class="line"></div><div class="head"></div></div>
+
+        <!-- Decision diamond -->
+        <div class="flow-step step-decision">
+          <div class="label">⬦ Unique products ≥ 14 ?</div>
+          <div class="detail">
+            <strong style="color:#6be06b;">YES →</strong> proceed to SERP &nbsp;&nbsp;&nbsp;
+            <strong style="color:#e06b6b;">NO →</strong> loop back, pick next batch of 10
+          </div>
+        </div>
+
+        <div class="loop-back-arrow">
+          <div class="loop-back-label">< 14 products → fetch more influencers</div>
+        </div>
+      </div>
+      <!-- ── End loop ── -->
+
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">≥ 14 unique products</div></div>
+
+      <div class="flow-step step-serp">
+        <div class="label">🛍️ SERP API — Google Shopping Search</div>
+        <div class="detail">
+          Query: "{brand} {product_name}"<br>
+          Top 3 results: title, snippet, source, link, price<br>
+          Output: <code>merge_vertical.tsv</code> (16 columns)
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">TSV → SCOPE EXTRACT</div></div>
+
+      <div class="flow-step step-scope">
+        <div class="label">📊 SCOPE Catalog Match</div>
+        <div class="detail">Match against Microsoft Shopping catalog<br>Output: <code>matchedDetails_vertical_0309.tsv</code></div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">matched results</div></div>
+
+      <div class="flow-step step-output">
+        <div class="label">📄 HTML Report — generate_report.py</div>
+        <div class="detail">10 sections: Funnel, Category, Platform, Terms, Brands, Products, Fail, Match, Missed<br><code>reports/report_all_0301.html</code></div>
+      </div>
+    </div>
+
+    <div class="stats-row stats-vertical">
+      <div class="stat-badge"><div class="num">5</div><div class="lbl">Categories</div></div>
+      <div class="stat-badge"><div class="num">260</div><div class="lbl">Videos</div></div>
+      <div class="stat-badge"><div class="num">70</div><div class="lbl">Products</div></div>
+      <div class="stat-badge"><div class="num">57</div><div class="lbl">Catalog Matched</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  JUNYAO PIPELINE                                              -->
+<!-- ============================================================ -->
+<div id="junyao" class="section">
+  <h2 class="section-title">Junyao Pipeline <span class="pipe-tag junyao">TopInfluencer</span></h2>
+  <p class="section-desc">Start from a curated list of 391 influencers (Junyao's list), fetch their latest videos and extract products.</p>
+
+  <div class="flow-card">
+    <div class="flowchart">
+      <div class="flow-step step-input">
+        <div class="label">📥 Input: influencers_with_nox.csv</div>
+        <div class="detail">391 influencers with NOX channel IDs across 3 platforms<br><code>data/input/influencers_with_nox.csv</code></div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">first 300 influencers (default)</div></div>
+
+      <div class="flow-step step-nox">
+        <div class="label">🔍 NOX API — Fetch Videos by Channel</div>
+        <div class="detail">
+          API: <code>/nox/v1/{platform}/video?channelId=…&amp;startDate=2026-03-02</code><br>
+          For each influencer, try all matched platforms<br>
+          4 parallel workers, pageSize=100
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">video title + description</div></div>
+
+      <div class="flow-step step-llm">
+        <div class="label">🤖 GPT-5.1 — Extract Products</div>
+        <div class="detail">
+          Same prompt as Vertical: extract product_name, brand, category, evidence<br>
+          Fail types: no_product, empty_content, unclear, llm_error<br>
+          Output: <code>junyao_all_results.tsv</code>
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">products with influencer metadata</div></div>
+
+      <div class="flow-step step-serp">
+        <div class="label">🛍️ SERP API — Google Shopping Search</div>
+        <div class="detail">
+          Query: "{brand} {product_name}" for each unique product<br>
+          Output directly in vertical 16-column format<br>
+          <code>merge_junyao_topinfluencer.tsv</code>
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">TSV → SCOPE EXTRACT</div></div>
+
+      <div class="flow-step step-scope">
+        <div class="label">📊 SCOPE Catalog Match</div>
+        <div class="detail">Match against Microsoft Shopping catalog<br>Output: <code>matchedDetails_junyao_0302.tsv</code></div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">matched results</div></div>
+
+      <div class="flow-step step-output">
+        <div class="label">📄 HTML Report — generate_report_junyao.py</div>
+        <div class="detail">7 sections: Funnel, Influencer, Platform, Fail Types, Brand &amp; Category, Verification, Failed Review<br><code>reports/report_junyao_*.html</code></div>
+      </div>
+    </div>
+
+    <div class="stats-row stats-junyao">
+      <div class="stat-badge"><div class="num">130</div><div class="lbl">Influencers</div></div>
+      <div class="stat-badge"><div class="num">223</div><div class="lbl">Videos</div></div>
+      <div class="stat-badge"><div class="num">43</div><div class="lbl">Products</div></div>
+      <div class="stat-badge"><div class="num">38</div><div class="lbl">Catalog Matched</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  HASHTAG PIPELINE                                             -->
+<!-- ============================================================ -->
+<div id="hashtag" class="section">
+  <h2 class="section-title">Hashtag Pipeline <span class="pipe-tag hashtag">HashtagSearch</span></h2>
+  <p class="section-desc">Discover videos by searching NOX with trending hashtags from cchashtags.tsv (73 hashtags, mainly electronics).</p>
+
+  <div class="flow-card">
+    <div class="flowchart">
+      <div class="flow-step step-input">
+        <div class="label">📥 Input: cchashtags.tsv</div>
+        <div class="detail">73 hashtags (70 electronics + 3 sports), all tagged SHOPPING<br><code>data/input/cchashtags.tsv</code></div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">73 hashtags × 3 platforms = 219 tasks</div></div>
+
+      <div class="flow-step step-nox">
+        <div class="label">🔍 NOX API — searchVideo by Hashtag</div>
+        <div class="detail">
+          API: <code>/nox/v1/{platform}/searchVideo?tags=…</code><br>
+          Filters: subscribersMin=100K, country=US, language=en<br>
+          Date: 2026-03-02 (single day), 4 workers, 1 page each<br>
+          <em>Result: 8/73 hashtags returned videos (strict filters)</em>
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">video title + description</div></div>
+
+      <div class="flow-step step-llm">
+        <div class="label">🤖 GPT-5.1 — Extract Products</div>
+        <div class="detail">
+          Same prompt: extract product_name, brand, category, evidence<br>
+          Output: <code>search_data_all_results.tsv</code><br>
+          Columns include queryTag, hashtag_category for traceability
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">products with hashtag metadata</div></div>
+
+      <div class="flow-step step-serp">
+        <div class="label">🛍️ SERP API — Google Shopping Search</div>
+        <div class="detail">
+          Query: "{brand} {product_name}" for each unique product<br>
+          Output directly in vertical 16-column format<br>
+          <code>merge_hashtag_search.tsv</code>
+        </div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">TSV → SCOPE EXTRACT</div></div>
+
+      <div class="flow-step step-scope">
+        <div class="label">📊 SCOPE Catalog Match</div>
+        <div class="detail">Match against Microsoft Shopping catalog<br>Output: <code>matchedDetails_hashtags_0303.tsv</code></div>
+      </div>
+      <div class="arrow"><div class="line"></div><div class="head"></div><div class="arrow-label">matched results</div></div>
+
+      <div class="flow-step step-output">
+        <div class="label">📄 HTML Report — generate_report_hashtag.py</div>
+        <div class="detail">7 sections: Funnel, Hashtag Breakdown, Platform, Fail Types, Brand &amp; Category, Verification, Failed Review<br><code>reports/report_hashtag_*.html</code></div>
+      </div>
+    </div>
+
+    <div class="stats-row stats-hashtag">
+      <div class="stat-badge"><div class="num">8</div><div class="lbl">Hashtags</div></div>
+      <div class="stat-badge"><div class="num">70</div><div class="lbl">Videos</div></div>
+      <div class="stat-badge"><div class="num">11</div><div class="lbl">Products</div></div>
+      <div class="stat-badge"><div class="num">7</div><div class="lbl">Catalog Matched</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div class="footer">
+  Generated on March 3, 2026 &nbsp;|&nbsp; 3 Pipelines: Vertical · Junyao · Hashtag &nbsp;|&nbsp; NOX + GPT-5.1 + SERP + SCOPE
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // find the button whose onclick contains the id
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick').includes(id)) b.classList.add('active');
+  });
+}
+</script>
+</body>
+</html>
