@@ -1,0 +1,6 @@
+# VS Code Local History
+.history/
+
+# Python
+__pycache__/
+*.pyc
