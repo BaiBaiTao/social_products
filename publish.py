@@ -40,11 +40,12 @@ INJECT_SNIPPET = f'''{INJECT_MARKER}
 # --- 不在 index 中展示的文件夹 ---
 EXCLUDE_FOLDERS = {"beauty", "ce_od", "design"}
 
-# --- 分类配置：文件夹名 => (显示名, 图标) ---
+# --- 分类配置：文件夹路径 => (显示名, 图标) ---
 CATEGORIES = OrderedDict([
-    ("HashTags",          ("HashTags",              "🏷️")),
-    ("NoxTopInfluencers", ("Nox Top Influencers",   "🌟")),
-    ("design",            ("Design",               "📐")),
+    ("HashTags",                          ("HashTags",              "🏷️")),
+    ("TopInfluencers/NoxTopInfluencers",  ("Nox Top Influencers",   "🌟")),
+    ("TopInfluencers/JunyaoInfluencers", ("Junyao Influencers",    "👤")),
+    ("design",                            ("Design",               "📐")),
 ])
 
 # --- 从文件名中提取日期后缀用于排序（如 _0302 => "0302"）---
@@ -86,8 +87,9 @@ def scan_reports() -> list[str]:
         blocks.append(build_category_block(folder, display_name, icon, files))
 
     # 自动检测新文件夹
+    configured_roots = {k.split("/")[0].split("\\")[0] for k in CATEGORIES}
     for d in sorted(ROOT.iterdir()):
-        if not d.is_dir() or d.name.startswith(".") or d.name in CATEGORIES or d.name in EXCLUDE_FOLDERS:
+        if not d.is_dir() or d.name.startswith(".") or d.name in configured_roots or d.name in EXCLUDE_FOLDERS:
             continue
         files = list(d.glob("*.html"))
         if not files:

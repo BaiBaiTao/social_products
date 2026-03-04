@@ -12,11 +12,12 @@ Set-Location $root
 # --- 不在 index 中展示的文件夹 ---
 $excludeFolders = @('beauty', 'ce_od', 'design')
 
-# --- 分类配置：文件夹名 => (显示名, 图标) ---
+# --- 分类配置：文件夹路径 => (显示名, 图标) ---
 $categories = [ordered]@{
-    "HashTags"          = @("HashTags", "🏷️")
-    "NoxTopInfluencers" = @("Nox Top Influencers", "🌟")
-    "design"            = @("Design", "📐")
+    "HashTags"                          = @("HashTags", "🏷️")
+    "TopInfluencers/NoxTopInfluencers"  = @("Nox Top Influencers", "🌟")
+    "TopInfluencers/JunyaoInfluencers" = @("Junyao Influencers", "👤")
+    "design"                            = @("Design", "📐")
 }
 
 # --- 扫描目录，生成分类 HTML ---
@@ -55,9 +56,10 @@ $fileLinks
 }
 
 # --- 检测未配置的新文件夹 ---
-$allFolders = Get-ChildItem -Path $root -Directory | Where-Object { $_.Name -ne '.git' }
+$allFolders = Get-ChildItem -Path $root -Directory | Where-Object { -not $_.Name.StartsWith('.') }
+$configuredRoots = $categories.Keys | ForEach-Object { ($_ -split '[/\\]')[0] } | Select-Object -Unique
 foreach ($dir in $allFolders) {
-    if (-not $categories.Contains($dir.Name) -and $dir.Name -notin $excludeFolders) {
+    if ($dir.Name -notin $configuredRoots -and $dir.Name -notin $excludeFolders) {
         $files = Get-ChildItem -Path $dir.FullName -Filter "*.html" | Sort-Object {
             if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
         } -Descending
