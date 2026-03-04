@@ -9,13 +9,14 @@ param(
 $root = $PSScriptRoot
 Set-Location $root
 
+# --- 不在 index 中展示的文件夹 ---
+$excludeFolders = @('beauty', 'ce_od', 'design')
+
 # --- 分类配置：文件夹名 => (显示名, 图标) ---
 $categories = [ordered]@{
-    "all"              = @("All (综合报告)", "📋")
-    "beauty"           = @("Beauty (美妆)", "💄")
-    "cc_hashtag_trends" = @("CC Hashtag Trends (话题标签趋势)", "🏷️")
-    "ce_od"            = @("CE & Outdoors (消费电子/户外)", "🏕️")
-    "top_influencers"  = @("Top Influencers (头部达人)", "🌟")
+    "HashTags"          = @("HashTags", "🏷️")
+    "NoxTopInfluencers" = @("Nox Top Influencers", "🌟")
+    "design"            = @("Design", "📐")
 }
 
 # --- 扫描目录，生成分类 HTML ---
@@ -25,7 +26,9 @@ foreach ($folder in $categories.Keys) {
     $folderPath = Join-Path $root $folder
     if (-not (Test-Path $folderPath)) { continue }
 
-    $files = Get-ChildItem -Path $folderPath -Filter "*.html" | Sort-Object Name
+    $files = Get-ChildItem -Path $folderPath -Filter "*.html" | Sort-Object {
+        if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
+    } -Descending
     if ($files.Count -eq 0) { continue }
 
     $displayName = $categories[$folder][0]
@@ -54,8 +57,10 @@ $fileLinks
 # --- 检测未配置的新文件夹 ---
 $allFolders = Get-ChildItem -Path $root -Directory | Where-Object { $_.Name -ne '.git' }
 foreach ($dir in $allFolders) {
-    if (-not $categories.Contains($dir.Name)) {
-        $files = Get-ChildItem -Path $dir.FullName -Filter "*.html" | Sort-Object Name
+    if (-not $categories.Contains($dir.Name) -and $dir.Name -notin $excludeFolders) {
+        $files = Get-ChildItem -Path $dir.FullName -Filter "*.html" | Sort-Object {
+            if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
+        } -Descending
         if ($files.Count -eq 0) { continue }
 
         $catId = "cat-$($dir.Name -replace '[^a-zA-Z0-9]', '')"

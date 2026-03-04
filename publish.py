@@ -37,21 +37,28 @@ INJECT_SNIPPET = f'''{INJECT_MARKER}
 </div>
 '''
 
+# --- 不在 index 中展示的文件夹 ---
+EXCLUDE_FOLDERS = {"beauty", "ce_od", "design"}
+
 # --- 分类配置：文件夹名 => (显示名, 图标) ---
 CATEGORIES = OrderedDict([
-    ("all",              ("All (综合报告)",                  "📋")),
-    ("beauty",           ("Beauty (美妆)",                   "💄")),
-    ("cc_hashtag_trends",("CC Hashtag Trends (话题标签趋势)", "🏷️")),
-    ("ce_od",            ("CE & Outdoors (消费电子/户外)",    "🏕️")),
-    ("top_influencers",  ("Top Influencers (头部达人)",       "🌟")),
+    ("HashTags",          ("HashTags",              "🏷️")),
+    ("NoxTopInfluencers", ("Nox Top Influencers",   "🌟")),
+    ("design",            ("Design",               "📐")),
 ])
+
+# --- 从文件名中提取日期后缀用于排序（如 _0302 => "0302"）---
+def _extract_date(path: Path) -> str:
+    m = re.search(r'_(\d{4})(?:\D|$)', path.stem)
+    return m.group(1) if m else '0000'
 
 # --- 生成单个分类的 HTML ---
 def build_category_block(folder: str, display_name: str, icon: str, files: list[Path]) -> str:
     cat_id = f"cat-{''.join(c for c in folder if c.isalnum())}"
+    # 按文件名中的日期后缀降序排列（新日期靠前）
     file_links = "\n".join(
         f'                <li><a href="{folder}/{f.name}">{f.stem}</a></li>'
-        for f in sorted(files, key=lambda x: x.name)
+        for f in sorted(files, key=lambda x: _extract_date(x), reverse=True)
     )
     return f'''        <div class="category collapsed" id="{cat_id}">
             <div class="category-header" onclick="toggle('{cat_id}')">
@@ -80,7 +87,7 @@ def scan_reports() -> list[str]:
 
     # 自动检测新文件夹
     for d in sorted(ROOT.iterdir()):
-        if not d.is_dir() or d.name.startswith(".") or d.name in CATEGORIES:
+        if not d.is_dir() or d.name.startswith(".") or d.name in CATEGORIES or d.name in EXCLUDE_FOLDERS:
             continue
         files = list(d.glob("*.html"))
         if not files:
