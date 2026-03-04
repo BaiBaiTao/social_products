@@ -40,12 +40,11 @@ INJECT_SNIPPET = f'''{INJECT_MARKER}
 # --- 不在 index 中展示的文件夹 ---
 EXCLUDE_FOLDERS = {"beauty", "ce_od", "design"}
 
-# --- 分类配置：文件夹路径 => (显示名, 图标) ---
+# --- 分类配置：顶级文件夹名 => (显示名, 图标) ---
 CATEGORIES = OrderedDict([
-    ("HashTags",                          ("HashTags",              "🏷️")),
-    ("TopInfluencers/NoxTopInfluencers",  ("Nox Top Influencers",   "🌟")),
-    ("TopInfluencers/JunyaoInfluencers", ("Junyao Influencers",    "👤")),
-    ("design",                            ("Design",               "📐")),
+    ("HashTags",        ("HashTags",           "🏷️")),
+    ("TopInfluencers",  ("Top Influencers",    "🌟")),
+    ("design",          ("Design",             "📐")),
 ])
 
 # --- 从文件名中提取日期后缀用于排序（如 _0302 => "0302"）---
@@ -58,7 +57,7 @@ def build_category_block(folder: str, display_name: str, icon: str, files: list[
     cat_id = f"cat-{''.join(c for c in folder if c.isalnum())}"
     # 按文件名中的日期后缀降序排列（新日期靠前）
     file_links = "\n".join(
-        f'                <li><a href="{folder}/{f.name}">{f.stem}</a></li>'
+        f'                <li><a href="{f.relative_to(ROOT).as_posix()}">{f.stem}</a></li>'
         for f in sorted(files, key=lambda x: _extract_date(x), reverse=True)
     )
     return f'''        <div class="category collapsed" id="{cat_id}">
@@ -81,17 +80,16 @@ def scan_reports() -> list[str]:
         folder_path = ROOT / folder
         if not folder_path.is_dir():
             continue
-        files = list(folder_path.glob("*.html"))
+        files = list(folder_path.rglob("*.html"))
         if not files:
             continue
         blocks.append(build_category_block(folder, display_name, icon, files))
 
     # 自动检测新文件夹
-    configured_roots = {k.split("/")[0].split("\\")[0] for k in CATEGORIES}
     for d in sorted(ROOT.iterdir()):
-        if not d.is_dir() or d.name.startswith(".") or d.name in configured_roots or d.name in EXCLUDE_FOLDERS:
+        if not d.is_dir() or d.name.startswith(".") or d.name in CATEGORIES or d.name in EXCLUDE_FOLDERS:
             continue
-        files = list(d.glob("*.html"))
+        files = list(d.rglob("*.html"))
         if not files:
             continue
         print(f"[INFO] 发现新文件夹 '{d.name}'，已自动加入索引 (可在脚本 CATEGORIES 中配置显示名和图标)")

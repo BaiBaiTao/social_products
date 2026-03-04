@@ -12,12 +12,11 @@ Set-Location $root
 # --- 不在 index 中展示的文件夹 ---
 $excludeFolders = @('beauty', 'ce_od', 'design')
 
-# --- 分类配置：文件夹路径 => (显示名, 图标) ---
+# --- 分类配置：顶级文件夹名 => (显示名, 图标) ---
 $categories = [ordered]@{
-    "HashTags"                          = @("HashTags", "🏷️")
-    "TopInfluencers/NoxTopInfluencers"  = @("Nox Top Influencers", "🌟")
-    "TopInfluencers/JunyaoInfluencers" = @("Junyao Influencers", "👤")
-    "design"                            = @("Design", "📐")
+    "HashTags"        = @("HashTags", "🏷️")
+    "TopInfluencers"  = @("Top Influencers", "🌟")
+    "design"          = @("Design", "📐")
 }
 
 # --- 扫描目录，生成分类 HTML ---
@@ -27,7 +26,7 @@ foreach ($folder in $categories.Keys) {
     $folderPath = Join-Path $root $folder
     if (-not (Test-Path $folderPath)) { continue }
 
-    $files = Get-ChildItem -Path $folderPath -Filter "*.html" | Sort-Object {
+    $files = Get-ChildItem -Path $folderPath -Filter "*.html" -Recurse | Sort-Object {
         if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
     } -Descending
     if ($files.Count -eq 0) { continue }
@@ -38,7 +37,8 @@ foreach ($folder in $categories.Keys) {
 
     $fileLinks = ($files | ForEach-Object {
         $name = $_.BaseName
-        "                <li><a href=`"$folder/$($_.Name)`">$name</a></li>"
+        $relPath = $_.FullName.Substring($root.Length + 1) -replace '\\', '/'
+        "                <li><a href=`"$relPath`">$name</a></li>"
     }) -join "`n"
 
     $categoryBlocks += @"
@@ -57,10 +57,9 @@ $fileLinks
 
 # --- 检测未配置的新文件夹 ---
 $allFolders = Get-ChildItem -Path $root -Directory | Where-Object { -not $_.Name.StartsWith('.') }
-$configuredRoots = $categories.Keys | ForEach-Object { ($_ -split '[/\\]')[0] } | Select-Object -Unique
 foreach ($dir in $allFolders) {
-    if ($dir.Name -notin $configuredRoots -and $dir.Name -notin $excludeFolders) {
-        $files = Get-ChildItem -Path $dir.FullName -Filter "*.html" | Sort-Object {
+    if (-not $categories.Contains($dir.Name) -and $dir.Name -notin $excludeFolders) {
+        $files = Get-ChildItem -Path $dir.FullName -Filter "*.html" -Recurse | Sort-Object {
             if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
         } -Descending
         if ($files.Count -eq 0) { continue }
