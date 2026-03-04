@@ -19,70 +19,99 @@ $categories = [ordered]@{
     "design"          = @("Design", "📐")
 }
 
+# --- 辅助函数：为一个文件夹生成分类 HTML（自动检测子目录层级）---
+function Build-CategoryBlock($folder, $displayName, $icon) {
+    $folderPath = Join-Path $root $folder
+    if (-not (Test-Path $folderPath)) { return $null }
+
+    $catId = "cat-$($folder -replace '[^a-zA-Z0-9]', '')"
+
+    # 收集直属 HTML 文件
+    $directFiles = Get-ChildItem -Path $folderPath -Filter "*.html" -File | Sort-Object {
+        if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
+    } -Descending
+
+    # 收集子目录
+    $subdirs = Get-ChildItem -Path $folderPath -Directory | Where-Object { -not $_.Name.StartsWith('.') } | Sort-Object Name
+    $subBlocks = @()
+    $subTotal = 0
+    foreach ($sub in $subdirs) {
+        $subFiles = Get-ChildItem -Path $sub.FullName -Filter "*.html" -Recurse | Sort-Object {
+            if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
+        } -Descending
+        if ($subFiles.Count -eq 0) { continue }
+        $subTotal += $subFiles.Count
+        $subId = "$catId-$($sub.Name -replace '[^a-zA-Z0-9]', '')"
+        $subLinks = ($subFiles | ForEach-Object {
+            $name = $_.BaseName
+            $relPath = $_.FullName.Substring($root.Length + 1) -replace '\\', '/'
+            "                    <li><a href=`"$relPath`">$name</a></li>"
+        }) -join "`n"
+        $subBlocks += @"
+            <div class="subcategory collapsed" id="$subId">
+                <div class="subcategory-header" onclick="toggle('$subId')">
+                    <span class="icon">📁</span> $($sub.Name)
+                    <span class="count">$($subFiles.Count)</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <ul class="file-list">
+$subLinks
+                </ul>
+            </div>
+"@
+    }
+
+    $total = $directFiles.Count + $subTotal
+    if ($total -eq 0) { return $null }
+
+    $innerParts = @()
+
+    # 直属文件
+    if ($directFiles.Count -gt 0) {
+        $directLinks = ($directFiles | ForEach-Object {
+            $name = $_.BaseName
+            $relPath = $_.FullName.Substring($root.Length + 1) -replace '\\', '/'
+            "                <li><a href=`"$relPath`">$name</a></li>"
+        }) -join "`n"
+        $innerParts += @"
+            <ul class="file-list">
+$directLinks
+            </ul>
+"@
+    }
+
+    $innerParts += $subBlocks
+    $inner = $innerParts -join "`n"
+
+    return @"
+        <div class="category collapsed" id="$catId">
+            <div class="category-header" onclick="toggle('$catId')">
+                <span class="icon">$icon</span> $displayName
+                <span class="count">$total</span>
+                <span class="arrow">▼</span>
+            </div>
+$inner
+        </div>
+"@
+}
+
 # --- 扫描目录，生成分类 HTML ---
 $categoryBlocks = @()
 
 foreach ($folder in $categories.Keys) {
-    $folderPath = Join-Path $root $folder
-    if (-not (Test-Path $folderPath)) { continue }
-
-    $files = Get-ChildItem -Path $folderPath -Filter "*.html" -Recurse | Sort-Object {
-        if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
-    } -Descending
-    if ($files.Count -eq 0) { continue }
-
-    $displayName = $categories[$folder][0]
-    $icon = $categories[$folder][1]
-    $catId = "cat-$($folder -replace '[^a-zA-Z0-9]', '')"
-
-    $fileLinks = ($files | ForEach-Object {
-        $name = $_.BaseName
-        $relPath = $_.FullName.Substring($root.Length + 1) -replace '\\', '/'
-        "                <li><a href=`"$relPath`">$name</a></li>"
-    }) -join "`n"
-
-    $categoryBlocks += @"
-        <div class="category collapsed" id="$catId">
-            <div class="category-header" onclick="toggle('$catId')">
-                <span class="icon">$icon</span> $displayName
-                <span class="count">$($files.Count)</span>
-                <span class="arrow">▼</span>
-            </div>
-            <ul class="file-list">
-$fileLinks
-            </ul>
-        </div>
-"@
+    $block = Build-CategoryBlock $folder $categories[$folder][0] $categories[$folder][1]
+    if ($block) { $categoryBlocks += $block }
 }
 
 # --- 检测未配置的新文件夹 ---
 $allFolders = Get-ChildItem -Path $root -Directory | Where-Object { -not $_.Name.StartsWith('.') }
 foreach ($dir in $allFolders) {
     if (-not $categories.Contains($dir.Name) -and $dir.Name -notin $excludeFolders) {
-        $files = Get-ChildItem -Path $dir.FullName -Filter "*.html" -Recurse | Sort-Object {
-            if ($_.BaseName -match '_(\d{4})') { $matches[1] } else { '0000' }
-        } -Descending
-        if ($files.Count -eq 0) { continue }
-
-        $catId = "cat-$($dir.Name -replace '[^a-zA-Z0-9]', '')"
-        $fileLinks = ($files | ForEach-Object {
-            $name = $_.BaseName
-            "                <li><a href=`"$($dir.Name)/$($_.Name)`">$name</a></li>"
-        }) -join "`n"
-
-        $categoryBlocks += @"
-        <div class="category collapsed" id="$catId">
-            <div class="category-header" onclick="toggle('$catId')">
-                <span class="icon">📁</span> $($dir.Name)
-                <span class="count">$($files.Count)</span>
-                <span class="arrow">▼</span>
-            </div>
-            <ul class="file-list">
-$fileLinks
-            </ul>
-        </div>
-"@
-        Write-Host "[INFO] 发现新文件夹 '$($dir.Name)'，已自动加入索引 (可在脚本中配置显示名和图标)" -ForegroundColor Yellow
+        $block = Build-CategoryBlock $dir.Name $dir.Name "📁"
+        if ($block) {
+            $categoryBlocks += $block
+            Write-Host "[INFO] 发现新文件夹 '$($dir.Name)'，已自动加入索引 (可在脚本中配置显示名和图标)" -ForegroundColor Yellow
+        }
     }
 }
 
@@ -156,6 +185,7 @@ $html = @"
         }
         .category.collapsed .arrow { transform: rotate(-90deg); }
         .category.collapsed .file-list { display: none; }
+        .category.collapsed .subcategory { display: none; }
         .file-list {
             list-style: none;
             border-top: 1px solid #f0f0f0;
@@ -179,6 +209,41 @@ $html = @"
         .file-list a::before {
             content: "📄 ";
             font-size: 0.85rem;
+        }
+        .subcategory {
+            border-top: 1px solid #f0f0f0;
+        }
+        .subcategory-header {
+            padding: 0.7rem 1.5rem 0.7rem 2.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            transition: background 0.2s;
+            color: #555;
+        }
+        .subcategory-header:hover { background: #f5f8ff; }
+        .subcategory-header .icon { font-size: 1.1rem; }
+        .subcategory-header .count {
+            margin-left: auto;
+            background: #e8ecf1;
+            color: #555;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .subcategory-header .arrow {
+            transition: transform 0.3s;
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+        .subcategory.collapsed .arrow { transform: rotate(-90deg); }
+        .subcategory.collapsed .file-list { display: none; }
+        .subcategory .file-list a {
+            padding-left: 4.5rem;
         }
         footer {
             text-align: center;

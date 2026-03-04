@@ -52,23 +52,64 @@ def _extract_date(path: Path) -> str:
     m = re.search(r'_(\d{4})(?:\D|$)', path.stem)
     return m.group(1) if m else '0000'
 
-# --- 生成单个分类的 HTML ---
-def build_category_block(folder: str, display_name: str, icon: str, files: list[Path]) -> str:
+# --- 生成单个分类的 HTML（自动检测子目录层级）---
+def build_category_block(folder: str, display_name: str, icon: str) -> str | None:
+    folder_path = ROOT / folder
     cat_id = f"cat-{''.join(c for c in folder if c.isalnum())}"
-    # 按文件名中的日期后缀降序排列（新日期靠前）
-    file_links = "\n".join(
-        f'                <li><a href="{f.relative_to(ROOT).as_posix()}">{f.stem}</a></li>'
-        for f in sorted(files, key=lambda x: _extract_date(x), reverse=True)
-    )
+
+    # 收集直属 HTML 文件
+    direct_files = sorted(folder_path.glob("*.html"), key=_extract_date, reverse=True)
+
+    # 收集子目录及其 HTML 文件
+    subdirs = []
+    for d in sorted(folder_path.iterdir()):
+        if d.is_dir() and not d.name.startswith("."):
+            sub_files = sorted(d.rglob("*.html"), key=_extract_date, reverse=True)
+            if sub_files:
+                subdirs.append((d.name, sub_files))
+
+    total = len(direct_files) + sum(len(sf) for _, sf in subdirs)
+    if total == 0:
+        return None
+
+    parts = []
+
+    # 直属文件
+    if direct_files:
+        links = "\n".join(
+            f'                <li><a href="{f.relative_to(ROOT).as_posix()}">{f.stem}</a></li>'
+            for f in direct_files
+        )
+        parts.append(f'''            <ul class="file-list">
+{links}
+            </ul>''')
+
+    # 子目录
+    for sub_name, sub_files in subdirs:
+        sub_id = f"{cat_id}-{''.join(c for c in sub_name if c.isalnum())}"
+        sub_links = "\n".join(
+            f'                    <li><a href="{f.relative_to(ROOT).as_posix()}">{f.stem}</a></li>'
+            for f in sub_files
+        )
+        parts.append(f'''            <div class="subcategory collapsed" id="{sub_id}">
+                <div class="subcategory-header" onclick="toggle('{sub_id}')">
+                    <span class="icon">📁</span> {sub_name}
+                    <span class="count">{len(sub_files)}</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <ul class="file-list">
+{sub_links}
+                </ul>
+            </div>''')
+
+    inner = "\n".join(parts)
     return f'''        <div class="category collapsed" id="{cat_id}">
             <div class="category-header" onclick="toggle('{cat_id}')">
                 <span class="icon">{icon}</span> {display_name}
-                <span class="count">{len(files)}</span>
+                <span class="count">{total}</span>
                 <span class="arrow">▼</span>
             </div>
-            <ul class="file-list">
-{file_links}
-            </ul>
+{inner}
         </div>'''
 
 # --- 扫描目录 ---
@@ -80,20 +121,18 @@ def scan_reports() -> list[str]:
         folder_path = ROOT / folder
         if not folder_path.is_dir():
             continue
-        files = list(folder_path.rglob("*.html"))
-        if not files:
-            continue
-        blocks.append(build_category_block(folder, display_name, icon, files))
+        block = build_category_block(folder, display_name, icon)
+        if block:
+            blocks.append(block)
 
     # 自动检测新文件夹
     for d in sorted(ROOT.iterdir()):
         if not d.is_dir() or d.name.startswith(".") or d.name in CATEGORIES or d.name in EXCLUDE_FOLDERS:
             continue
-        files = list(d.rglob("*.html"))
-        if not files:
-            continue
-        print(f"[INFO] 发现新文件夹 '{d.name}'，已自动加入索引 (可在脚本 CATEGORIES 中配置显示名和图标)")
-        blocks.append(build_category_block(d.name, d.name, "📁", files))
+        block = build_category_block(d.name, d.name, "📁")
+        if block:
+            print(f"[INFO] 发现新文件夹 '{d.name}'，已自动加入索引 (可在脚本 CATEGORIES 中配置显示名和图标)")
+            blocks.append(block)
 
     return blocks
 
@@ -175,6 +214,7 @@ def generate_html(blocks: list[str]) -> str:
         }}
         .category.collapsed .arrow {{ transform: rotate(-90deg); }}
         .category.collapsed .file-list {{ display: none; }}
+        .category.collapsed .subcategory {{ display: none; }}
         .file-list {{
             list-style: none;
             border-top: 1px solid #f0f0f0;
@@ -198,6 +238,41 @@ def generate_html(blocks: list[str]) -> str:
         .file-list a::before {{
             content: "📄 ";
             font-size: 0.85rem;
+        }}
+        .subcategory {{
+            border-top: 1px solid #f0f0f0;
+        }}
+        .subcategory-header {{
+            padding: 0.7rem 1.5rem 0.7rem 2.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            user-select: none;
+            transition: background 0.2s;
+            color: #555;
+        }}
+        .subcategory-header:hover {{ background: #f5f8ff; }}
+        .subcategory-header .icon {{ font-size: 1.1rem; }}
+        .subcategory-header .count {{
+            margin-left: auto;
+            background: #e8ecf1;
+            color: #555;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }}
+        .subcategory-header .arrow {{
+            transition: transform 0.3s;
+            font-size: 0.7rem;
+            color: #aaa;
+        }}
+        .subcategory.collapsed .arrow {{ transform: rotate(-90deg); }}
+        .subcategory.collapsed .file-list {{ display: none; }}
+        .subcategory .file-list a {{
+            padding-left: 4.5rem;
         }}
         footer {{
             text-align: center;
