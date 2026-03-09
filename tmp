@@ -1,0 +1,653 @@
+{
+    "bag": {
+        "meta": {
+            "bagId": "742619432",
+            "userId": "4901122247",
+            "bagGuid": "b17c089b-4294-4a31-97f0-34f9e494902e",
+            "userGuid": "7a8f3455-5444-4d28-8635-7c1f74615b44",
+            "userRegistryId": "0",
+            "context": {
+                "deviceType": "DESKTOP"
+            },
+            "analytics": {
+                "data": {
+                    "international": "false",
+                    "free_shipping_threshold_met": "true",
+                    "use_your_card_promo_shown": "false",
+                    "free_shipping_threshold": "150.00",
+                    "is_big_ticket": [
+                        "false"
+                    ],
+                    "is_big_ticket_v2c": [
+                        "false"
+                    ],
+                    "merge_bag_shown": "false",
+                    "order_discount": "155.0",
+                    "order_sub_total": "620.0",
+                    "order_total_items": "1",
+                    "product_registry_flag": [
+                        "false"
+                    ],
+                    "product_bops_available": [
+                        "false"
+                    ],
+                    "product_color": [
+                        "Galactic Grey / Hoka Blue"
+                    ],
+                    "product_original_price": [
+                        "155.0"
+                    ],
+                    "product_price": [
+                        "124.0"
+                    ],
+                    "product_pwp_flag": [
+                        "false"
+                    ],
+                    "product_gwp_flag": [
+                        "false"
+                    ],
+                    "product_id": [
+                        "5328561"
+                    ],
+                    "product_name": [
+                        "Men's Speedgoat 6 Running Sneakers"
+                    ],
+                    "product_quantity": [
+                        "1"
+                    ],
+                    "product_registry_number": [
+                        ""
+                    ],
+                    "product_size": [
+                        "10.5"
+                    ],
+                    "product_sub_total": [
+                        "124.0"
+                    ],
+                    "product_upc": [
+                        "197634457741"
+                    ],
+                    "product_category_id": [
+                        "3864"
+                    ],
+                    "product_fulfillment_method": [
+                        "SHIP"
+                    ],
+                    "saved_items_total": 0,
+                    "product_bops_select": [
+                        "false"
+                    ],
+                    "product_boss_select": [
+                        "false"
+                    ],
+                    "product_boss_available": [
+                        "false"
+                    ],
+                    "customer_store_id": "0",
+                    "product_protection_plan": [
+                        ""
+                    ],
+                    "product_category_name": [
+                        "SNEAKERS"
+                    ],
+                    "experimentation_ids": [],
+                    "product_shipping_surcharge": [
+                        "0.00"
+                    ],
+                    "bt_fulfillment_options": "",
+                    "product_arrivalbydate_information": [
+                        "3##str1#na#na#na"
+                    ],
+                    "protection_plan_eligibility": [
+                        ""
+                    ]
+                },
+                "coremetrics": {}
+            },
+            "killswitches": {
+                "fsCopyUpdateEnabled": false,
+                "isUndoOnListItemEnabled": true,
+                "isContinueShoppingLinkEnabled": true,
+                "responsiveBagNewUrlEnabled": true,
+                "additionalShippingDetailsEnabled": false,
+                "copyClarityVueEnabled": true,
+                "isCommonCreditCardBannerEnabled": true,
+                "isProsReviewStarsEnabled": true,
+                "xchkVGCConfirmationEnabled": true,
+                "redesignedStarRewardSectionEnabled": false,
+                "isUndoOnRemoveItemEnabled": true,
+                "isContinueChkoutSkipNodeEnabled": true,
+                "isHeartFunctionallyEnabled": true,
+                "paypalExpressCheckoutEnabled": true,
+                "isBigTicketDeliveryFeeRestructureEnabled": false,
+                "displaySalesExpirationDateInBag": true,
+                "isStartCheckoutAJAXCallKlarnaEnabled": true,
+                "pzoBadgingEnabled": false,
+                "isIshipOffersEnabled": false,
+                "curbsidePickupEnabled": false,
+                "isChkoutRedirectionBtnLoaderEnabled": true,
+                "canvasDrivenProsZonesMobileEnabled": false,
+                "globalErrorMessagingEnabled": true,
+                "bossBopsNtoOfferEnabled": true,
+                "isMltUnavailableBagDesktopDisabled": false,
+                "sddFreeShippingEnabled": false,
+                "isCreditCardBannerCopyUpdatesEnabled": false,
+                "isUpdateAutoReplenishEnabled": false,
+                "canvasDrivenProsZonesEnabled": false,
+                "shipFeesAndMethodsEnabled": false,
+                "makePromoCallForSignedInUsersWithSUPC": false,
+                "prosZonesAddToListEnabled": false,
+                "isProsZoneBoldedBrandNameEnabled": false,
+                "isParallelCheckoutXHREnabled": true,
+                "isSkipBagOnQuickBagEnabled": false,
+                "responsiveBagRviEnabled": true,
+                "isGcpBagEnabled": true,
+                "allStateWNMEnabled": true,
+                "separateBrandNameEnabled": false,
+                "internationalContextDrawerEnabled": true,
+                "isNewTransactionalViewEnabled": false,
+                "isBigTicketDeliveryFeeRestructureEligible": false,
+                "responsiveBagStarRewardsEnabled": false,
+                "gcpWishlistWrapperEnabled": true,
+                "responsiveBagSaveForLaterEnabled": true,
+                "responsiveBagLoyallistEnabled": true,
+                "isBagNewCurrentOffersDesignEnabled": false,
+                "isExpressPaymentsRedesignOnBagEnabled": false,
+                "isMoreLikeThisOnBagEnabled": false,
+                "isNewStarRewardsTierColorAndMsgEnabled": false,
+                "isCustomerGCPMigrationEnabled": true,
+                "reactiveWebClientEnabled": false,
+                "enhanceSameDayDeliveryEnabled": true,
+                "bagProtectionPlanResiliencyEnabled": true,
+                "ccfpEnabled": false,
+                "isShowStarRewardsProgressOnBagEnabled": false,
+                "rviRelatedProsZonesEnabled": false,
+                "isTealiumEnabled": false,
+                "warrantyManagementSmallTicketEnabled": false,
+                "login365Enabled": true,
+                "inStoreCurbsidePickupEnabled": true,
+                "carouselOpenInNewTabEnabled": true,
+                "reactiveWebClientEnabledCustomerService": false,
+                "isRviNewPlacementEnabled": false,
+                "responsiveAddToBagEnabled": true,
+                "isWhiteBGOnBagEnabled": false,
+                "pddContingencyEnabled": false,
+                "sameSiteCookieEnable": true,
+                "checkoutOptiUnavailableItemsInBagEnabled": false,
+                "responsiveBagAddEnabled": false,
+                "isBagFOBGroupingEnabled": true,
+                "taxesAlternateEnabled": false,
+                "isStickyCheckoutCTAMWEnabled": false,
+                "creditNewAccountDiscountEnabled": true,
+                "dualReadExperimentationEnabled": true,
+                "isBigTicketCXLoyaltyEnabled": false,
+                "isAutoReplenishNewDropDownEnabled": false,
+                "responsiveBagSortingEnabled": false,
+                "sflCollageViewEnabled": false,
+                "isBagGUIDQueryParamEnabled": false,
+                "isBagNewItemViewEnabled": false,
+                "moveProsAboveSflInBag": false,
+                "responsiveBagFreeShippingBannerEnabled": true,
+                "commonStoreLocationEnabled": true,
+                "isPromoBelowCtA": false,
+                "icwEnabled": false,
+                "rnChatEnabled": true,
+                "isTaggingOnQuickBagEnabled": false,
+                "shopByDepartmentStylingChangesEnabled": true,
+                "responsiveBagMoveToListEnabled": true,
+                "isProsATWEnabled": true,
+                "isStartCheckoutAJAXCallEnabled": true,
+                "isRviEditButtonEnabled": true,
+                "arrivesByDateEnabled": true,
+                "shouldHideNoColorSizeTraitsEnabled": true,
+                "reactiveWebClientBopsServiceEnabled": false,
+                "rviRedesignEnabled": false,
+                "isFreeScrollEnabled": true,
+                "bigTicketFeatureForMattressesEnabled": false,
+                "shipAndPickupButtonRedesignEnabled": true,
+                "isShowCreditOfferOnATBEnabled": false,
+                "removeUnavailableItemsFromBag": true,
+                "quickViewProsZoneEnabled": false,
+                "newGoogleAPICallEnabled": true,
+                "surchargeShippingMessageEnabled": false,
+                "eventBadgingEnabled": true,
+                "responsiveBagNewOfferSectionEnabled": false,
+                "bigTicketV2CEnabled": true,
+                "isMltUnavailableBagTabletDisabled": false,
+                "bigTicketFeatureEnabled": true,
+                "applePayOrderConfirmationFromCheckoutUIEnabled": true,
+                "isStartCheckoutPostCallEnabled": true,
+                "isBCOMBigTicketDeliveryFeeRestructureEnabled": true,
+                "enhancedSameDayDeliveryExperimentEnabled": true,
+                "updateApplePayCreditCardErrorMessageEnabled": false,
+                "copyClarityEnabled": true,
+                "redeemStarMoneyForMarketPlaceEnable": false,
+                "isProsOnEmptyBagEnabled": true,
+                "isPreRenderBagEnabled": true,
+                "suppressSupcPromotions": true,
+                "preQualCreditCheckEnabled": true,
+                "responsiveBagProsEnabled": true,
+                "isRemoveInternationalLinkEnabled": true,
+                "prosImpressionTaggingEnabled": true,
+                "displayScheduledDeliveryPriceEnabled": true,
+                "storeInPreferenceDatabaseEnabled": false,
+                "loyaltyPromotionBadgeTextEnabled": false,
+                "sddPromoEnabled": true,
+                "isP2PSubscriptionEnabled": false,
+                "isMltUnavailableBagMobileDisabled": false,
+                "gcpWrapperHealthcheckEnable": false,
+                "isQuickCheckoutOnPDPEnabled": true,
+                "isFreeShipProgressBarEnabled": false,
+                "isPromotionGcpEnabled": true,
+                "persistentLoginEnabled": true,
+                "shippingPromothresholdEnabled": false,
+                "prosZoneCSGRedesignScalingEnabled": true,
+                "disableApisWithUserIdInPayload": true,
+                "showCheckoutAsGuestButton": false,
+                "ocfPickupBossBadgingFreeShipToStoreTextEnabled": false,
+                "prosLockupEnabled": false,
+                "topLevelCategoryIdEnabled": false,
+                "bronzeSilverLoyaltyFST": false,
+                "klarnaExpressEnabled": true,
+                "deliveryDaysEnabled": true,
+                "isPaypalSkipSNSAssetsEnabled": true,
+                "searchBarRedesignEnabled": true,
+                "couponAutoApplyEnabled": false,
+                "currentOfferSectionOldImagesFix": true,
+                "reactiveWebClientProductServiceEnabled": false,
+                "responsiveBagMmoneyEnabled": true,
+                "isPriceSimplificationEnabled": true,
+                "checkoutMergeBagExperienceEnabled": false,
+                "mspListEnabled": true,
+                "isExcludeMakeChoiceGWPOnAddToBagEnabled": false,
+                "offersInBagPoolEnabled": false,
+                "isBigTicketCXProtectionPlansEnabled": true,
+                "isGCPBagPrePurchasePtsEnabled": true,
+                "disableMmoneyTooltipInfo": false,
+                "globalPreciseDeliveryDateEnabled": true,
+                "responsiveBagAutoMergeEnabled": true,
+                "pddOrderMethodsExclusionEnabled": false,
+                "isShowOfferPriceOnATBEnabled": false,
+                "newPlacesDetailsApiEnabled": true,
+                "removeFallbackProsZoneEnabled": false,
+                "isExcludeStateMessageEnabled": false,
+                "inStoreCurbsideCutoffTimeEnabled": true,
+                "isMkpAutoreplenishmentEnabled": false,
+                "responsiveBagRewardsCardEnabled": true,
+                "responsiveSignedInBagApplePayEnabled": true,
+                "isCreditCardBannerEnabled": true,
+                "protectionPlanAndDeliveryOptionsParityEnabled": true,
+                "isStarRewardsBelowCtA": false,
+                "bagPaypalUpgradeEnabled": false,
+                "suppressTaxAndPresentPreTaxTotal": true,
+                "responsiveBagBOSSEnabled": true,
+                "reactiveWebClientLoyaltyServiceEnabled": false,
+                "arrivesByDateVdfMkpEnabled": false,
+                "isQuickBuyEnabled": true,
+                "responsiveBagApplyCreditCardEnabled": false,
+                "taxesPendingEnabled": false,
+                "responsiveBagApplePayEnabled": true,
+                "responsiveBagSavedItemsEnabled": true,
+                "suppressUnavailableItemErrorMessageInPDP": true,
+                "isGWPOnPDPEnhancementsEnabled": true,
+                "creditDiscountTypesEnabled": true,
+                "KECEnabled": true,
+                "isLowAvailabilityMessaging": true,
+                "isAutoReplenishmentEnabled": false,
+                "ruaCheckoutErrorCookie": true,
+                "marketPlaceEnabled": true,
+                "isRoktEnabled": false
+            },
+            "bagAttributes": {
+                "pwpItemProdcutIdsInCurrentCart": [],
+                "gwpItemProdcutIdsInCurrentCart": [],
+                "newQualifiedGWP": false,
+                "newQualifiedPWP": false,
+                "bagItemQuantity": 5,
+                "gwpItemsCountInCurrentCart": 0,
+                "pwpItemsCountInCurrentCart": 0,
+                "offerAppliedInExpressCheckout": false,
+                "bagMarketPlaceItemCount": 0,
+                "redCarpetFreeShipOrder": false,
+                "redCarpetUser": false,
+                "bagContainsRedCarpetItem": false,
+                "shippableEligibleItems": false,
+                "surchargeApplicableItemCount": 0,
+                "saveForLaterEligible": false,
+                "saveForLaterEligibleForControl": false,
+                "sflcollageViewEnable": false,
+                "earnedMoneyToBeChecked": false,
+                "prosOnEmptyBag": false
+            },
+            "currency": "$",
+            "dca": "WDC",
+            "pattern": "2,7,14,15,16"
+        },
+        "adPools": {},
+        "sections": {
+            "bagItems": {
+                "meta": {
+                    "title": "BagItems",
+                    "scanStoreLocationNumber": 0,
+                    "currency": "$"
+                },
+                "adPools": {},
+                "items": [
+                    {
+                        "bagItemId": 3,
+                        "quantity": 1,
+                        "totalItemCountInBagForPdp": 5,
+                        "upcId": 8176449,
+                        "productId": 5328561,
+                        "gwpPromotionId": 0,
+                        "flags": {
+                            "gwpIndicator": false,
+                            "autoAddChoice": false,
+                            "isGiftCard": false,
+                            "storeAvailability": false,
+                            "shippingAvailability": true,
+                            "shipToStoreSelected": false,
+                            "shipToStoreAvailability": false,
+                            "isScannedItem": false,
+                            "pwpIndicator": false,
+                            "protectionPlanEligibility": false,
+                            "pickUpFromStore": false,
+                            "unavailableItem": false,
+                            "bigTicketV2CItem": false,
+                            "bigTicketItem": false
+                        },
+                        "originalPrice": 155.0,
+                        "sequenceNumber": 3,
+                        "shippingOptions": [
+                            {
+                                "adPools": {},
+                                "name": "Ship it",
+                                "message": "Low stock: Usually leaves the facility within 2 business days.",
+                                "availabilityText": "Low stock:",
+                                "deliveryText": "Usually leaves the facility within 2 business days.",
+                                "holidayMessageEligible": false
+                            }
+                        ],
+                        "itemTotal": 124.0,
+                        "itemTotalBeforeDiscount": 124.0,
+                        "personalizationFee": 0.0,
+                        "product": {
+                            "id": 5328561,
+                            "upcId": 8176449,
+                            "identifier": {
+                                "productUrl": "/shop/product/hoka-mens-speedgoat-6-running-sneakers?ID=5328561",
+                                "productId": 5328561,
+                                "upcId": 8176449
+                            },
+                            "detail": {
+                                "name": "Men's Speedgoat 6 Running Sneakers",
+                                "brand": "HOKA",
+                                "maxQuantity": 6,
+                                "defaultCategoryId": 3864
+                            },
+                            "imagery": {
+                                "urlTemplate": "http://slimages.macys.com/is/image/BLM/products/[IMAGEFILEPATH]?bgc=255,255,255&wid=[WIDTH]&qlt=[QUALITY]&layer=comp&op_sharpen=0&resMode=bicub&op_usm=0.7,1.0,0.5,0&fmt=jpeg",
+                                "primaryImage": {
+                                    "filePath": "0/optimized/14284966_fpx.tif"
+                                }
+                            },
+                            "availability": {
+                                "active": true,
+                                "live": true,
+                                "checkInStoreEligibility": true,
+                                "available": true,
+                                "orderType": "STR1",
+                                "shipDays": 2,
+                                "message": "In Stock: Usually leaves the facility within 2 business days.",
+                                "lowAvailability": true,
+                                "lowAvailabilityMessage": "Just a few left"
+                            },
+                            "deliveryDays": {
+                                "standardDeliveryDays": 8,
+                                "premiumDeliveryDays": 4,
+                                "expressDeliveryDays": 3,
+                                "noHurryDeliveryDays": 11,
+                                "bossDeliveryDays": 8
+                            },
+                            "traits": {
+                                "colors": [
+                                    "Galactic Grey / Hoka Blue"
+                                ],
+                                "sizes": [
+                                    "10.5"
+                                ],
+                                "sizeAttributes": [
+                                    {
+                                        "name": "MEN_SHOES_REGULAR_SIZE_T",
+                                        "value": "10.5"
+                                    }
+                                ],
+                                "normalColor": "Gray"
+                            },
+                            "suppressedForIntlShipping": false,
+                            "isOtherUPCAvailable": true,
+                            "otherUPCAvailable": true,
+                            "shippingInternational": false
+                        },
+                        "price": [
+                            {
+                                "label": "Orig.",
+                                "values": [
+                                    {
+                                        "value": 155.0,
+                                        "formattedValue": "$155.00",
+                                        "type": "ORIG"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Now",
+                                "values": [
+                                    {
+                                        "value": 124.0,
+                                        "formattedValue": "$124.00",
+                                        "type": "NOW",
+                                        "percentOffText": "20% off"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Total",
+                                "values": [
+                                    {
+                                        "value": 124.0,
+                                        "formattedValue": "$124.00",
+                                        "type": "ITEM_TOTAL"
+                                    }
+                                ]
+                            }
+                        ],
+                        "upcNumber": 197634457741,
+                        "mergeRequiredFlag": false,
+                        "eligibleForPreOrder": false,
+                        "bigTicketDeliverySize": 0,
+                        "userOptedPlanId": "0",
+                        "productCategoryName": "SNEAKERS",
+                        "pdpAtbProtectionPlanEligible": false,
+                        "deptId": 412,
+                        "vendorCode": 539,
+                        "classCode": 41,
+                        "subClassCode": 2003,
+                        "markStyle": "11481",
+                        "pddtreatmentIsEnable": false
+                    }
+                ]
+            },
+            "removedItems": {
+                "meta": {
+                    "title": "RemovedItems",
+                    "currency": "$"
+                },
+                "adPools": {},
+                "items": []
+            },
+            "summary": {
+                "meta": {
+                    "title": "Summary",
+                    "currency": "$"
+                },
+                "adPools": {},
+                "price": [
+                    {
+                        "label": "Subtotal",
+                        "values": [
+                            {
+                                "value": 620.0,
+                                "formattedValue": "$620.00",
+                                "type": "SUM_SUB_TOTAL"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Shipping",
+                        "values": [
+                            {
+                                "value": 0.0,
+                                "formattedValue": "Free",
+                                "type": "SHIPPING_CHARGES"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Pre-Tax Order Total",
+                        "values": [
+                            {
+                                "value": 620.0,
+                                "formattedValue": "$620.00",
+                                "type": "GRAND_TOTAL"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "You saved",
+                        "values": [
+                            {
+                                "value": 155.0,
+                                "formattedValue": "$155.00",
+                                "type": "YOU_SAVED",
+                                "percentOffText": "20%"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Subtotal Before You Saved",
+                        "values": [
+                            {
+                                "value": 775.0,
+                                "formattedValue": "$775.00",
+                                "type": "SUM_SUB_TOTAL_BEFORE_SAVINGS"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Discounts",
+                        "values": [
+                            {
+                                "value": 155.0,
+                                "formattedValue": "-$155.00",
+                                "type": "DISCOUNTS_EXCLUDING_MANUAL_PROMOTION"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bagPromotions": {
+                "meta": {
+                    "title": "Promotions",
+                    "currency": "$"
+                },
+                "adPools": {},
+                "manual": [],
+                "global": [
+                    {
+                        "identifier": {},
+                        "promoDetails": {
+                            "id": 8712,
+                            "description": "Free Shipping on almost all orders of $150 or more",
+                            "offerAvailableLabel": false,
+                            "promoType": "Free Shipping",
+                            "eligibleForUnderThresholdPromotion": false,
+                            "promotionThresholdMet": false,
+                            "pzOPromotion": false,
+                            "starPassPromotion": false,
+                            "originalPromotionName": "Free Shipping on $150+",
+                            "promotionalGiftCard": false
+                        },
+                        "discount": {
+                            "label": "Free Shipping on almost all orders of $150 or more",
+                            "values": [
+                                {
+                                    "value": 24.95,
+                                    "formattedValue": "-$24.95",
+                                    "type": "PROMOTION_SAVE"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "shippingThreshold": {
+                "meta": {
+                    "title": "FreeShipping",
+                    "currency": "$"
+                },
+                "adPools": {},
+                "data": {
+                    "adPools": {},
+                    "freeShippingThresholdAmount": "$150.00",
+                    "freeShippingThresholdReminderEligible": false
+                },
+                "everyItemBOPSSelected": false,
+                "srfreeShipping": false
+            },
+            "promotionOffer": {
+                "meta": {
+                    "title": "PromotionOffers",
+                    "currency": "$"
+                },
+                "adPools": {},
+                "promotionOffers": [
+                    {
+                        "adPools": {},
+                        "giftProductID": 5802717,
+                        "promotionID": 39403,
+                        "quantity": 1,
+                        "bonusOffer": false,
+                        "price": {
+                            "values": [
+                                {
+                                    "value": 189.990000000000009094947017729282379150390625,
+                                    "formattedValue": "$189.99",
+                                    "type": "YOUR_PRICE"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "adPools": {},
+                        "giftProductID": 5478326,
+                        "promotionID": 39543,
+                        "quantity": 1,
+                        "bonusOffer": false,
+                        "price": {
+                            "values": [
+                                {
+                                    "value": 15,
+                                    "formattedValue": "$15.00",
+                                    "type": "YOUR_PRICE"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "klarnaEligible": false,
+        "mediaForBag": {}
+    }
+}
