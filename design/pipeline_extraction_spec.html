@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>5-Category Extraction Pipeline — Full Specification</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #384359; color: #333; padding: 30px; }
+
+h1 { text-align: center; font-size: 26px; color: #1a1a2e; margin-bottom: 4px; }
+.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 28px; }
+.container { max-width: 1200px; margin: 0 auto; }
+
+/* ── Section ── */
+.section { margin-bottom: 36px; }
+.section-title {
+  font-size: 17px; font-weight: 700; color: #fff; padding: 10px 20px;
+  border-radius: 8px 8px 0 0;
+}
+.section-body {
+  background: #fff; border-radius: 0 0 8px 8px; padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+/* ── Flow ── */
+.flow { display: flex; flex-direction: column; align-items: center; }
+.arrow-down {
+  width: 2px; height: 24px; background: #aaa; position: relative; margin: 0 auto;
+}
+.arrow-down::after {
+  content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-top: 8px solid #aaa;
+}
+
+/* ── Nodes ── */
+.node {
+  border-radius: 10px; padding: 14px 20px; text-align: center;
+  min-width: 220px; max-width: 520px; position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.node .label { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.node .desc  { font-size: 12.5px; color: #555; line-height: 1.5; }
+
+.node-input    { background: #e8f5e9; border: 2px solid #43a047; }
+.node-nox      { background: #e3f2fd; border: 2px solid #1e88e5; }
+.node-llm      { background: #fff3e0; border: 2px solid #fb8c00; }
+.node-dedup    { background: #f3e5f5; border: 2px solid #8e24aa; }
+.node-serp     { background: #e0f7fa; border: 2px solid #00acc1; }
+.node-l1       { background: #fce4ec; border: 2px solid #e53935; }
+.node-output   { background: #f1f8e9; border: 2px solid #7cb342; }
+.node-filter   { background: #fff8e1; border: 2px solid #f9a825; }
+.node-manual   { background: #efebe9; border: 2px solid #795548; }
+
+/* ── Badge ── */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px;
+  border-radius: 10px; margin: 2px 2px; color: #fff;
+}
+.badge-cat  { background: #5c6bc0; }
+.badge-plat { background: #26a69a; }
+.badge-new  { background: #e53935; font-size: 10px; }
+
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; color: #fff;
+  font-weight: 700; font-size: 13px; margin-right: 6px; flex-shrink: 0;
+}
+
+/* ── Output grid ── */
+.output-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;
+}
+.output-item {
+  background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px;
+  padding: 7px 10px; font-size: 12px; text-align: left;
+}
+.output-item .fname { font-weight: 600; font-family: Consolas, monospace; color: #333; }
+.output-item .fdesc { color: #777; }
+
+/* ── Stats ── */
+.stats-bar { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin: 16px 0 10px; }
+.stat { text-align: center; }
+.stat .num { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+.stat .lbl { font-size: 12px; color: #888; }
+
+/* ── Category cards ── */
+.cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 14px 0 0; }
+.cat-card {
+  border-radius: 8px; padding: 12px; color: #fff; text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+}
+.cat-card .cat-name { font-weight: 700; font-size: 15px; }
+.cat-card .cat-num  { font-size: 22px; font-weight: 700; margin: 4px 0; }
+.cat-card .cat-desc { font-size: 11px; opacity: 0.9; line-height: 1.4; }
+
+/* ── Prompt section ── */
+.prompt-section { margin-top: 40px; }
+.prompt-card {
+  margin-bottom: 28px; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.prompt-header {
+  padding: 12px 20px; color: #fff; font-weight: 700; font-size: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.prompt-body { background: #fff; padding: 20px; }
+.prompt-meta { font-size: 13px; color: #666; margin-bottom: 12px; line-height: 1.6; }
+.prompt-meta b { color: #333; }
+
+.prompt-block {
+  background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 16px 18px;
+  font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;
+  overflow-x: auto; margin-bottom: 14px; position: relative;
+}
+.prompt-block .role-tag {
+  display: inline-block; padding: 1px 8px; border-radius: 4px;
+  font-weight: 700; font-size: 11px; margin-bottom: 6px;
+}
+.role-system { background: #a6e3a1; color: #1e1e2e; }
+.role-user   { background: #89b4fa; color: #1e1e2e; }
+
+.prompt-note {
+  background: #fff8e1; border-left: 4px solid #f9a825; padding: 10px 14px;
+  font-size: 12.5px; color: #555; border-radius: 0 6px 6px 0; margin-top: 10px;
+}
+.prompt-note b { color: #e65100; }
+
+/* ── Config table ── */
+table.config { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+table.config td { padding: 7px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+table.config td:first-child { font-weight: 600; color: #333; width: 180px; }
+table.config tr:nth-child(odd) { background: #fafafa; }
+</style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<h1>5-Category Product Extraction Pipeline</h1>
+<p class="subtitle">Manual Selection → Video → LLM Extract → Hard Filter → Dedup → SERP Verify → L1 Classify</p>
+
+<div class="container">
+
+<!-- ========== 5 CATEGORIES ========== -->
+<div class="section">
+  <div class="section-title" style="background: linear-gradient(135deg, #283593, #3949ab);">
+    📦 Five Extraction Verticals
+  </div>
+  <div class="section-body">
+    <div class="cat-grid">
+      <div class="cat-card" style="background: linear-gradient(135deg, #ec407a, #f06292);">
+        <div class="cat-name">Beauty</div>
+        <div class="cat-num">336</div>
+        <div class="cat-desc">Skincare, makeup, haircare, fragrance, beauty tools, oral care, bath &amp; body</div>
+      </div>
+      <div class="cat-card" style="background: linear-gradient(135deg, #42a5f5, #64b5f6);">
+        <div class="cat-name">3C</div>
+        <div class="cat-num">440</div>
+        <div class="cat-desc">Smartphones, laptops, headphones, cameras, smart home, gaming HW, wearables</div>
+      </div>
+      <div class="cat-card" style="background: linear-gradient(135deg, #ab47bc, #ce93d8);">
+        <div class="cat-name">Apparel</div>
+        <div class="cat-num">1,048</div>
+        <div class="cat-desc">Clothing, footwear, bags, fashion accessories, jewelry, sportswear</div>
+      </div>
+      <div class="cat-card" style="background: linear-gradient(135deg, #66bb6a, #81c784);">
+        <div class="cat-name">Home Improvement</div>
+        <div class="cat-num">448</div>
+        <div class="cat-desc">Furniture, kitchen, cleaning, power tools, lighting, garden, decor</div>
+      </div>
+      <div class="cat-card" style="background: linear-gradient(135deg, #ff7043, #ff8a65);">
+        <div class="cat-name">Outdoor</div>
+        <div class="cat-num">510</div>
+        <div class="cat-desc">Camping, cycling, fitness, water sports, fishing, grills, sports gear</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:14px; font-size:13px; color:#777;">
+      Total: <b>2,782</b> non-official influencers &nbsp;|&nbsp;
+      <span class="badge badge-plat">tiktok 1,235</span>
+      <span class="badge badge-plat">youtube 816</span>
+      <span class="badge badge-plat">instagram 731</span>
+      &nbsp;|&nbsp; Input: <code>all_influencers_non_official_merged.tsv</code>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PIPELINE FLOW ========== -->
+<div class="section">
+  <div class="section-title" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+    🔄 Full Pipeline Flow
+  </div>
+  <div class="section-body">
+    <div class="flow">
+
+      <div class="node node-manual" style="max-width:600px;">
+        <div class="label"><span class="step-num" style="background:#795548;">0</span>Manual Influencer Selection (NOX Website)</div>
+        <div class="desc" style="text-align:left; line-height:1.8;">
+          <b>Platform:</b> <a href="https://www.noxinfluencer.com" target="_blank">noxinfluencer.com</a> — human-operated search &amp; selection<br>
+          <b>① Select 5 categories:</b> Beauty, 3C, Apparel, Home Improvement, Outdoor<br>
+          <b>② Filter:</b> Followers &gt; 100K<br>
+          <b>③ Sort:</b> Rank by NOX default sort (engagement / influence score)<br>
+          <b>④ Pick:</b> Take top ~300 influencers per category<br>
+          <b>⑤ Platforms:</b> TikTok, YouTube, Instagram — repeat for each<br>
+          <b>⑥ Export:</b> Download influencer list → merge &amp; deduplicate → <code>all_influencers_non_official_merged.tsv</code>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-input" style="max-width:560px;">
+        <div class="label">📥 Input</div>
+        <div class="desc">
+          2,782 influencers × 5 categories × 3 platforms<br>
+          4 threads, round-robin across categories, rotating platforms
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-nox">
+        <div class="label"><span class="step-num" style="background:#1e88e5;">1</span>NOX Video Fetch</div>
+        <div class="desc">
+          GET <code>/nox/v1/{platform}/video</code><br>
+          Fetch channel videos within date range (channelId from noxlink)
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-llm">
+        <div class="label"><span class="step-num" style="background:#fb8c00;">2</span>LLM Product Extraction</div>
+        <div class="desc">
+          Azure OpenAI — extract (brand, productName, category, evidence) from title + description<br>
+          <b>→ See Prompt ① below</b>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-filter">
+        <div class="label"><span class="step-num" style="background:#f9a825;">2.5</span>Hard Keyword Filter</div>
+        <div class="desc">
+          Post-LLM regex — 38 keywords in <code>category_rules.json</code><br>
+          (motorcycle, car polish, ATV, DVD, action figure, swimsuit, etc.)
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-dedup">
+        <div class="label"><span class="step-num" style="background:#8e24aa;">3</span>Dedup (String + LLM)</div>
+        <div class="desc">
+          string_dedup → exact (brand, name) match<br>
+          llm_dedup_batched → semantic dedup with category-aware rules<br>
+          <b>→ See Prompt ② below</b>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-serp">
+        <div class="label"><span class="step-num" style="background:#00acc1;">4</span>SERP Verification</div>
+        <div class="desc">
+          Google Shopping API search → LLM judges match/mismatch<br>
+          Split: ✅ matched · ❌ mismatch · ⚠️ no_serp<br>
+          <b>→ See Prompt ③ below</b>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-l1">
+        <div class="label"><span class="step-num" style="background:#e53935;">5</span>L1 Category Classification</div>
+        <div class="desc">
+          LLM assigns L1 tag from 30 categories (l1_tags.tsv)<br>
+          Batch mode, 4 threads<br>
+          <b>→ See Prompt ④ below</b>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-output" style="max-width: 640px;">
+        <div class="label">📤 Output Files (per category × timestamp)</div>
+        <div class="output-grid">
+          <div class="output-item">
+            <div class="fname">merge_{cat}_{ts}.tsv</div>
+            <div class="fdesc">SERP matched + L1 tag</div>
+          </div>
+          <div class="output-item">
+            <div class="fname">{cat}_products_{ts}.csv</div>
+            <div class="fdesc">Deduped product list</div>
+          </div>
+          <div class="output-item">
+            <div class="fname">{cat}_summary_{ts}.csv</div>
+            <div class="fdesc">All rows (incl. failures)</div>
+          </div>
+          <div class="output-item">
+            <div class="fname">serp_mismatch_{cat}.tsv</div>
+            <div class="fdesc">SERP verification failed</div>
+          </div>
+          <div class="output-item">
+            <div class="fname">no_serp_{cat}.tsv</div>
+            <div class="fdesc">No Shopping results</div>
+          </div>
+          <div class="output-item">
+            <div class="fname">dedup_removed_{cat}.tsv</div>
+            <div class="fdesc">Dedup removed log</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROMPT ① EXTRACT ========== -->
+<div class="prompt-section">
+
+<div class="prompt-card">
+  <div class="prompt-header" style="background: linear-gradient(135deg, #e65100, #fb8c00);">
+    <span class="step-num" style="background:rgba(255,255,255,0.3);">①</span>
+    Product Extraction — product_extractor.py
+  </div>
+  <div class="prompt-body">
+    <div class="prompt-meta">
+      <b>Module:</b> product_extractor.py &nbsp;→&nbsp; <code>extract_products(title, vertical_category, description)</code><br>
+      <b>Model:</b> Azure OpenAI &nbsp;|&nbsp; <b>Temperature:</b> 0 &nbsp;|&nbsp; <b>Max tokens:</b> 2000<br>
+      <b>Input:</b> Video title + description (max 800 chars) &nbsp;|&nbsp; <b>Output:</b> JSON with products[] + failType
+    </div>
+
+    <div class="prompt-block"><span class="role-tag role-system">SYSTEM</span>
+You are a strict product extraction expert. Output only valid JSON. Never guess product names.</div>
+
+    <div class="prompt-block"><span class="role-tag role-user">USER</span>
+You are a strict product extraction expert. Extract ONLY products whose SPECIFIC OFFICIAL NAME appears in the text below.
+
+Current date: {current_date}
+Content:
+{content}
+
+--- CATEGORY CONTEXT ---
+This video comes from the [{vertical_category}] vertical.
+Description: {category_description}
+
+Note: Extract ALL purchasable products mentioned, regardless of category.
+The influencer's vertical is for reference only — do NOT filter by it.
+Only the GLOBAL EXCLUSIONS below should be used to reject products.
+
+--- GLOBAL EXCLUSIONS (always skip these) ---
+  1. VEHICLES &amp; CAR PARTS: cars, trucks, motorcycles, boats, RVs, ATVs, AND all vehicle parts/accessories ...
+  2. MOVIES &amp; MEDIA &amp; MUSIC: films, TV shows, DVDs, music albums, video games, trading card games ...
+  3. TOYS &amp; GAMES: dolls, action figures, LEGO sets, puzzles, board games, trading cards ...
+  4. FOOD &amp; BEVERAGES: snacks, candy, drinks, coffee, meal kits ... (Dietary supplements ARE allowed)
+  5. SOFTWARE &amp; DIGITAL PRODUCTS: OS, apps, SaaS, AI tools ... (Physical tech products ARE allowed)
+  6. SWIMWEAR &amp; INTIMATE APPAREL: swimsuits, bikinis, lingerie, underwear ...
+  7. TOOLS (non-Home-Improvement): generic tools only valid in HomeImprovement vertical
+  8. LOW-VALUE UNBRANDED ITEMS: generic novelty trinkets, dollar-store items ...
+  9. SECONDHAND / USED PRODUCTS: used, refurbished, vintage ...
+  10. NON-PRODUCT ENTITIES: generic content items that are not purchasable SKUs ...
+  11. SERVICES / NON-PRODUCTS: restaurant meals, gym memberships, travel bookings ...
+  12. REAL ESTATE: houses, apartments, land ...
+
+STRICT RULES:
+
+1. PRODUCT NAME must UNIQUELY identify ONE specific purchasable product, not a category.
+   - KEY TEST: if you search "brand + name" on the brand's website, would it return ONE
+     specific product page with a price? If yes, extract. If returns a category page → do NOT.
+   - WRONG: "foundation", "mascara", "blush"
+   - RIGHT: "Soft Pinch Liquid Blush", "Shape Tape Concealer", "Airwrap"
+
+2. The product name MUST appear explicitly in the content text.
+
+3. The brand MUST be identifiable from the text (via @mention, explicit name, or hashtag).
+   - Retailers (Ulta, Sephora, Amazon, Target) are NOT brands.
+
+4. When in doubt, do NOT extract.
+
+5. For each product, provide "evidence": the EXACT substring from original text.
+
+6. Judge RELEVANCE:
+   - "on_topic": real purchasable consumer product
+   - "off_topic": falls under GLOBAL EXCLUSIONS
+   - "borderline": unusual but still legitimate purchasable item
+   Only extract "on_topic" or "borderline".
+
+7. PRODUCT NAME COMPLETENESS: If only single-word name, append product type.
+   - WRONG: name="Rapunzel" → RIGHT: name="Rapunzel Fragrance"
+
+Output JSON only:
+{
+  "products": [
+    {
+      "name": "official product name from text",
+      "brand": "brand from text",
+      "category": "product category",
+      "evidence": "exact quote from text",
+      "relevance": "on_topic",
+      "relevance_reason": "brief reason"
+    }
+  ],
+  "otherInfo": "",
+  "failType": ""
+}
+
+failType options (when no products found):
+- "no_product" | "lifestyle_only" | "music_dance" | "empty_content"
+- "no_spec_prod" | "non_commercial" | "restaurant_food"
+- "off_topic" | "secondhand_outdated"</div>
+
+    <div class="prompt-note">
+      <b>Post-LLM Hard Filter:</b> After LLM returns products, <code>_is_hard_excluded()</code> applies regex matching
+      against 38 keywords: <code>motorcycle, motocross, dirt bike, automotive, vehicle, car polish, car wax, ATV,
+      snowmobile, go-kart, DVD, Blu-ray, vinyl record, action figure, plush toy, trading cards, LEGO set,
+      swimsuit, swimwear, bikini, tankini, lingerie, real estate, rental property</code> etc.<br>
+      Configured in <code>category_rules.json → _global_exclusions.hard_filter_keywords</code>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROMPT ② DEDUP ========== -->
+<div class="prompt-card">
+  <div class="prompt-header" style="background: linear-gradient(135deg, #6a1b9a, #8e24aa);">
+    <span class="step-num" style="background:rgba(255,255,255,0.3);">②</span>
+    Dedup — dedup.py
+  </div>
+  <div class="prompt-body">
+    <div class="prompt-meta">
+      <b>Module:</b> dedup.py &nbsp;→&nbsp; <code>string_dedup()</code> + <code>llm_dedup_batched()</code><br>
+      <b>Model:</b> Azure OpenAI &nbsp;|&nbsp; <b>Temperature:</b> 0 &nbsp;|&nbsp; <b>Max tokens:</b> 4000<br>
+      <b>Input:</b> List of (brand, productName) pairs after string dedup &nbsp;|&nbsp; <b>Output:</b> unique[] + duplicates[]<br>
+      <b>Note:</b> string_dedup is pure code (case-insensitive exact match), LLM dedup handles semantic merges
+    </div>
+
+    <div class="prompt-block"><span class="role-tag role-system">SYSTEM</span>
+You are a specialized Product Data Engineer. Your task is to deduplicate product lists based on specific category-level business rules. Output only valid JSON.</div>
+
+    <div class="prompt-block"><span class="role-tag role-user">USER</span>
+Below is a list of (brand, productName) pairs. Your goal is to identify DUPLICATE items and merge them according to strict category definitions.
+
+### Category Definition &amp; Merging Rules:
+
+1. <b>Beauty &amp; Personal Care</b>:
+   - DIFFERENT: Different colors/shades are DIFFERENT products
+     (e.g., "Dior 999 Red" vs "Dior 100 Nude").
+   - SAME: Only merge if it's the exact same shade with different naming
+     (e.g., "Dior 999" vs "Dior Rouge 999").
+
+2. <b>3C &amp; Electronics</b>:
+   - SAME: Different colors are the SAME product
+     (e.g., "iPhone 17 Orange" and "iPhone 17 Blue" → Merge to "iPhone 17").
+   - DIFFERENT: Different models or storage capacities are DIFFERENT.
+
+3. <b>Apparel &amp; Accessories</b>:
+   - SAME: Different sizes are the SAME product.
+   - DIFFERENT: Different colors or styles are DIFFERENT.
+
+4. <b>Home &amp; Household</b>:
+   - DIFFERENT: Different scents/fragrances are DIFFERENT products.
+
+5. <b>Outdoor &amp; Sports</b>:
+   - DIFFERENT: Different colors of Jackets/Apparel are DIFFERENT.
+   - DIFFERENT: Different materials for Tents are DIFFERENT.
+   - DIFFERENT: Different colors of climbing ropes are DIFFERENT.
+   - DIFFERENT: Different temperature ratings for Sleeping Bags are DIFFERENT.
+
+### General Cleaning Rules:
+- Merge variations in casing, abbreviations, or typos
+  (e.g., "MAC Eye Shadow" vs "MAC Eyeshadow").
+- Remove fluff words like "Best Seller", "New", or "Official".
+
+Products to Process:
+{product_list}
+
+### Instructions:
+1. Group products that are the SAME based on the rules above.
+2. For each group, pick ONE canonical representative.
+3. If products are "DIFFERENT" based on rules, do NOT merge them.
+
+Output Format:
+{
+  "unique": [
+    {"brand": "canonical brand", "productName": "canonical product name"}
+  ],
+  "duplicates": [
+    {
+      "kept": {"brand": "...", "productName": "..."},
+      "removed": [{"brand": "...", "productName": "..."}]
+    }
+  ]
+}
+
+- "unique" = final deduplicated list (all distinct products).
+- "duplicates" = only groups where merging happened.
+- EVERY input product must appear in either "unique" or "duplicates[].removed".</div>
+  </div>
+</div>
+
+<!-- ========== PROMPT ③ VERIFY ========== -->
+<div class="prompt-card">
+  <div class="prompt-header" style="background: linear-gradient(135deg, #00695c, #00897b);">
+    <span class="step-num" style="background:rgba(255,255,255,0.3);">③</span>
+    SERP Verification — serp_verifier.py
+  </div>
+  <div class="prompt-body">
+    <div class="prompt-meta">
+      <b>Module:</b> serp_verifier.py &nbsp;→&nbsp; <code>verify_serp_matches(brand, product, category, serp_results)</code><br>
+      <b>Model:</b> Azure OpenAI &nbsp;|&nbsp; <b>Temperature:</b> 0 &nbsp;|&nbsp; <b>Max tokens:</b> 1000<br>
+      <b>Input:</b> Extracted (brand, product, category) + Google Shopping search results<br>
+      <b>Output:</b> Per-result match/no verdict → split into matched / mismatch / no_serp files<br>
+      <b>Upstream:</b> serp_searcher.py calls SerpAPI, maps results to (search_title, search_price, search_source, search_snippet)
+    </div>
+
+    <div class="prompt-block"><span class="role-tag role-system">SYSTEM</span>
+You are a strict product matching expert. You determine whether a search result refers to the SAME product the user is looking for.</div>
+
+    <div class="prompt-block"><span class="role-tag role-user">USER</span>
+A product was extracted from a video:
+  Brand:    {brand}
+  Product:  {product}
+  Category: {category}
+
+Below are Google Shopping search results returned for this product.
+For EACH result, determine: is it the SAME product (same brand, same specific item, same category)?
+
+Search results:
+  [1] Title: {search_title}  |  Price: {search_price}  |  Source: {search_source}  |  Snippet: {search_snippet}
+  [2] ...
+
+RULES:
+1. "Same product" means it must be the same TYPE of item. E.g.:
+   - "Disney Rapunzel Perfume" vs "Disney Rapunzel Doll" → NO (perfume ≠ doll)
+   - "Nike Air Force 1" vs "Nike Air Force 1 '07" → YES (same shoe, variant)
+   - "Dyson Airwrap" vs "Dyson V15 Detect" → NO (different product)
+2. Brand must match (or be a known sub-brand/parent-brand relationship).
+3. Minor naming variations, color/size variants, or bundled items are OK → YES.
+4. If the search result is clearly a DIFFERENT category of product → NO.
+5. Accessories or cases for the product count as NO.
+
+Output JSON only — an array with one object per result:
+[
+  {"index": 1, "match": "yes", "reason": "same product, color variant"},
+  {"index": 2, "match": "no",  "reason": "this is a doll, not perfume"}
+]</div>
+
+    <div class="prompt-note">
+      <b>Known Issue:</b> In <code>serp_searcher.py</code>, the <code>search_snippet</code> field is mapped from
+      Google Shopping's <code>delivery</code> field (shipping/delivery info), <b>not</b> the product description.
+      The LLM still receives it but it provides limited value for matching.
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROMPT ④ L1 CLASSIFY ========== -->
+<div class="prompt-card">
+  <div class="prompt-header" style="background: linear-gradient(135deg, #b71c1c, #e53935);">
+    <span class="step-num" style="background:rgba(255,255,255,0.3);">④</span>
+    L1 Category Classification — add_llm_l1_category.py
+  </div>
+  <div class="prompt-body">
+    <div class="prompt-meta">
+      <b>Module:</b> add_llm_l1_category.py &nbsp;→&nbsp; <code>L1CategoryClassifier.classify_rows()</code><br>
+      <b>Model:</b> Azure OpenAI &nbsp;|&nbsp; <b>Temperature:</b> 0 &nbsp;|&nbsp; <b>Max tokens:</b> 4000<br>
+      <b>Input:</b> Batch of items (brand, productName, category, title) &nbsp;|&nbsp; <b>Output:</b> L1 tag per item<br>
+      <b>Batch size:</b> 20 items per LLM call &nbsp;|&nbsp; <b>Workers:</b> 4 threads<br>
+      <b>L1 source:</b> 30 categories from <code>catagoryTemp/l1_tags.tsv</code>
+    </div>
+
+    <div class="prompt-block"><span class="role-tag role-system">SYSTEM</span>
+You output valid JSON only.</div>
+
+    <div class="prompt-block"><span class="role-tag role-user">USER</span>
+You are a strict product taxonomy classifier.
+For each item below, select exactly one L1 category from the list.
+If unsure, choose Miscellaneous.
+
+L1 List:
+- Apparel
+- Shoes &amp; Footwear
+- Bags &amp; Luggage
+- Jewelry &amp; Watches
+- Skincare
+- Makeup &amp; Cosmetics
+- Haircare
+- Fragrance
+- Bath &amp; Body
+- Health &amp; Wellness
+- Smartphones &amp; Accessories
+- Computing &amp; Tablets
+- Audio &amp; Headphones
+- Cameras &amp; Photography
+- Smart Home
+- Gaming
+- Wearables
+- Home Appliances
+- Furniture &amp; Decor
+- Kitchen &amp; Dining
+- Cleaning &amp; Organization
+- Tools &amp; Hardware
+- Lighting
+- Garden &amp; Outdoor Living
+- Camping &amp; Hiking
+- Fitness &amp; Exercise
+- Cycling
+- Water Sports
+- Winter Sports
+- Sports Equipment
+  <i>(... 30 categories total from l1_tags.tsv)</i>
+
+Items:
+Item 1:
+Brand: {brand}
+ProductName: {productName}
+Category: {category}
+Title: {title}
+
+Item 2:
+...
+
+Output JSON only:
+{
+  "results": [
+    {"index": 1, "l1": "&lt;one from list&gt;"},
+    {"index": 2, "l1": "&lt;one from list&gt;"}
+  ]
+}</div>
+  </div>
+</div>
+
+</div><!-- /prompt-section -->
+
+<!-- ========== CONFIG ========== -->
+<div class="section">
+  <div class="section-title" style="background: linear-gradient(135deg, #37474f, #546e7a);">
+    ⚙️ Configuration Summary
+  </div>
+  <div class="section-body">
+    <table class="config">
+      <tr><td>NOX API</td><td><code>https://service.noxinfluencer.com/nox/v1/{platform}/video</code> — channel video fetch</td></tr>
+      <tr><td>NOX Quota API</td><td><code>/nox/v1/key</code> — free to query remaining quota</td></tr>
+      <tr><td>LLM Backend</td><td>Azure OpenAI (4 calls per influencer: extract, dedup, verify, L1 classify)</td></tr>
+      <tr><td>SERP API</td><td>SerpAPI — Google Shopping engine</td></tr>
+      <tr><td>Parallelism</td><td>4 threads (configurable via <code>--workers</code>)</td></tr>
+      <tr><td>Target Mode</td><td><code>--target 30</code> (stop at 30 unique products) or <code>--target 0</code> (unlimited, process ALL)</td></tr>
+      <tr><td>Date Range</td><td><code>--date YYYY-MM-DD --days N</code> (N days lookback window)</td></tr>
+      <tr><td>Resume Support</td><td>Checkpoint CSV + progress.json for crash recovery in unlimited mode</td></tr>
+      <tr><td>Hard Filter</td><td>38 keywords in <code>category_rules.json → _global_exclusions.hard_filter_keywords</code></td></tr>
+      <tr><td>L1 Tags</td><td>30 categories in <code>catagoryTemp/l1_tags.tsv</code></td></tr>
+      <tr><td>Data Output Root</td><td><code>pipeline/data/vertical/{beauty,ce,apparel,home,outdoor}/</code></td></tr>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<div style="text-align:center; margin-top:30px; color:#aaa; font-size:12px;">
+  Generated: March 11, 2026 &nbsp;|&nbsp; Pipeline v2 — 5-Category Extraction Specification
+</div>
+
+</body>
+</html>
