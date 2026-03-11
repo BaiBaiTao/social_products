@@ -638,27 +638,6 @@ Output JSON only:
 
 </div><!-- /prompt-section -->
 
-<!-- ========== CONFIG ========== -->
-<div class="section">
-  <div class="section-title" style="background: linear-gradient(135deg, #37474f, #546e7a);">
-    ⚙️ Configuration Summary
-  </div>
-  <div class="section-body">
-    <table class="config">
-      <tr><td>NOX API</td><td><code>https://service.noxinfluencer.com/nox/v1/{platform}/video</code> — channel video fetch</td></tr>
-      <tr><td>NOX Quota API</td><td><code>/nox/v1/key</code> — free to query remaining quota</td></tr>
-      <tr><td>LLM Backend</td><td>Azure OpenAI (4 calls per influencer: extract, dedup, verify, L1 classify)</td></tr>
-      <tr><td>SERP API</td><td>SerpAPI — Google Shopping engine</td></tr>
-      <tr><td>Parallelism</td><td>4 threads (configurable via <code>--workers</code>)</td></tr>
-      <tr><td>Target Mode</td><td><code>--target 30</code> (stop at 30 unique products) or <code>--target 0</code> (unlimited, process ALL)</td></tr>
-      <tr><td>Date Range</td><td><code>--date YYYY-MM-DD --days N</code> (N days lookback window)</td></tr>
-      <tr><td>Resume Support</td><td>Checkpoint CSV + progress.json for crash recovery in unlimited mode</td></tr>
-      <tr><td>Hard Filter</td><td>38 keywords in <code>category_rules.json → _global_exclusions.hard_filter_keywords</code></td></tr>
-      <tr><td>L1 Tags</td><td>30 categories in <code>catagoryTemp/l1_tags.tsv</code></td></tr>
-      <tr><td>Data Output Root</td><td><code>pipeline/data/vertical/{beauty,ce,apparel,home,outdoor}/</code></td></tr>
-    </table>
-  </div>
-</div>
 
 </div>
 
