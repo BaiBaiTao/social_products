@@ -51,6 +51,7 @@ h1 { text-align: center; font-size: 26px; color: #1a1a2e; margin-bottom: 4px; }
 .node-output   { background: #f1f8e9; border: 2px solid #7cb342; }
 .node-filter   { background: #fff8e1; border: 2px solid #f9a825; }
 .node-manual   { background: #efebe9; border: 2px solid #795548; }
+.node-scope    { background: #e8eaf6; border: 2px solid #3f51b5; }
 
 /* ── Badge ── */
 .badge {
@@ -153,8 +154,8 @@ table.config tr:nth-child(odd) { background: #fafafa; }
 </div>
 
 
-<h1 style="color:wheat">5-Category Product Extraction Pipeline</h1>
-<p class="subtitle" style="color:white">Manual Selection → Video → LLM Extract → Hard Filter → Dedup → SERP Verify → L1 Classify</p>
+<h1>5-Category Product Extraction Pipeline</h1>
+<p class="subtitle">Manual Selection → Video → LLM Extract → Hard Filter → Dedup → SERP Verify → L1 Classify</p>
 
 <div class="container">
 
@@ -285,6 +286,16 @@ table.config tr:nth-child(odd) { background: #fafafa; }
           LLM assigns L1 tag from 30 categories (l1_tags.tsv)<br>
           Batch mode, 4 threads<br>
           <b>→ See Prompt ④ below</b>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <div class="node node-scope">
+        <div class="label"><span class="step-num" style="background:#3f51b5;">6</span>SCOPE Catalog Matching</div>
+        <div class="desc">
+          Normalize SERP shopping URLs → extract canonical product URL<br>
+          Match normalized URL against catalog <code>normUrl</code> column<br>
+          Join matched rows with catalog metadata (productId, vertical, etc.)
         </div>
       </div>
       <div class="arrow-down"></div>
@@ -553,9 +564,11 @@ Output JSON only — an array with one object per result:
 ]</div>
 
     <div class="prompt-note">
-      <b>Known Issue:</b> In <code>serp_searcher.py</code>, the <code>search_snippet</code> field is mapped from
-      Google Shopping's <code>delivery</code> field (shipping/delivery info), <b>not</b> the product description.
-      The LLM still receives it but it provides limited value for matching.
+      <b>Data Source Fix (v2):</b> <code>search_snippet</code> now maps from <code>about_the_product.description</code>
+      (full product description with model details and specs) instead of the old <code>delivery</code> field (shipping info).
+      Store titles now use the retailer-specific <code>store.title</code> (e.g., "Sony - WH-1000XM5 Wireless Noise Cancelling
+      Over-the-Ear Headphones - Black") which is more detailed than the generic Google Shopping title.
+      For <code>shopping_results</code> fallback, snippet maps from <code>sr.snippet</code> (user review summary).
     </div>
   </div>
 </div>
@@ -637,7 +650,6 @@ Output JSON only:
 </div>
 
 </div><!-- /prompt-section -->
-
 
 </div>
 
