@@ -141,13 +141,14 @@ tr:hover td { background:#FAFBFC; }
 </div>
 <div class="container">
   <h1>&#x1F4CA; Influencer Product Extraction Report — 5M Influencers</h1>
-  <p class="subtitle">2544 influencers &nbsp;|&nbsp; 326 products sent to SerpAPI &nbsp;|&nbsp; Date: 2026-03-08 ~ 2026-03-14 &nbsp;|&nbsp; Generated: 2026-03-18 20:31</p>
+  <p class="subtitle">2544 influencers &nbsp;|&nbsp; 326 products sent to SerpAPI &nbsp;|&nbsp; Date: 2026-03-08 ~ 2026-03-14 &nbsp;|&nbsp; Generated: 2026-03-19 13:54</p>
 <div class="card" id="sec-funnel" style="order:1;">
 <h2>Extraction Funnel</h2>
 <p style="color:#7F8C8D;font-size:.84em;margin:-4px 0 16px;">Full pipeline funnel with dedup, SERP verification, L1 filter, seller filter, and catalog matching.</p>
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
 <button class="funnel-tab active" data-target="funnel-panel-all" onclick="switchFunnelTab(this)">All</button>
 <button class="funnel-tab" data-target="funnel-panel-platform" onclick="switchFunnelTab(this)">Platform</button>
+<button class="funnel-tab" data-target="funnel-panel-accttype" onclick="switchFunnelTab(this)">Account Type</button>
 </div>
 <div class="funnel-panel" id="funnel-panel-all" style="display:block;">
 <div class="funnel">
@@ -267,6 +268,36 @@ tr:hover td { background:#FAFBFC; }
 <div class="two-col">
 <div><h3>Posts by Platform</h3><div style="display:flex;justify-content:center;"><div class="pie-wrapper"><div class="pie-chart" style="background:conic-gradient(#4169E1 0.0% 38.3%, #2E8B57 38.3% 75.7%, #E74C3C 75.7% 100.0%)"></div><div class="pie-legend"><div class="legend-item"><span class="legend-dot" style="background:#4169E1"></span><span class="legend-text">tiktok: <strong>7827</strong> (38.3%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#2E8B57"></span><span class="legend-text">youtube: <strong>7629</strong> (37.4%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#E74C3C"></span><span class="legend-text">instagram: <strong>4957</strong> (24.3%)</span></div></div></div></div></div>
 <div><h3>Products by Platform</h3><div style="display:flex;justify-content:center;"><div class="pie-wrapper"><div class="pie-chart" style="background:conic-gradient(#4169E1 0.0% 41.2%, #2E8B57 41.2% 81.3%, #E74C3C 81.3% 100.0%)"></div><div class="pie-legend"><div class="legend-item"><span class="legend-dot" style="background:#4169E1"></span><span class="legend-text">instagram: <strong>189</strong> (41.2%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#2E8B57"></span><span class="legend-text">youtube: <strong>184</strong> (40.1%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#E74C3C"></span><span class="legend-text">tiktok: <strong>86</strong> (18.7%)</span></div></div></div></div></div>
+</div>
+</div>
+<div class="funnel-panel" id="funnel-panel-accttype" style="display:none;">
+<h3 style="margin-bottom:12px;">Product Extraction Rate by Account Type</h3>
+<table style="width:100%;border-collapse:collapse;font-size:.88em;margin-bottom:24px;">
+<thead><tr style="background:#F4F6F7;"><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Account Type</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Input</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Processed</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">With Posts</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">With Products</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Posts</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Posts w/ Products</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Extraction Rate</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #DDD;white-space:nowrap;">Raw Products</th></tr></thead><tbody>
+<tr style="border-bottom:1px solid #EEE;"><td style="padding:8px 12px;font-weight:700;text-align:left;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#78909C;margin-right:6px;vertical-align:middle;"></span>Non-Shopping Individual</td><td style="padding:8px 12px;text-align:right;">3572</td><td style="padding:8px 12px;text-align:right;">2286</td><td style="padding:8px 12px;text-align:right;">2286</td><td style="padding:8px 12px;text-align:right;">61</td><td style="padding:8px 12px;text-align:right;">17943</td><td style="padding:8px 12px;text-align:right;">95</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#78909C;">0.5%</td><td style="padding:8px 12px;text-align:right;">167</td></tr>
+<tr style="border-bottom:1px solid #EEE;"><td style="padding:8px 12px;font-weight:700;text-align:left;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2196F3;margin-right:6px;vertical-align:middle;"></span>Shopping Person/Creator</td><td style="padding:8px 12px;text-align:right;">294</td><td style="padding:8px 12px;text-align:right;">218</td><td style="padding:8px 12px;text-align:right;">218</td><td style="padding:8px 12px;text-align:right;">26</td><td style="padding:8px 12px;text-align:right;">1485</td><td style="padding:8px 12px;text-align:right;">51</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#2196F3;">3.4%</td><td style="padding:8px 12px;text-align:right;">141</td></tr>
+<tr style="border-bottom:1px solid #EEE;"><td style="padding:8px 12px;font-weight:700;text-align:left;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF9800;margin-right:6px;vertical-align:middle;"></span>Shopping Curation Channel</td><td style="padding:8px 12px;text-align:right;">54</td><td style="padding:8px 12px;text-align:right;">40</td><td style="padding:8px 12px;text-align:right;">40</td><td style="padding:8px 12px;text-align:right;">11</td><td style="padding:8px 12px;text-align:right;">985</td><td style="padding:8px 12px;text-align:right;">120</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:#FF9800;">12.2%</td><td style="padding:8px 12px;text-align:right;">151</td></tr>
+<tr style="border-top:2px solid #AAA;font-weight:700;background:#FAFAFA;"><td style="padding:8px 12px;text-align:left;">Total</td><td style="padding:8px 12px;text-align:right;">3920</td><td style="padding:8px 12px;text-align:right;">2544</td><td style="padding:8px 12px;text-align:right;">2544</td><td style="padding:8px 12px;text-align:right;">98</td><td style="padding:8px 12px;text-align:right;">20413</td><td style="padding:8px 12px;text-align:right;">266</td><td style="padding:8px 12px;text-align:right;">1.3%</td><td style="padding:8px 12px;text-align:right;">459</td></tr>
+</tbody></table>
+<h3 style="margin-bottom:8px;">Extraction Rate Comparison</h3>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+  <div style="min-width:200px;max-width:220px;font-size:.85em;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Non-Shopping Individual</div>
+  <div style="flex:1;background:#F0F0F0;border-radius:6px;height:24px;overflow:hidden;"><div style="width:4.3%;background:#78909C;height:100%;border-radius:6px;min-width:2px;"></div></div>
+  <div style="min-width:120px;text-align:right;font-size:.84em;"><span style="font-weight:700;color:#333;">0.5%</span> <span style="color:#999;">(95/17943)</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+  <div style="min-width:200px;max-width:220px;font-size:.85em;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Shopping Person/Creator</div>
+  <div style="flex:1;background:#F0F0F0;border-radius:6px;height:24px;overflow:hidden;"><div style="width:28.2%;background:#2196F3;height:100%;border-radius:6px;min-width:2px;"></div></div>
+  <div style="min-width:120px;text-align:right;font-size:.84em;"><span style="font-weight:700;color:#333;">3.4%</span> <span style="color:#999;">(51/1485)</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+  <div style="min-width:200px;max-width:220px;font-size:.85em;font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Shopping Curation Channel</div>
+  <div style="flex:1;background:#F0F0F0;border-radius:6px;height:24px;overflow:hidden;"><div style="width:100.0%;background:#FF9800;height:100%;border-radius:6px;min-width:2px;"></div></div>
+  <div style="min-width:120px;text-align:right;font-size:.84em;"><span style="font-weight:700;color:#333;">12.2%</span> <span style="color:#999;">(120/985)</span></div>
+</div>
+<div class="two-col" style="margin-top:24px;">
+<div><h3>Products by Account Type</h3><div style="display:flex;justify-content:center;"><div class="pie-wrapper"><div class="pie-chart" style="background:conic-gradient(#78909C 0.0% 36.4%, #FF9800 36.4% 69.3%, #2196F3 69.3% 100.0%)"></div><div class="pie-legend"><div class="legend-item"><span class="legend-dot" style="background:#78909C"></span><span class="legend-text">Non-Shopping Individual: <strong>167</strong> (36.4%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#FF9800"></span><span class="legend-text">Shopping Curation Channel: <strong>151</strong> (32.9%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#2196F3"></span><span class="legend-text">Shopping Person/Creator: <strong>141</strong> (30.7%)</span></div></div></div></div></div>
+<div><h3>Accounts by Type (Input)</h3><div style="display:flex;justify-content:center;"><div class="pie-wrapper"><div class="pie-chart" style="background:conic-gradient(#78909C 0.0% 91.1%, #2196F3 91.1% 98.6%, #FF9800 98.6% 100.0%)"></div><div class="pie-legend"><div class="legend-item"><span class="legend-dot" style="background:#78909C"></span><span class="legend-text">Non-Shopping Individual: <strong>3572</strong> (91.1%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#2196F3"></span><span class="legend-text">Shopping Person/Creator: <strong>294</strong> (7.5%)</span></div><div class="legend-item"><span class="legend-dot" style="background:#FF9800"></span><span class="legend-text">Shopping Curation Channel: <strong>54</strong> (1.4%)</span></div></div></div></div></div>
 </div>
 </div>
 </div>
@@ -12024,7 +12055,7 @@ tr:hover td { background:#FAFBFC; }
 </div>
 
 <div style="text-align:center;color:rgba(255,255,255,.6);padding:20px;font-size:.8em;order:99;">
-  Pipeline v2 Extraction Report &nbsp;|&nbsp; 2026-03-18 20:31
+  Pipeline v2 Extraction Report &nbsp;|&nbsp; 2026-03-19 13:54
 </div>
 </div>
 <script>
