@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOX Product Extraction Pipeline — Workflow</title>
+<style>
+  :root {
+    --blue:    #1a73e8;
+    --green:   #1e8e3e;
+    --purple:  #7627bb;
+    --orange:  #e37400;
+    --teal:    #007b83;
+    --brown:   #8b4513;
+    --gray:    #5f6368;
+    --bg:      #f8f9fa;
+    --card:    #ffffff;
+    --border:  #dadce0;
+    --code-bg: #1e1e2e;
+    --code-fg: #cdd6f4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Google Sans", "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: #202124;
+    line-height: 1.65;
+  }
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: #fff;
+    padding: 48px 60px 40px;
+  }
+  .header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
+  .header p  { margin-top: 8px; opacity: .85; font-size: 1.05rem; max-width: 720px; }
+  .header .meta { margin-top: 20px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-item { background: rgba(255,255,255,.15); border-radius: 6px; padding: 6px 14px; font-size: .85rem; }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+
+  /* ── Section titles ── */
+  h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 20px; display: flex; align-items: center; gap: 10px; }
+  h2::before { content: ""; display: inline-block; width: 4px; height: 1.4rem; border-radius: 2px; background: var(--blue); }
+
+  /* ── Mermaid flow ── */
+  .mermaid { display: flex; justify-content: center; margin-bottom: 8px; }
+
+  /* ── Stage cards ── */
+  .stage-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .stage-header:hover { background: #f1f3f4; }
+  .stage-badge {
+    border-radius: 8px;
+    padding: 6px 14px;
+    color: #fff;
+    font-weight: 700;
+    font-size: .9rem;
+    flex-shrink: 0;
+  }
+  .stage-title { font-size: 1.1rem; font-weight: 700; flex: 1; }
+  .stage-subtitle { color: var(--gray); font-size: .87rem; }
+  .llm-badge {
+    background: #fce8e6;
+    color: #c5221f;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: .75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .no-llm-badge {
+    background: #e8f5e9;
+    color: #1e8e3e;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: .75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .chevron { color: var(--gray); font-size: 1.2rem; transition: transform .2s; flex-shrink: 0; }
+  .collapsed .chevron { transform: rotate(-90deg); }
+
+  .stage-body { padding: 0 24px 24px; }
+  .stage-body.hidden { display: none; }
+
+  /* ── Info grid ── */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 700px) { .info-grid { grid-template-columns: 1fr; } }
+  .info-box { background: #f8f9fa; border-radius: 8px; padding: 14px 18px; border: 1px solid var(--border); }
+  .info-box h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--gray); margin-bottom: 8px; }
+  .info-box ul { padding-left: 16px; font-size: .88rem; }
+  .info-box ul li { margin-bottom: 4px; }
+  .info-box p { font-size: .88rem; }
+
+  /* ── Prompt blocks ── */
+  .prompt-section { margin-top: 16px; }
+  .prompt-section h4 { font-size: .9rem; font-weight: 700; margin-bottom: 8px; color: #202124; }
+  .prompt-role {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 4px 10px;
+    border-radius: 4px 4px 0 0;
+    display: inline-block;
+    margin-top: 12px;
+  }
+  .role-system { background: #4a148c; color: #fff; }
+  .role-user   { background: #0d47a1; color: #fff; }
+  pre.prompt {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+    font-size: .8rem;
+    line-height: 1.6;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 4px;
+  }
+  .role-system + pre.prompt { border-radius: 0 8px 8px 8px; }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 32px; color: var(--gray); font-size: .82rem; border-top: 1px solid var(--border); margin-top: 20px; }
+
+  /* ── Stage badge colors ── */
+  .c-s1  { background: #546e7a; }
+  .c-s2  { background: #4a90d9; }
+  .c-s31 { background: #7b68ee; }
+  .c-s32 { background: #e67e22; }
+  .c-s33 { background: #27ae60; }
+  .c-s4  { background: #e74c3c; }
+  .c-s5  { background: #8e6b3e; }
+  .c-s6  { background: #95a5a6; }
+  .c-s7  { background: #00897b; }
+  .c-s8  { background: #5c6bc0; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: { fontSize: '14px', fontFamily: 'Segoe UI, sans-serif' },
+    flowchart: { curve: 'basis', padding: 20, nodeSpacing: 30, rankSpacing: 55 }
+  });
+</script>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<!-- ══ Header ══ -->
+<div class="header">
+  <h1>🛒 NOX Product Extraction Pipeline</h1>
+  <p>End-to-end pipeline for discovering shoppable products from social media influencer content — from influencer discovery to verified, catalog-matched product entries with analytics reports.</p>
+  <div class="meta">
+    <span class="meta-item">⚙️ 8 Stages</span>
+    <span class="meta-item">🤖 4 LLM Calls</span>
+    <span class="meta-item">🔍 SerpApi + NOX API</span>
+    <span class="meta-item">🏪 Azure OpenAI (gpt-5.1)</span>
+    <span class="meta-item">📊 SCOPE Catalog Join</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══ Pipeline Flow ══ -->
+  <h2>Pipeline Flow</h2>
+  <div class="mermaid">
+flowchart TD
+    NOX_DB[("🌐 NoxInfluencer
+Platform influencer database")]
+
+    subgraph SG1 [" "]
+        direction TB
+        S1["⬛ S1 — Influencer Discovery
+NOX API → query influencers → filter"]
+        S1_RAW["📦 raw influencer profiles\n(all candidates)"]
+        S1_FILT["🔽 quality &amp; relevance filter"]
+        S1_OUT["📋 all_influencers_non_official_merged.tsv"]
+    end
+
+    subgraph SG2 [" "]
+        direction TB
+        S2["🔵 S2 — Fetch
+NOX API → videos per influencer"]
+        S2_V["📄 all_videos.tsv"]
+        S2_RAW["📦 all_raw_nox.jsonl\n(full API response)"]
+        S2_ERR["⚠️ errors.tsv"]
+    end
+
+    subgraph SG3 ["S3 — Product Extraction"]
+        direction TB
+        S31["🟣 S3.1 — Extract
+LLM product extraction from title / description"]
+        S31_PROD["✅ all_products.tsv\nbrand + productName + category + evidence"]
+        S31_FAIL["🗑️ all_failed.tsv\nfailType: no_product / non_english / lifestyle_only / ..."]
+
+        S32["🟠 S3.2 — Dedup
+String similarity + LLM deduplication"]
+        S32_OUT["📄 all_products.tsv"]
+        S32_REM["🗑️ all_dedup_removed.tsv"]
+
+        S33["🟢 S3.3 — L1 Classify
+LLM L1 category tagging + exclude filter"]
+        S33_OUT["📄 all_l1.tsv\n(kept categories only)"]
+        S33_EXCL["🚫 all_l1_excluded.tsv"]
+        S33_CFG[("⚙️ l1_tags.tsv\nl1_exclude_tags.txt")]
+
+        S31 --> S31_PROD
+        S31 -.-> S31_FAIL
+        S31_PROD ==> S32
+        S32 --> S32_OUT
+        S32 -.-> S32_REM
+        S32_OUT ==> S33
+        S33_CFG -.-> S33
+        S33 --> S33_OUT
+        S33 -.-> S33_EXCL
+    end
+
+    subgraph SG4 [" "]
+        direction TB
+        S4["🔴 S4 — SERP
+Google Shopping search + LLM verification"]
+        S4_MATCH["✅ all_serp_matched.tsv"]
+        S4_MIS["❌ all_serp_mismatch.tsv"]
+        S4_NO["❓ all_no_serp.tsv"]
+    end
+
+    subgraph SG5 [" "]
+        direction TB
+        S5["🟤 S5 — Seller Filter
+Filter by seller authority level"]
+        S5_OK["✅ all_seller_ok.tsv\n(high / average / unknown)"]
+        S5_FILT["🚫 all_seller_filtered.tsv\n(spam / low removed)"]
+        S5_CFG[("⚙️ seller_level_authority.tsv")]
+    end
+
+    subgraph SG6 [" "]
+        direction TB
+        S6["⬜ S6 — Merge
+Copy final output for downstream"]
+        S6_OUT["🏁 merge_all.tsv"]
+    end
+
+    subgraph SG7 [" "]
+        direction TB
+        S7["🟦 S7 — SCOPE Match
+Catalog join via URL normalization"]
+        S7_OUT["📦 matchedDetails.tsv\nGOID + price + seller + image"]
+        S7_CFG[("🗃️ OfferFeedDaily.ss\nCatalog snapshot")]
+    end
+
+    subgraph SG8 [" "]
+        direction TB
+        S8["🟪 S8 — Report &amp; Export
+HTML analytics + TSV export"]
+        S8_RPT["📊 report_vertical_{MMDD}.html"]
+        S8_EXP["📋 export_vertical_{MMDD}.tsv"]
+        S8_NIC["📋 export_vertical_{MMDD}_not_in_catalog.tsv"]
+    end
+
+    NOX_DB ==> S1
+    S1 --> S1_RAW
+    S1_RAW --> S1_FILT
+    S1_FILT --> S1_OUT
+
+    S1_OUT ==> S2
+    S2 --> S2_V
+    S2 --> S2_RAW
+    S2 -.-> S2_ERR
+
+    S2_V ==> S31
+
+    S33_OUT ==> S4
+    S4 --> S4_MATCH
+    S4 -.-> S4_MIS
+    S4 -.-> S4_NO
+
+    S4_MATCH ==> S5
+    S5_CFG -.-> S5
+    S5 --> S5_OK
+    S5 -.-> S5_FILT
+
+    S5_OK ==> S6
+    S6 --> S6_OUT
+
+    S6_OUT ==> S7
+    S7_CFG -.-> S7
+    S7 --> S7_OUT
+
+    S6_OUT ==> S8
+    S7_OUT ==> S8
+    S8 --> S8_RPT
+    S8 --> S8_EXP
+    S8 -.-> S8_NIC
+
+    style S1 fill:#546e7a,color:#fff,stroke:#37474f,stroke-width:2px
+    style S2 fill:#4a90d9,color:#fff,stroke:#2c6fad,stroke-width:2px
+    style S31 fill:#7b68ee,color:#fff,stroke:#5a48cc,stroke-width:2px
+    style S32 fill:#e67e22,color:#fff,stroke:#c56a18,stroke-width:2px
+    style S33 fill:#27ae60,color:#fff,stroke:#1e8449,stroke-width:2px
+    style S4 fill:#e74c3c,color:#fff,stroke:#c0392b,stroke-width:2px
+    style S5 fill:#8e6b3e,color:#fff,stroke:#6d4c2d,stroke-width:2px
+    style S6 fill:#95a5a6,color:#fff,stroke:#7f8c8d,stroke-width:2px
+    style S7 fill:#00897b,color:#fff,stroke:#00695c,stroke-width:2px
+    style S8 fill:#5c6bc0,color:#fff,stroke:#3949ab,stroke-width:2px
+
+    style S1_OUT fill:#eceff1,color:#37474f,stroke:#546e7a,stroke-width:2px
+    style S31_PROD fill:#d4efdf,color:#1e6b3a,stroke:#27ae60
+    style S31_FAIL fill:#f5e6d3,color:#6d4c2d,stroke:#8e6b3e
+    style S33_EXCL fill:#fadbd8,color:#922b21,stroke:#e74c3c
+    style S4_MATCH fill:#d4efdf,color:#1e6b3a,stroke:#27ae60
+    style S4_MIS fill:#f9ebea,color:#922b21,stroke:#e74c3c
+    style S4_NO fill:#fef9e7,color:#7d6608,stroke:#f1c40f
+    style S5_FILT fill:#f5e6d3,color:#6d4c2d,stroke:#8e6b3e
+    style S6_OUT fill:#d6eaf8,color:#1a5276,stroke:#2980b9,stroke-width:2px
+    style S7_OUT fill:#e0f2f1,color:#004d40,stroke:#00897b,stroke-width:2px
+    style S8_RPT fill:#e8eaf6,color:#283593,stroke:#5c6bc0,stroke-width:2px
+    style S8_EXP fill:#e8eaf6,color:#283593,stroke:#5c6bc0
+    style S8_NIC fill:#f3e5f5,color:#6a1b9a,stroke:#ab47bc
+
+    style SG1 fill:none,stroke:#546e7a,stroke-width:1px,stroke-dasharray:5
+    style SG2 fill:none,stroke:#4a90d9,stroke-width:1px,stroke-dasharray:5
+    style SG3 fill:#f5f0ff,stroke:#7b68ee,stroke-width:2px
+    style SG4 fill:none,stroke:#e74c3c,stroke-width:1px,stroke-dasharray:5
+    style SG5 fill:none,stroke:#8e6b3e,stroke-width:1px,stroke-dasharray:5
+    style SG6 fill:none,stroke:#95a5a6,stroke-width:1px,stroke-dasharray:5
+    style SG7 fill:none,stroke:#00897b,stroke-width:1px,stroke-dasharray:5
+    style SG8 fill:none,stroke:#5c6bc0,stroke-width:1px,stroke-dasharray:5
+  </div>
+
+  <!-- ══ Stage Cards ══ -->
+  <h2>Stage Details &amp; LLM Prompts</h2>
+
+  <!-- S1 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s1">S1</span>
+      <div style="flex:1">
+        <div class="stage-title">Influencer Discovery</div>
+        <div class="stage-subtitle">Query NoxInfluencer API for influencer profiles, filter by quality &amp; relevance, produce curated influencer list</div>
+      </div>
+      <span class="no-llm-badge">No LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Data Source</h4>
+          <ul>
+            <li>NoxInfluencer platform database</li>
+            <li>Query by category / region / follower range</li>
+            <li>Platforms: YouTube, TikTok, Instagram</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Filtering Criteria</h4>
+          <ul>
+            <li>Exclude official brand accounts (non-influencer)</li>
+            <li>Minimum follower / engagement threshold</li>
+            <li>Content-type relevance (shopping / review / haul)</li>
+            <li>Deduplicate across platforms</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Process</h4>
+          <ul>
+            <li>① Query NOX API → raw influencer profiles</li>
+            <li>② Apply quality &amp; relevance filters</li>
+            <li>③ Merge across platforms → deduplicated list</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>config/all_influencers_non_official_merged.tsv</code></li>
+            <li>Columns: inf_id, alias, platform, channelId, followers, social_link, ...</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s2">S2</span>
+      <div style="flex:1">
+        <div class="stage-title">NOX Video Fetch</div>
+        <div class="stage-subtitle">Pull recent videos from influencer accounts via NOX Influencer API</div>
+      </div>
+      <span class="no-llm-badge">No LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul>
+            <li>Influencer list TSV from S1</li>
+            <li>Date range (daily, default today)</li>
+            <li><code>--limit N</code> influencers (round-robin across platforms)</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s01_fetch/all_videos.tsv</code> — structured video rows</li>
+            <li><code>s01_fetch/all_raw_nox.jsonl</code> — full raw API responses</li>
+            <li><code>s01_fetch/errors.tsv</code> — API failures</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Platforms</h4>
+          <ul>
+            <li>YouTube</li>
+            <li>TikTok</li>
+            <li>Instagram</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Columns Output</h4>
+          <p style="font-size:.82rem;font-family:monospace">inf_id, alias, platform, channelId, videoId, url, publishTime, views, likes, comments, tags, title, description</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3.1 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s31">S3.1</span>
+      <div style="flex:1">
+        <div class="stage-title">LLM Product Extraction</div>
+        <div class="stage-subtitle">Identify specific shoppable products from video title + description</div>
+      </div>
+      <span class="llm-badge">🤖 LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul>
+            <li><code>s01_fetch/all_videos.tsv</code></li>
+            <li>Video title + description (combined, max 800 chars)</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s02_extract/all_products.tsv</code> — one row per extracted product</li>
+            <li><code>s02_extract/all_failed.tsv</code> — one row per failed video</li>
+            <li><code>failType</code> values include:<br>
+              <code>no_product</code> / <code>non_english</code> / <code>lifestyle_only</code> /<br>
+              <code>music_dance</code> / <code>no_spec_prod</code> / <code>off_topic</code> / etc.</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Failure Handling</h4>
+          <ul>
+            <li><code>no_product</code>: nothing mentioned</li>
+            <li><code>non_english</code>: non-English content → skip</li>
+            <li><code>lifestyle_only</code>, <code>music_dance</code>, etc.</li>
+            <li>Max 3 retries per video, 30s timeout</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Design Principles</h4>
+          <ul>
+            <li>Never guess product names — must be in text</li>
+            <li>Brand must be @mentioned or explicit</li>
+            <li>Single-word names get type appended for searchability</li>
+            <li>Global exclusion list rejects off-topic products</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="prompt-section">
+        <h4>LLM Prompts (Azure OpenAI)</h4>
+        <span class="prompt-role role-system">System</span>
+        <pre class="prompt">You are a strict product extraction expert. Output only valid JSON. Never guess product names.</pre>
+
+        <span class="prompt-role role-user">User</span>
+        <pre class="prompt">You are a strict product extraction expert. Extract ONLY products whose SPECIFIC OFFICIAL NAME appears in the text below.
+
+Current date: {current_date}
+Content:
+{content}
+{category_context}
+{global_exclusions}
+
+STRICT RULES:
+
+1. PRODUCT NAME must UNIQUELY identify ONE specific purchasable product, not a category.
+   - KEY TEST: if you search "brand + name" on the brand's website, would it return ONE specific product page
+     with a price? If yes, extract. If it returns a category page listing multiple products, do NOT extract.
+   - WRONG (category descriptions): "foundation", "mascara", "blush", "primer"
+   - RIGHT (unique product names): "Soft Pinch Liquid Blush", "Shape Tape Concealer", "Airwrap"
+
+2. The product name MUST appear explicitly in the content text.
+   - Do NOT guess or complete product names from your knowledge.
+
+3. The brand MUST be identifiable from the text (via @mention, explicit name, or hashtag).
+   - Retailers (Ulta, Sephora, Amazon, Target) are NOT brands.
+   - Use the OFFICIAL brand name.
+
+4. When in doubt, do NOT extract. Better to miss than to extract wrong.
+
+5. For each product, provide "evidence": copy the EXACT substring from the original text that contains the product name.
+
+6. For each product, judge its RELEVANCE for homepage display:
+   - "on_topic": product is a real, purchasable consumer product suitable for a shopping homepage
+   - "off_topic": product falls under GLOBAL EXCLUSIONS (vehicles, movies, toys, swimwear, etc.)
+   - "borderline": product is unusual but still a legitimate purchasable item
+   Only extract products that are "on_topic" or "borderline". Do NOT extract "off_topic" products.
+
+7. PRODUCT NAME COMPLETENESS: If the product name is only a single word (e.g. "Rapunzel", "Elixir"),
+   append its product type/category to make it a searchable name.
+   - WRONG: name="Rapunzel", category="fragrance"  → searching "Disney Rapunzel" finds a movie character
+   - RIGHT:  name="Rapunzel Fragrance", category="fragrance"
+
+8. LANGUAGE CHECK (MUST be done FIRST):
+   If the primary language is NOT English → return failType="non_english" immediately.
+
+Output JSON only:
+{
+  "products": [
+    {
+      "name": "official product name from text",
+      "brand": "brand from text",
+      "category": "product category",
+      "evidence": "exact quote from text",
+      "relevance": "on_topic",
+      "relevance_reason": "brief reason"
+    }
+  ],
+  "otherInfo": "",
+  "failType": ""
+}
+
+failType options: no_product | lifestyle_only | music_dance | empty_content | no_spec_prod
+                  non_commercial | restaurant_food | off_topic | secondhand_outdated | non_english</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3.2 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s32">S3.2</span>
+      <div style="flex:1">
+        <div class="stage-title">Deduplication</div>
+        <div class="stage-subtitle">Two-pass dedup: fast string similarity then LLM semantic merge</div>
+      </div>
+      <span class="llm-badge">🤖 LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Pass 1 — String Dedup</h4>
+          <ul>
+            <li>Normalise: lowercase, strip punctuation</li>
+            <li>Group by exact normalised (brand, productName)</li>
+            <li>Fast, no API cost</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Pass 2 — LLM Dedup</h4>
+          <ul>
+            <li>Category-aware merging rules</li>
+            <li>Beauty: different shades = DIFFERENT</li>
+            <li>Electronics: different colors = SAME</li>
+            <li>Apparel: different sizes = SAME</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul><li><code>s02_extract/all_products.tsv</code></li></ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s03_dedup/all_products.tsv</code> — unique canonical products</li>
+            <li><code>s03_dedup/all_dedup_removed.tsv</code> — merged duplicates log</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="prompt-section">
+        <h4>LLM Prompts (Azure OpenAI)</h4>
+        <span class="prompt-role role-system">System</span>
+        <pre class="prompt">You are a specialized Product Data Engineer. Your task is to deduplicate product lists based on specific category-level business rules. Output only valid JSON.</pre>
+
+        <span class="prompt-role role-user">User</span>
+        <pre class="prompt">Below is a list of (brand, productName) pairs. Your goal is to identify DUPLICATE items and merge them according to strict category definitions.
+
+### Category Definition &amp; Merging Rules:
+
+1. **Beauty &amp; Personal Care**:
+   - DIFFERENT: Different colors/shades are DIFFERENT products ("Dior 999 Red" vs "Dior 100 Nude").
+   - SAME: Only merge if it's the exact same shade with different naming ("Dior 999" vs "Dior Rouge 999").
+
+2. **3C &amp; Electronics**:
+   - SAME: Different colors are the SAME product ("iPhone 17 Orange" + "iPhone 17 Blue" → "iPhone 17").
+   - DIFFERENT: Different models or storage capacities are DIFFERENT.
+
+3. **Apparel &amp; Accessories**:
+   - SAME: Different sizes are the SAME product ("Nike Tee Size L" + "Nike Tee Size S" → "Nike Tee").
+   - DIFFERENT: Different colors or styles are DIFFERENT.
+
+4. **Home &amp; Household**:
+   - DIFFERENT: Different scents/fragrances are DIFFERENT products.
+
+5. **Outdoor &amp; Sports**:
+   - DIFFERENT: Different colors of Jackets/Apparel are DIFFERENT products.
+   - DIFFERENT: Different materials for Tents, different temperature ratings for Sleeping Bags.
+
+### General Cleaning Rules:
+- Merge variations in casing, abbreviations, or typos ("MAC Eye Shadow" = "MAC Eyeshadow").
+- Remove fluff words like "Best Seller", "New", "Official".
+
+Products to Process:
+{product_list}
+
+Output Format:
+{
+  "unique": [
+    {"brand": "canonical brand", "productName": "canonical product name"}
+  ],
+  "duplicates": [
+    {
+      "kept": {"brand": "...", "productName": "..."},
+      "removed": [{"brand": "...", "productName": "..."}]
+    }
+  ]
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3.3 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s33">S3.3</span>
+      <div style="flex:1">
+        <div class="stage-title">L1 Category Classification &amp; Filter</div>
+        <div class="stage-subtitle">Assign standardised L1 taxonomy tag; drop excluded categories before SERP</div>
+      </div>
+      <span class="llm-badge">🤖 LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Purpose</h4>
+          <ul>
+            <li>Classify each product into one of 31 standard L1 categories</li>
+            <li>Filter out 20 excluded categories <strong>before</strong> SERP — saves API quota</li>
+            <li>Outputs <code>LLM_L1Category</code> column for downstream use</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>11 Kept Categories</h4>
+          <ul style="font-size:.82rem">
+            <li>Home Furnishings, Kitchen &amp; Housewares</li>
+            <li>Electronics, Computing, Cameras &amp; Optics</li>
+            <li>Sports &amp; Outdoors, Lawn &amp; Garden</li>
+            <li>Shoes, Beauty &amp; Fragrance</li>
+            <li>Toys, Car &amp; Garage</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul>
+            <li><code>s03_dedup/all_products.tsv</code></li>
+            <li><code>config/l1_tags.tsv</code> — 31 L1 label names</li>
+            <li><code>config/l1_exclude_tags.txt</code> — 20 excluded labels</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s04_l1/all_l1.tsv</code> — kept rows + <code>LLM_L1Category</code></li>
+            <li><code>s04_l1/all_l1_excluded.tsv</code> — excluded rows for review</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="prompt-section">
+        <h4>LLM Prompts — Batch Classification (Azure OpenAI)</h4>
+        <span class="prompt-role role-system">System</span>
+        <pre class="prompt">You output valid JSON only.</pre>
+
+        <span class="prompt-role role-user">User</span>
+        <pre class="prompt">You are a strict product taxonomy classifier.
+For each item below, select exactly one L1 category from the list.
+If unsure, choose Miscellaneous.
+
+L1 List:
+- Baby &amp; Nursery
+- Beauty &amp; Fragrance
+- Books &amp; Magazines
+- Cameras &amp; Optics
+- Car &amp; Garage
+- Clothing
+- Collectibles &amp; Memorabilia
+- Computing
+- Electronics
+- Flowers
+- Gourmet Food &amp; Chocolate
+- Health &amp; Wellness
+- Home Furnishings
+- Jewelry &amp; Watches
+- Kitchen &amp; Housewares
+- Lawn &amp; Garden
+- Miscellaneous
+- Movies
+- Music
+- Musical Instruments
+- Office Products
+- Pet Supplies
+- Shoes
+- Software
+- Sports &amp; Outdoors
+- Tools &amp; Hardware
+- Toys
+- Travel
+- Vehicles
+- Video Games
+- Arts &amp; Crafts
+
+Items:
+{item_block}
+
+Output JSON only:
+{
+  "results": [
+    {"index": 1, "l1": "&lt;one from list&gt;"}
+  ]
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s4">S4</span>
+      <div style="flex:1">
+        <div class="stage-title">SERP Search &amp; LLM Verification</div>
+        <div class="stage-subtitle">Google Shopping search via SerpApi + LLM validates each result is the correct product</div>
+      </div>
+      <span class="llm-badge">🤖 LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Search Phase (SerpApi)</h4>
+          <ul>
+            <li>Query: <code>"brand productName"</code> on Google Shopping</li>
+            <li>Up to 3 results per product (<code>SERP_TOP_N=3</code>)</li>
+            <li>20 parallel workers</li>
+            <li>Fallback: Immersive Shopping results</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Verify Phase (LLM)</h4>
+          <ul>
+            <li>LLM checks each SERP result vs extracted product</li>
+            <li>Must match: brand, product type, specific item</li>
+            <li>Color/size variants OK; different categories → NO</li>
+            <li>Accessories for the product → NO</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul><li><code>s04_l1/all_l1.tsv</code></li></ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s05_serp/all_serp_matched.tsv</code> — verified matches</li>
+            <li><code>s05_serp/all_serp_mismatch.tsv</code> — LLM-rejected</li>
+            <li><code>s05_serp/all_no_serp.tsv</code> — no Google results</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="prompt-section">
+        <h4>LLM Prompts — SERP Verification (Azure OpenAI)</h4>
+        <span class="prompt-role role-system">System</span>
+        <pre class="prompt">You are a strict product matching expert. You determine whether a search result refers to the SAME product the user is looking for.</pre>
+
+        <span class="prompt-role role-user">User</span>
+        <pre class="prompt">A product was extracted from a video:
+  Brand:    {brand}
+  Product:  {product}
+  Category: {category}
+
+Below are Google Shopping search results returned for this product.
+For EACH result, determine: is it the SAME product (same brand, same specific item, same category)?
+
+Search results:
+{results_block}
+
+RULES:
+1. "Same product" means it must be the same TYPE of item:
+   - "Disney Rapunzel Perfume" vs "Disney Rapunzel Doll"  → NO (perfume ≠ doll)
+   - "Nike Air Force 1" vs "Nike Air Force 1 '07"         → YES (same shoe, variant)
+   - "Dyson Airwrap" vs "Dyson V15 Detect"                → NO (different product)
+2. Brand must match (or be known sub-brand/parent-brand).
+3. Minor naming variations, color/size variants, bundles → YES.
+4. Clearly DIFFERENT category of product → NO.
+5. Accessories or cases → NO ("iPhone case" ≠ "iPhone").
+
+Output JSON only — one object per result:
+[
+  {"index": 1, "match": "yes", "reason": "same product, color variant"},
+  {"index": 2, "match": "no",  "reason": "this is a doll, not perfume"}
+]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s5">S5</span>
+      <div style="flex:1">
+        <div class="stage-title">Seller Authority Filter</div>
+        <div class="stage-subtitle">Remove products from spam/low-authority sellers using a 306K-entry domain authority table</div>
+      </div>
+      <span class="no-llm-badge">No LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Authority Levels</h4>
+          <ul>
+            <li>✅ <strong>high</strong> — major retailers (keep)</li>
+            <li>✅ <strong>average</strong> — established stores (keep)</li>
+            <li>✅ <strong>unknown</strong> — not in table (keep, no signal)</li>
+            <li>❌ <strong>low</strong> — low-quality stores (filter)</li>
+            <li>❌ <strong>spam</strong> — known spam domains (filter)</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Lookup Logic</h4>
+          <ul>
+            <li>Extract domain from <code>search_source</code></li>
+            <li>Lookup in <code>config/seller_level_authority.tsv</code></li>
+            <li>306,868 entries (Region + Domain + Level)</li>
+            <li>Adds <code>seller_authority</code> column to output</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul><li><code>s05_serp/all_serp_matched.tsv</code></li></ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s06_seller/all_seller_ok.tsv</code></li>
+            <li><code>s06_seller/all_seller_filtered.tsv</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s6">S6</span>
+      <div style="flex:1">
+        <div class="stage-title">Merge &amp; Final Output</div>
+        <div class="stage-subtitle">Copy to canonical output path for downstream consumption</div>
+      </div>
+      <span class="no-llm-badge">No LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul><li><code>s06_seller/all_seller_ok.tsv</code></li></ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s07_merge/merge_all.tsv</code> — final product catalog rows</li>
+          </ul>
+        </div>
+        <div class="info-box" style="grid-column: span 2">
+          <h4>Final Output Columns</h4>
+          <p style="font-size:.82rem;font-family:monospace;line-height:2">
+            platform · alias · videoUrl · publishTime · brand · productName ·
+            <strong>category</strong> (LLM S3.1) · <strong>LLM_L1Category</strong> (LLM S3.3) ·
+            evidence · title · search_rank · search_title · search_snippet ·
+            search_source · search_link · search_price · serp_match · serp_match_reason ·
+            serp_status · seller_authority
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s7">S7</span>
+      <div style="flex:1">
+        <div class="stage-title">SCOPE Catalog Match</div>
+        <div class="stage-subtitle">Join pipeline products with Bing Shopping catalog via URL normalization on Cosmos</div>
+      </div>
+      <span class="no-llm-badge">No LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Purpose</h4>
+          <ul>
+            <li>Match <code>search_link</code> URLs against live catalog offers</li>
+            <li>URL normalization via <code>UrlNormalizerv2</code> module</li>
+            <li>Join with <code>OfferFeedDaily.ss</code> on <code>NormalizedUrl</code></li>
+            <li>Retrieves GOID, price, seller, image, category mapping</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Execution Environment</h4>
+          <ul>
+            <li>Runs as a SCOPE job on Cosmos cluster</li>
+            <li>Script: <code>scopeScripts/influencerMatches.script</code></li>
+            <li>Input uploaded to Cosmos as <code>merge_all_{MMDD}.tsv</code></li>
+            <li>Output downloaded as <code>matchedDetails.tsv</code></li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul>
+            <li><code>s07_merge/merge_all.tsv</code> (uploaded to Cosmos)</li>
+            <li><code>OfferFeedDaily.ss</code> — daily catalog snapshot</li>
+            <li><code>CategoryMapping.csv</code> — LLMCatId → CategoryName</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s08_scope_matched/matchedDetails.tsv</code></li>
+          </ul>
+        </div>
+        <div class="info-box" style="grid-column: span 2">
+          <h4>Matched Detail Columns</h4>
+          <p style="font-size:.82rem;font-family:monospace;line-height:2">
+            NormSearchLink · GlobalOfferId · LLMCatId · Market · Title · Description ·
+            Brand · OfferPriceOriginal · OfferPriceAfterDeal · Gender · AgeGroup ·
+            Seller · ImageURL · OfferURL · ProviderId · CategoryName · LLM_L1Category
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="stage-card">
+    <div class="stage-header" onclick="toggle(this)">
+      <span class="stage-badge c-s8">S8</span>
+      <div style="flex:1">
+        <div class="stage-title">Report &amp; Export</div>
+        <div class="stage-subtitle">Generate interactive HTML analytics report and joined TSV data export</div>
+      </div>
+      <span class="no-llm-badge">No LLM</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="stage-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h4>Report Tool</h4>
+          <ul>
+            <li><code>tools/generate_report.py</code></li>
+            <li>12-section interactive HTML report</li>
+            <li>Funnel metrics, L1 distribution, fail-type breakdown</li>
+            <li>Brand/category analysis, per-product detail cards</li>
+            <li>Supports <code>--tag</code> for custom title</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Export Tool</h4>
+          <ul>
+            <li><code>tools/export_joined_data.py</code></li>
+            <li>Joins: merge_all + matchedDetails + influencer metadata</li>
+            <li>Output includes GOID, catalog price, seller, followers</li>
+            <li>Separate file for products not in catalog</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Input</h4>
+          <ul>
+            <li>All stage outputs (S2–S7)</li>
+            <li><code>s08_scope_matched/matchedDetails.tsv</code> (catalog data)</li>
+            <li>Input influencer list (for social metadata)</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Output</h4>
+          <ul>
+            <li><code>s09_report/report_vertical_{MMDD}.html</code> — analytics report</li>
+            <li><code>s09_report/export_vertical_{MMDD}.tsv</code> — joined export</li>
+            <li><code>s09_report/export_vertical_{MMDD}_not_in_catalog.tsv</code></li>
+          </ul>
+        </div>
+        <div class="info-box" style="grid-column: span 2">
+          <h4>Report Sections (12)</h4>
+          <p style="font-size:.88rem;line-height:2">
+          ① Pipeline Funnel &nbsp;
+          ② Source Posts by L1 &nbsp;
+          ③ Extracted Fail Types &nbsp;
+          ④ Product Brand Distribution &nbsp;
+          ⑤ Category Tree &nbsp;
+          ⑥ SERP Verification Stats &nbsp;
+          ⑦ Seller Authority Breakdown &nbsp;
+          ⑧ Catalog Match Stats &nbsp;
+          ⑨ Top Products by Mention &nbsp;
+          ⑩ Products Not in Catalog &nbsp;
+          ⑪ All Matched Products (cards) &nbsp;
+          ⑫ Data Quality Notes
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  NOX Product Extraction Pipeline · Social Commerce Team
+</footer>
+
+<script>
+function toggle(header) {
+  const card = header.parentElement;
+  const body = card.querySelector('.stage-body');
+  const isHidden = body.classList.contains('hidden');
+  body.classList.toggle('hidden', !isHidden);
+  header.classList.toggle('collapsed', !isHidden);
+}
+// Start all expanded
+document.querySelectorAll('.stage-body').forEach(b => b.classList.remove('hidden'));
+</script>
+</body>
+</html>
