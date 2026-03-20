@@ -43,6 +43,7 @@ EXCLUDE_FOLDERS = {"beauty", "ce_od", "design"}
 # --- 分类配置：顶级文件夹名 => (显示名, 图标) ---
 CATEGORIES = OrderedDict([
     ("HashTags",        ("HashTags",           "🏷️")),
+    ("InfluencersReports", ("Influencers Reports", "📈")),
     ("TopInfluencers",  ("Top Influencers",    "🌟")),
     ("design",          ("Design",             "📐")),
 ])
