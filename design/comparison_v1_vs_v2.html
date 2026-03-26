@@ -93,9 +93,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .bar-seg { display:flex; align-items:center; justify-content:center; color:white; font-size:.75em; font-weight:700; min-width:30px; }
 
 /* Catalog filter */
-.cat-filter-bar { display:flex; gap:6px; margin-bottom:14px; }
-.cat-filter-btn { padding:6px 16px; border-radius:16px; font-size:.8em; font-weight:600; cursor:pointer;
-  border:2px solid #DDD; background:#F8F9FA; color:#555; user-select:none; transition:all .15s; }
+.cat-filter-bar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+.cat-filter-btn { padding:4px 12px; border-radius:14px; font-size:.75em; font-weight:600; cursor:pointer;
+  border:2px solid #DDD; background:#F8F9FA; color:#555; user-select:none; transition:all .15s; white-space:nowrap; }
 .cat-filter-btn:hover { border-color:#999; }
 .cat-filter-btn.active { background:var(--active-bg, #1a237e); color:white; border-color:var(--active-border, #1a237e); }
 
@@ -149,7 +149,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 <div class="container">
 <div class="header">
 <h1>V1 vs V2 Prompt Extraction Comparison (Catalog Matched)</h1>
-<div class="sub">Generated 2026-03-26 10:26 · V1: Old Pipeline · V2: Improved Prompt with Confidence Scoring · Only catalog-matched products shown</div>
+<div class="sub">Generated 2026-03-26 10:28 · V1: Old Pipeline · V2: Improved Prompt with Confidence Scoring · Only catalog-matched products shown</div>
 </div>
 
 <div class="card" id="sec-overview">
