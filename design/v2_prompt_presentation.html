@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V2 Product Extraction Prompt</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --orange: #ea580c;
+    --orange-bg: #fff7ed;
+    --purple: #7c3aed;
+    --purple-bg: #ede9fe;
+    --yellow: #ca8a04;
+    --yellow-bg: #fefce8;
+    --teal: #0d9488;
+    --teal-bg: #ccfbf1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  /* Sidebar */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
+    background: #1e293b; color: #cbd5e1; overflow-y: auto; z-index: 100;
+    padding: 24px 0;
+  }
+  .sidebar h2 {
+    font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 0 20px 16px; color: #94a3b8; border-bottom: 1px solid #334155;
+    margin-bottom: 8px;
+  }
+  .sidebar a {
+    display: block; padding: 10px 20px; color: #cbd5e1; text-decoration: none;
+    font-size: 13px; transition: all .15s; border-left: 3px solid transparent;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    background: #334155; color: #f1f5f9; border-left-color: var(--accent);
+  }
+  .sidebar .score-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px;
+  }
+  /* Main */
+  .main { margin-left: 240px; padding: 40px 48px; max-width: 960px; }
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: white; padding: 48px 40px; border-radius: 16px; margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .header::after {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px; background: rgba(255,255,255,.06);
+    border-radius: 50%;
+  }
+  .header h1 { font-size: 28px; margin-bottom: 8px; }
+  .header p { font-size: 15px; opacity: .85; }
+  .header .badge {
+    display: inline-block; background: rgba(255,255,255,.18); padding: 4px 14px;
+    border-radius: 20px; font-size: 12px; margin-top: 12px; letter-spacing: .5px;
+  }
+  /* Section */
+  .section {
+    background: var(--card); border-radius: 12px; padding: 32px;
+    margin-bottom: 24px; border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .section h2 {
+    font-size: 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section h2 .icon {
+    width: 32px; height: 32px; border-radius: 8px; display: flex;
+    align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .section h3 { font-size: 15px; margin: 18px 0 8px; color: var(--text); }
+  /* Rule card */
+  .rule {
+    background: var(--bg); border-radius: 8px; padding: 16px 20px;
+    margin-bottom: 12px; border-left: 4px solid var(--accent);
+  }
+  .rule strong { color: var(--accent); }
+  .rule.warn { border-left-color: var(--orange); }
+  .rule.warn strong { color: var(--orange); }
+  .rule.critical { border-left-color: var(--red); background: var(--red-bg); }
+  .rule.critical strong { color: var(--red); }
+  .rule.green { border-left-color: var(--green); }
+  .rule.green strong { color: var(--green); }
+  /* Example */
+  .example {
+    background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px;
+    padding: 10px 14px; margin: 8px 0; font-size: 13px; color: var(--text-muted);
+  }
+  .example .good { color: var(--green); font-weight: 600; }
+  .example .bad { color: var(--red); font-weight: 600; }
+  /* Score bar */
+  .score-bar {
+    display: flex; align-items: stretch; margin-bottom: 16px;
+    border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+  }
+  .score-item {
+    padding: 14px 16px; flex: 1; text-align: center; border-right: 1px solid var(--border);
+    font-size: 12px; line-height: 1.4;
+  }
+  .score-item:last-child { border-right: none; }
+  .score-item .num { font-size: 24px; font-weight: 700; display: block; margin-bottom: 2px; }
+  .s9 { background: #166534; color: white; }
+  .s8 { background: #15803d; color: white; }
+  .s7 { background: #16a34a; color: white; }
+  .s6 { background: #65a30d; color: white; }
+  .s5 { background: #ca8a04; color: white; }
+  .s4 { background: #ea580c; color: white; }
+  .s3 { background: #dc2626; color: white; }
+  .s2 { background: #991b1b; color: white; }
+  .s1 { background: #7f1d1d; color: white; }
+  .s0 { background: #44403c; color: white; }
+  /* Score detail */
+  .score-detail {
+    display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;
+  }
+  .score-badge {
+    min-width: 44px; height: 44px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center; font-size: 20px;
+    font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .score-desc { font-size: 14px; }
+  .score-desc .label { font-weight: 600; margin-bottom: 2px; }
+  /* Threshold line */
+  .threshold {
+    border: 2px dashed var(--green); border-radius: 8px; padding: 12px 18px;
+    margin: 20px 0; background: var(--green-bg); text-align: center;
+    font-weight: 600; font-size: 15px; color: var(--green);
+  }
+  .threshold-below {
+    border: 2px dashed var(--red); border-radius: 8px; padding: 8px 18px;
+    margin: 4px 0 16px; background: var(--red-bg); text-align: center;
+    font-size: 13px; color: var(--red);
+  }
+  /* Tag */
+  .tag {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600; margin: 2px 4px 2px 0;
+  }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+  .tag-red { background: var(--red-bg); color: var(--red); }
+  .tag-orange { background: var(--orange-bg); color: var(--orange); }
+  .tag-purple { background: var(--purple-bg); color: var(--purple); }
+  .tag-blue { background: var(--accent-light); color: var(--accent); }
+  .tag-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  /* Key rules list */
+  .key-rules { list-style: none; padding: 0; }
+  .key-rules li {
+    padding: 8px 12px; margin-bottom: 6px; border-radius: 6px;
+    font-size: 13px; display: flex; align-items: baseline; gap: 8px;
+  }
+  .key-rules li .arrow { font-weight: 700; flex-shrink: 0; }
+  /* JSON block */
+  .json-block {
+    background: #1e293b; color: #e2e8f0; border-radius: 10px;
+    padding: 24px; font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px; overflow-x: auto; line-height: 1.7;
+  }
+  .json-block .key { color: #93c5fd; }
+  .json-block .str { color: #86efac; }
+  .json-block .num { color: #fcd34d; }
+  .json-block .comment { color: #64748b; font-style: italic; }
+  /* failType table */
+  .ft-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ft-table th { text-align: left; padding: 10px 12px; background: var(--bg); border-bottom: 2px solid var(--border); }
+  .ft-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .ft-table code {
+    background: var(--accent-light); color: var(--accent); padding: 2px 8px;
+    border-radius: 4px; font-size: 12px; font-weight: 600;
+  }
+  /* Flow diagram */
+  .flow {
+    display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+    justify-content: center; margin: 20px 0;
+  }
+  .flow-step {
+    background: var(--accent-light); color: var(--accent); padding: 10px 18px;
+    border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center;
+  }
+  .flow-arrow { font-size: 20px; color: var(--text-muted); margin: 0 6px; }
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+  }
+  @media print {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<nav class="sidebar">
+  <h2>Prompt V2</h2>
+  <a href="#overview">Overview</a>
+  <a href="#flow">Processing Flow</a>
+  <a href="#hard-rules">Hard Rules (1-6)</a>
+  <a href="#homepage-criteria">Homepage Criteria</a>
+  <a href="#scoring">Confidence Scoring</a>
+  <a href="#score-details">Score Definitions (0-9)</a>
+  <a href="#key-rules">Key Scoring Rules</a>
+  <a href="#spam">Spam / SEO Detection</a>
+  <a href="#critical">Critical Rule</a>
+  <a href="#output">Output Format</a>
+  <a href="#failtype">failType Options</a>
+</nav>
+
+<div class="main">
+
+<!-- Header -->
+<div class="header" id="overview">
+  <h1>Product Extraction Prompt V2</h1>
+  <p>Social Media Product Extraction with Confidence Scoring System</p>
+  <span class="badge">V2 EXPERIMENT &middot; NOX EXTRACTION PIPELINE</span>
+</div>
+
+<!-- Flow -->
+<div class="section" id="flow">
+  <h2><span class="icon" style="background:var(--purple-bg);color:var(--purple)">⟳</span> Processing Flow</h2>
+  <div class="flow">
+    <div class="flow-step">① Language Check</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">② Hard Rules Filter</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">③ Candidate Extraction</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">④ Confidence Scoring (0-9)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">⑤ Spam Detection</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">⑥ Threshold ≥ 5</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">⑦ Relevance + Homepage Gates</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:var(--green-bg);color:var(--green)">✓ Products</div>
+  </div>
+  <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:8px;">
+    All candidates are listed regardless of score. Only those with confidence ≥ 5, on_topic/borderline, and passing homepage criteria enter <strong>products</strong>.
+  </p>
+</div>
+
+<!-- Hard Rules -->
+<div class="section" id="hard-rules">
+  <h2><span class="icon" style="background:var(--red-bg);color:var(--red)">⚠</span> Hard Rules</h2>
+  <p style="margin-bottom:16px;color:var(--text-muted);">Must always be followed — violation of any rule invalidates the extraction.</p>
+
+  <div class="rule">
+    <strong>Rule 1 — Explicit Product Name</strong><br>
+    Product name MUST appear explicitly in the content text. Do NOT guess or complete names from knowledge.<br>
+    <div class="example">
+      <strong>Exception — Collaborations:</strong> If text describes a collab (e.g. "X has reunited with Y to put his spin on Z"), construct name as "CollabPartner x ProductLine"<br>
+      <span class="good">✓ "@lorenz.og … his latest spin on the Air Max 95" → name = "Lorenzo x Air Max 95"</span>
+    </div>
+    <div class="example">
+      <strong>Co-Brand Preservation:</strong> If text ties two brands to the SAME product, retain both entities.<br>
+      <span class="good">✓ "Crocs and LEGO … Brick Clog" → name = "LEGO x Crocs Brick Clog"</span><br>
+      <span class="bad">✗ Do NOT drop, replace, or normalize away an explicitly mentioned collaborator token.</span>
+    </div>
+  </div>
+
+  <div class="rule">
+    <strong>Rule 2 — Brand Identification</strong><br>
+    Brand MUST be identifiable from text (via @mention, explicit name, or hashtag). Use the OFFICIAL brand name.<br>
+    <div class="example">
+      <span class="bad">✗ Retailers (Ulta, Sephora, Amazon, Target) are NOT brands.</span>
+    </div>
+  </div>
+
+  <div class="rule">
+    <strong>Rule 3 — Evidence</strong><br>
+    For each product, provide <code>evidence</code>: copy the EXACT substring from the original text containing the product name.
+  </div>
+
+  <div class="rule">
+    <strong>Rule 4 — Relevance Judgment</strong><br>
+    Judge each product's relevance for homepage display:
+    <div style="margin-top:8px;">
+      <span class="tag tag-green">on_topic</span> Real, purchasable consumer product suitable for shopping homepage<br>
+      <span class="tag tag-red">off_topic</span> Falls under Global Exclusions, promotional freebies, subscription services (always off_topic)<br>
+      <span class="tag tag-orange">borderline</span> Unusual but still a legitimate purchasable item<br>
+    </div>
+    <div class="example">Only extract <strong>on_topic</strong> or <strong>borderline</strong>. Do NOT extract off_topic products.</div>
+  </div>
+
+  <div class="rule green">
+    <strong>Rule 5 — Product Name Completeness</strong><br>
+    Single-word product names must be appended with product type/category for searchability.<br>
+    <div class="example">
+      <span class="bad">✗ WRONG:</span> name="Rapunzel", category="fragrance" → searching "Disney Rapunzel" finds a movie character<br>
+      <span class="good">✓ RIGHT:</span> name="Rapunzel Fragrance", category="fragrance" → finds the product<br>
+      Multi-word names like "Soft Pinch Liquid Blush" are already specific — do NOT add category.
+    </div>
+  </div>
+
+  <div class="rule critical">
+    <strong>Rule 6 — Language Check (MUST be done FIRST)</strong><br>
+    Determine the PRIMARY language of the post. Ignore brand names, product model numbers, and hashtags.<br>
+    If NOT English → immediately return empty products with <code>failType="non_english"</code>.<br>
+    Do NOT extract products even if brand/product name appears to be English.
+  </div>
+</div>
+
+<!-- Homepage Criteria -->
+<div class="section" id="homepage-criteria">
+  <h2><span class="icon" style="background:var(--teal-bg);color:var(--teal)">✓</span> Homepage Inclusion Criteria</h2>
+  <p style="margin-bottom:16px;color:var(--text-muted);">ALL three criteria must be satisfied. If any fails, do NOT include in products.</p>
+
+  <div class="rule green">
+    <strong>1) Purchasable</strong><br>
+    The item is a real consumer product/service that can be obtained independently.
+  </div>
+  <div class="rule green">
+    <strong>2) Searchable</strong><br>
+    The text provides enough identity to search it (at least brand + product name/type).
+  </div>
+  <div class="rule green">
+    <strong>3) Primary Focus</strong><br>
+    The product is a main subject of the post (review/recommendation/demo), not incidental tags.
+  </div>
+
+  <div class="example">
+    Campaign/engagement slogans without concrete product evidence (e.g. #JoinTeamX, #XChallenge, #Giveaway) → cap at confidence <strong>2</strong>.
+  </div>
+</div>
+
+<!-- Scoring Overview -->
+<div class="section" id="scoring">
+  <h2><span class="icon" style="background:var(--yellow-bg);color:var(--yellow)">★</span> Confidence Scoring System</h2>
+
+  <p style="margin-bottom:12px;">
+    List ALL product-like mentions as candidates. The confidence score (0-9) determines <strong>how specific</strong> the product identification is — replacing any binary yes/no extraction rule.
+  </p>
+
+  <div class="rule">
+    <strong>Scoring Principles:</strong>
+    <ul style="margin:8px 0 0 20px;font-size:14px;">
+      <li>Score based on how clearly the <strong>text</strong> identifies a product — NOT on whether you recognize the product.</li>
+      <li>You cannot search the web. Do NOT penalize unfamiliarity.</li>
+      <li>Trust the text's signals: hashtag as name, brand handle + product term, "must have" language.</li>
+      <li>If uncertain between adjacent scores, choose the <strong>LOWER</strong> score.</li>
+    </ul>
+  </div>
+
+  <div class="score-bar" style="margin-top:20px;">
+    <div class="score-item s9"><span class="num">9</span>Full Variant</div>
+    <div class="score-item s8"><span class="num">8</span>Specific</div>
+    <div class="score-item s7"><span class="num">7</span>Model/Collab</div>
+    <div class="score-item s6"><span class="num">6</span>Series/Line</div>
+    <div class="score-item s5"><span class="num">5</span>Brand+Type</div>
+    <div class="score-item s4"><span class="num">4</span>Collection</div>
+    <div class="score-item s3"><span class="num">3</span>Weak</div>
+    <div class="score-item s2"><span class="num">2</span>Very Weak</div>
+    <div class="score-item s1"><span class="num">1</span>Uncertain</div>
+    <div class="score-item s0"><span class="num">0</span>Not Product</div>
+  </div>
+
+  <div class="threshold">▲ Extraction Threshold: confidence ≥ 5 → enters "products"</div>
+  <div class="threshold-below">▼ confidence &lt; 5 → candidates only, not extracted</div>
+</div>
+
+<!-- Score Details -->
+<div class="section" id="score-details">
+  <h2><span class="icon" style="background:var(--yellow-bg);color:var(--yellow)">📊</span> Score Definitions (0-9)</h2>
+
+  <div class="score-detail">
+    <div class="score-badge s9">9</div>
+    <div class="score-desc">
+      <div class="label">Full Variant — Specific name + colorway/edition/variant + brand</div>
+      e.g. "Air Jordan 1 High Alaska", "Soft Pinch Liquid Blush in Joy"
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s8">8</div>
+    <div class="score-desc">
+      <div class="label">Clearly Specific & Searchable — Brand + distinct product name, missing variant detail</div>
+      Brand + distinct product name that reads near-unique in context; specific collab/product name directly searchable
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s7">7</div>
+    <div class="score-desc">
+      <div class="label">Specific with Minor Ambiguity — Model/version/collab/distinct name</div>
+      <ul style="margin:4px 0 0 16px;font-size:13px;">
+        <li>Model/version numbers: "EP-133 sampler", "991v1", "990v4"</li>
+        <li>Collab version: "Lorenzo x Air Max 95", "Travis Scott x Air Jordan 1"</li>
+        <li>Co-branded: "LEGO x Crocs Brick Clog" (both entities explicit)</li>
+        <li>Hashtag as product name: "#AutoScooper" (not campaign slogans)</li>
+        <li>Single-product review/recommendation post with identifiable name + brand</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s6">6</div>
+    <div class="score-desc">
+      <div class="label">Product Line/Series — Named range without version; narrow type with endorsement</div>
+      <ul style="margin:4px 0 0 16px;font-size:13px;">
+        <li>Product series: "Air Max 95", "Air Max 90", "KERATIME" (series numbers 95/90/97 are NOT model numbers)</li>
+        <li>Collab product without collab name captured → stays at 6</li>
+        <li>Brand + narrow product type as main subject with strong endorsement</li>
+      </ul>
+      <div class="example">
+        <span class="good">✓ Qualifies for 6:</span> "cushion foundation from @skintific" (narrow type, specific review)<br>
+        <span class="bad">✗ Does NOT qualify:</span> "Nike sneakers" (too broad) → stays at 5
+      </div>
+    </div>
+  </div>
+
+  <div style="border:2px solid var(--green);border-radius:8px;padding:4px 16px;margin:8px 0 16px;background:var(--green-bg);text-align:center;font-weight:600;color:var(--green);font-size:14px;">
+    ── ✂ Extraction Threshold (≥ 5) ──
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s5">5</div>
+    <div class="score-desc">
+      <div class="label">Brand + Single Category — Broad but usable product type</div>
+      e.g. "Nike sneakers" (single category), "Adidas hoodie" (single category)
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s4">4</div>
+    <div class="score-desc">
+      <div class="label">Mixed Collection — Brand + multi-category bucket</div>
+      e.g. "Nike new arrival", "Adidas spring collection", "merch", "capsule", "drop", "kit"
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s3">3</div>
+    <div class="score-desc">
+      <div class="label">Very Weak — Brand/category hints only, low searchability</div>
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s2">2</div>
+    <div class="score-desc">
+      <div class="label">Weak Signal — Explicit product-like signal but not concretely searchable</div>
+      e.g. campaign/engagement slogans, weak brand+term combinations
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s1">1</div>
+    <div class="score-desc">
+      <div class="label">Uncertain — Seems product-like but confirming requires guessing</div>
+    </div>
+  </div>
+
+  <div class="score-detail">
+    <div class="score-badge s0">0</div>
+    <div class="score-desc">
+      <div class="label">Not a Product — Person's name, movie title, location, etc.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Scoring Rules -->
+<div class="section" id="key-rules">
+  <h2><span class="icon" style="background:var(--accent-light);color:var(--accent)">📋</span> Key Scoring Rules</h2>
+
+  <ul class="key-rules">
+    <li style="background:var(--green-bg);">
+      <span class="arrow" style="color:var(--green)">→ 7+</span>
+      <span>Model/version numbers (e.g. "2010", "v1", "v2", "133")</span>
+    </li>
+    <li style="background:var(--green-bg);">
+      <span class="arrow" style="color:var(--green)">→ 7+</span>
+      <span>Collaboration name included in product name (e.g. "Lorenzo x Air Max 95")</span>
+    </li>
+    <li style="background:var(--green-bg);">
+      <span class="arrow" style="color:var(--green)">→ 7+</span>
+      <span>Hashtag clearly denoting a product name (e.g. "#AutoScooper")</span>
+    </li>
+    <li style="background:var(--red-bg);">
+      <span class="arrow" style="color:var(--red)">→ cap 2</span>
+      <span>Campaign/engagement slogans (#JoinTeamX, #XChallenge, #Giveaway) with no product evidence</span>
+    </li>
+    <li style="background:var(--yellow-bg);">
+      <span class="arrow" style="color:var(--yellow)">→ 6</span>
+      <span>Product series/line (e.g. "Air Max 95", "KERATIME") — series numbers are NOT model numbers</span>
+    </li>
+    <li style="background:var(--yellow-bg);">
+      <span class="arrow" style="color:var(--yellow)">→ 6</span>
+      <span>Collab product WITHOUT the collab name captured → missing specificity</span>
+    </li>
+    <li style="background:var(--yellow-bg);">
+      <span class="arrow" style="color:var(--yellow)">→ 6</span>
+      <span>Brand + narrow product type as main subject with strong endorsement</span>
+    </li>
+    <li style="background:var(--accent-light);">
+      <span class="arrow" style="color:var(--accent)">→ 5</span>
+      <span>Brand + single broad product type (tee, sneakers, hoodie)</span>
+    </li>
+    <li style="background:var(--accent-light);">
+      <span class="arrow" style="color:var(--accent)">→ 5</span>
+      <span>Brand + product type without strong endorsement</span>
+    </li>
+    <li style="background:var(--orange-bg);">
+      <span class="arrow" style="color:var(--orange)">→ 4</span>
+      <span>Mixed collection bucket (new arrival, spring collection, trending picks, kit)</span>
+    </li>
+    <li style="background:var(--orange-bg);">
+      <span class="arrow" style="color:var(--orange)">→ 4</span>
+      <span>Generic collection words: "merch", "capsule", "drop", "essentials" (unless narrowed to single type → 5)</span>
+    </li>
+    <li style="background:var(--orange-bg);">
+      <span class="arrow" style="color:var(--orange)">→ 4</span>
+      <span>Broad bucket words: "gear", "apparel", "products", "cosmetics", "makeup", "skincare" (unless narrowed → 5)</span>
+    </li>
+    <li style="background:var(--orange-bg);">
+      <span class="arrow" style="color:var(--orange)">→ ≤ 4</span>
+      <span>Brand-only or handle-only mention with no concrete item type (never 5)</span>
+    </li>
+    <li style="background:var(--red-bg);">
+      <span class="arrow" style="color:var(--red)">→ 3-4</span>
+      <span>Pure category word without enough product identity</span>
+    </li>
+    <li style="background:var(--accent-light);">
+      <span class="arrow" style="color:var(--accent)">→ cap 5</span>
+      <span>Implicit promotion (@brand product without endorsement language) → cap at 5</span>
+    </li>
+  </ul>
+
+  <div class="rule warn" style="margin-top:16px;">
+    <strong>Tie-breaker:</strong> If uncertain between adjacent scores, always choose the <strong>LOWER</strong> score.
+  </div>
+</div>
+
+<!-- Spam Detection -->
+<div class="section" id="spam">
+  <h2><span class="icon" style="background:var(--red-bg);color:var(--red)">🛡</span> Spam / SEO Tag Detection</h2>
+  <p style="margin-bottom:16px;color:var(--text-muted);">Must be checked BEFORE finalizing scores.</p>
+
+  <div class="rule critical">
+    <strong>Compare post TITLE to products found.</strong><br>
+    If the title indicates a SPECIFIC TOPIC (game, challenge, movie reaction, comedy skit) and product mentions appear ONLY in description hashtags or keyword-stuffed text UNRELATED to that topic → those are <strong>SEO spam tags</strong>.
+  </div>
+
+  <div class="rule warn">
+    <strong>Action:</strong> Cap ALL spam-tag products at confidence <strong>2</strong>, regardless of how specific the model name looks.
+  </div>
+
+  <div class="example" style="margin-top:12px;">
+    <strong>Example:</strong><br>
+    Title: "Rescuing My Roblox Friends from Golden Tsunami"<br>
+    Description: "a01,a11,a10,a20,a30,…,iphone, #Iphone8plus, #j5prime, #j2prime"<br>
+    → Post is about Roblox gameplay; phone models are spam SEO tags → score <strong>1-2</strong> for all.<br><br>
+    <em>Only apply when mismatch is CLEAR. If title is vague or products plausibly relate, score normally.</em>
+  </div>
+</div>
+
+<!-- Critical Rule -->
+<div class="section" id="critical">
+  <h2><span class="icon" style="background:var(--green-bg);color:var(--green)">⚡</span> Critical Rule</h2>
+
+  <div class="rule critical" style="font-size:16px;text-align:center;padding:24px;">
+    <strong>After scoring all candidates, populate "products" with EVERY candidate whose confidence ≥ 5 that is "on_topic" or "borderline" AND satisfies all homepage inclusion criteria.</strong><br><br>
+    <span style="font-size:14px;">This is a hard rule — do NOT override based on subjective judgment.</span>
+  </div>
+
+  <div style="display:flex;gap:16px;margin-top:16px;">
+    <div class="rule green" style="flex:1;text-align:center;">
+      <strong>"products"</strong><br>
+      Only candidates with confidence ≥ 5<br>
+      + relevance (on_topic / borderline)<br>
+      + homepage criteria passed
+    </div>
+    <div class="rule" style="flex:1;text-align:center;">
+      <strong>"candidates"</strong><br>
+      ALL product-like mentions<br>
+      regardless of confidence score<br>
+      (including rejected ones)
+    </div>
+  </div>
+</div>
+
+<!-- Output Format -->
+<div class="section" id="output">
+  <h2><span class="icon" style="background:var(--purple-bg);color:var(--purple)">{ }</span> Output Format</h2>
+
+  <div class="json-block">
+{<br>
+&nbsp;&nbsp;<span class="key">"candidates"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"name"</span>: <span class="str">"best product name from text"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"brand"</span>: <span class="str">"brand from text"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"confidence"</span>: <span class="num">8</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"reason"</span>: <span class="str">"why this score"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="key">"products"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"name"</span>: <span class="str">"official product name from text"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"brand"</span>: <span class="str">"brand from text"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"category"</span>: <span class="str">"product category"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"evidence"</span>: <span class="str">"exact quote from text"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"relevance"</span>: <span class="str">"on_topic"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"relevance_reason"</span>: <span class="str">"brief reason"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span class="key">"otherInfo"</span>: <span class="str">""</span>,<br>
+&nbsp;&nbsp;<span class="key">"failType"</span>: <span class="str">""</span><br>
+}
+  </div>
+</div>
+
+<!-- failType -->
+<div class="section" id="failtype">
+  <h2><span class="icon" style="background:var(--orange-bg);color:var(--orange)">✕</span> failType Options</h2>
+  <p style="margin-bottom:12px;color:var(--text-muted);">Used when no products reach confidence ≥ 5.</p>
+
+  <table class="ft-table">
+    <thead>
+      <tr><th>failType</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>no_product</code></td><td>No product or brand mentioned at all</td></tr>
+      <tr><td><code>lifestyle_only</code></td><td>Pure lifestyle content</td></tr>
+      <tr><td><code>music_dance</code></td><td>Music / dance / entertainment</td></tr>
+      <tr><td><code>empty_content</code></td><td>Too short to analyze</td></tr>
+      <tr><td><code>no_spec_prod</code></td><td>Brand mentioned but no product name reached confidence ≥ 5</td></tr>
+      <tr><td><code>non_commercial</code></td><td>Educational / news content</td></tr>
+      <tr><td><code>restaurant_food</code></td><td>Restaurant / venue items only</td></tr>
+      <tr><td><code>off_topic</code></td><td>Products found but all outside the vertical category</td></tr>
+      <tr><td><code>secondhand_outdated</code></td><td>Products found but all appear secondhand or outdated</td></tr>
+      <tr><td><code>non_english</code></td><td>Content is not in English</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule" style="margin-top:16px;">
+    <strong>Final output rules:</strong>
+    <ul style="margin:8px 0 0 20px;font-size:14px;">
+      <li>If <code>products</code> is non-empty → <code>failType = ""</code></li>
+      <li>If <code>products</code> is empty → set appropriate failType</li>
+      <li>Output JSON only, no other text</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<script>
+// Scroll-spy for sidebar
+const sections = document.querySelectorAll('.section, .header');
+const navLinks = document.querySelectorAll('.sidebar a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.getBoundingClientRect().top;
+    if (top < 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
