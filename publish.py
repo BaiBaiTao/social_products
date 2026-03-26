@@ -333,6 +333,15 @@ def inject_home_button():
 def git_push(message: str):
     os.chdir(ROOT)
     subprocess.run(["git", "add", "-A"], check=True)
+    status = subprocess.run(
+        ["git", "diff", "--cached", "--quiet"],
+        check=False,
+    )
+    if status.returncode == 0:
+        print("[INFO] 没有检测到文件变更，已跳过 git commit 和 push")
+        return
+    if status.returncode != 1:
+        raise subprocess.CalledProcessError(status.returncode, status.args)
     subprocess.run(["git", "commit", "-m", message], check=True)
     subprocess.run(["git", "push", "origin", "main"], check=True)
 
