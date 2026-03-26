@@ -48,24 +48,38 @@ CATEGORIES = OrderedDict([
     ("design",          ("Design",             "📐")),
 ])
 
+INDEX_EXTENSIONS = ("*.html", "*.txt")
+
 # --- 从文件名中提取日期后缀用于排序（如 _0302 => "0302"）---
 def _extract_date(path: Path) -> str:
     m = re.search(r'_(\d{4})(?:\D|$)', path.stem)
     return m.group(1) if m else '0000'
+
+
+def _collect_index_files(folder: Path, recursive: bool = False) -> list[Path]:
+    pattern_method = folder.rglob if recursive else folder.glob
+    files = []
+    for pattern in INDEX_EXTENSIONS:
+        files.extend(pattern_method(pattern))
+    return sorted(files, key=_extract_date, reverse=True)
+
+
+def _file_icon(path: Path) -> str:
+    return "📄" if path.suffix.lower() == ".html" else "📝"
 
 # --- 生成单个分类的 HTML（自动检测子目录层级）---
 def build_category_block(folder: str, display_name: str, icon: str) -> str | None:
     folder_path = ROOT / folder
     cat_id = f"cat-{''.join(c for c in folder if c.isalnum())}"
 
-    # 收集直属 HTML 文件
-    direct_files = sorted(folder_path.glob("*.html"), key=_extract_date, reverse=True)
+    # 收集直属可索引文件
+    direct_files = _collect_index_files(folder_path)
 
-    # 收集子目录及其 HTML 文件
+    # 收集子目录及其可索引文件
     subdirs = []
     for d in sorted(folder_path.iterdir()):
         if d.is_dir() and not d.name.startswith("."):
-            sub_files = sorted(d.rglob("*.html"), key=_extract_date, reverse=True)
+            sub_files = _collect_index_files(d, recursive=True)
             if sub_files:
                 subdirs.append((d.name, sub_files))
 
@@ -78,7 +92,7 @@ def build_category_block(folder: str, display_name: str, icon: str) -> str | Non
     # 直属文件
     if direct_files:
         links = "\n".join(
-            f'                <li><a href="{f.relative_to(ROOT).as_posix()}">{f.stem}</a></li>'
+            f'                <li><a href="{f.relative_to(ROOT).as_posix()}">{_file_icon(f)} {f.stem}</a></li>'
             for f in direct_files
         )
         parts.append(f'''            <ul class="file-list">
@@ -89,7 +103,7 @@ def build_category_block(folder: str, display_name: str, icon: str) -> str | Non
     for sub_name, sub_files in subdirs:
         sub_id = f"{cat_id}-{''.join(c for c in sub_name if c.isalnum())}"
         sub_links = "\n".join(
-            f'                    <li><a href="{f.relative_to(ROOT).as_posix()}">{f.stem}</a></li>'
+            f'                    <li><a href="{f.relative_to(ROOT).as_posix()}">{_file_icon(f)} {f.stem}</a></li>'
             for f in sub_files
         )
         parts.append(f'''            <div class="subcategory collapsed" id="{sub_id}">
@@ -140,8 +154,11 @@ def scan_reports() -> list[str]:
 # --- 统计总文件数 ---
 def count_total() -> int:
     return sum(
-        1 for f in ROOT.rglob("*.html")
-        if f.name != "index.html" and ".git" not in f.parts
+        1 for f in ROOT.rglob("*")
+        if f.is_file()
+        and f.suffix.lower() in {".html", ".txt"}
+        and f.name != "index.html"
+        and ".git" not in f.parts
     )
 
 # --- 生成完整 HTML ---
@@ -235,10 +252,6 @@ def generate_html(blocks: list[str]) -> str:
         .file-list a:hover {{
             background: #f0f4ff;
             color: #1d4ed8;
-        }}
-        .file-list a::before {{
-            content: "📄 ";
-            font-size: 0.85rem;
         }}
         .subcategory {{
             border-top: 1px solid #f0f0f0;
