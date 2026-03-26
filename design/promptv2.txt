@@ -179,3 +179,4 @@ failType options (when no products with confidence >= 5):
 - If products is non-empty, failType=""
 - If products is empty, set appropriate failType
 - Output JSON only, no other text
+ 
