@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Filter Summary - 20260402_174849</title>
+    <style>
+        :root {
+            --bg: #e3f2fd;
+            --panel: #fff8e1;
+            --text: #1a2a1a;
+            --muted: #5d7a6e;
+            --accent: #1b5e20;
+            --accent-2: #2e7d32;
+            --border: #d4c090;
+            --warn: #d84315;
+            --mono-bg: #0d2818;
+            --mono-fg: #c8e6c9;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: "Segoe UI", "Noto Sans", sans-serif; background: linear-gradient(160deg, #bbdefb 0%, #90caf9 40%, #e3f2fd 80%, #b3e5fc 100%); color: var(--text); }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .hero { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 8px 30px rgba(30, 80, 140, 0.12); }
+        h1 { margin: 0 0 6px; font-size: 30px; color: var(--accent); }
+        .meta { color: var(--muted); font-size: 14px; }
+        .overview { margin-top: 18px; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: 0 4px 16px rgba(30, 80, 140, 0.08); }
+        .stage-card { margin-top: 18px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: 0 6px 24px rgba(30, 80, 140, 0.10); }
+        .stage-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
+        .stage-badge { min-width: 64px; text-align: center; padding: 10px 12px; border-radius: 12px; background: linear-gradient(180deg, #1b5e20 0%, #43a047 100%); color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; }
+        h2 { margin: 0 0 6px; font-size: 22px; color: var(--accent); }
+        .stage-desc { color: var(--muted); font-size: 14px; line-height: 1.45; }
+        .kv { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .kv td { border-top: 1px solid var(--border); padding: 8px 4px; vertical-align: top; }
+        .kv td:first-child { color: var(--muted); width: 36%; }
+        .flow { margin-top: 18px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border: 1px solid #a5d6a7; border-radius: 14px; overflow-x: auto; }
+        .flow h2 { margin-top: 0; color: var(--accent); }
+        .pipeline { display: grid; grid-template-columns: repeat(10, minmax(140px, 1fr)); gap: 10px; align-items: stretch; min-width: 1500px; }
+        .flow-node { background: linear-gradient(180deg, #ffffff 0%, #f1f8e9 100%); border: 1px solid #81c784; border-radius: 12px; padding: 10px; position: relative; min-height: 82px; cursor: pointer; text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .flow-node:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(27, 94, 32, 0.20); border-color: var(--accent); }
+        .flow-node::after { content: "\2192"; position: absolute; right: -12px; top: 34%; color: var(--accent-2); font-size: 22px; font-weight: 700; }
+        .flow-node:last-child::after { content: ""; }
+        .flow-code { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 0.3px; text-transform: uppercase; }
+        .flow-title { font-size: 14px; font-weight: 700; margin-top: 4px; line-height: 1.3; }
+        .gate { margin-top: 10px; font-size: 13px; color: #1a2a1a; background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 10px; }
+        ul { margin: 8px 0 0; padding-left: 20px; }
+        li { margin: 4px 0; line-height: 1.4; }
+        .mono { background: var(--mono-bg); color: var(--mono-fg); border-radius: 12px; border: 1px solid #2e5a2e; padding: 12px; overflow-x: auto; white-space: pre-wrap; font-family: Consolas, "Courier New", monospace; font-size: 12px; line-height: 1.45; }
+        .mono.large { max-height: 520px; overflow-y: auto; }
+        .warn { color: var(--warn); font-size: 13px; margin-top: 8px; }
+        .subgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .subcard { border: 1px solid #c8e6c9; border-radius: 12px; padding: 14px; background: linear-gradient(180deg, #fffde7 0%, #fff8e1 100%); }
+        .subcard h4 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
+        .subcard p { margin: 0; line-height: 1.5; }
+        .span2 { grid-column: span 2; }
+        .mini-title { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .compact-list li { margin: 3px 0; }
+        .dense-list li { margin: 6px 0; }
+        .subtle { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+        .empty { color: var(--muted); font-size: 13px; }
+        .back-to-top { position: fixed; bottom: 28px; right: 28px; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(180deg, #1b5e20 0%, #43a047 100%); color: #fff; border: none; cursor: pointer; font-size: 20px; box-shadow: 0 4px 16px rgba(27, 94, 32, 0.3); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.15s; z-index: 999; }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { transform: scale(1.1); }
+        .stage-card { scroll-margin-top: 16px; }
+        @media (max-width: 900px) {
+            .subgrid { grid-template-columns: 1fr; }
+            .span2 { grid-column: span 1; }
+            .wrap { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+    <div class="wrap">
+        <section class="hero">
+            <h1>Pipeline Filter & Interface Handoff</h1>
+            <div class="meta">Run ID: 20260402_174849 | Generated: 2026-04-03 13:19:45</div>
+            <div class="meta">Date Range: 2026-03-16 ~ 2026-03-29</div>
+        </section>
+
+        <section class="flow">
+            <h2>Sequential Filter Flow</h2>
+            <div class="pipeline">
+                <a href='#card-s01' class='flow-node'><div class='flow-code'>s01</div><div class='flow-title'>NOX Input &amp; Fetch</div></a><a href='#card-s02' class='flow-node'><div class='flow-code'>s02</div><div class='flow-title'>LLM Product Extraction</div></a><a href='#card-s03' class='flow-node'><div class='flow-code'>s03</div><div class='flow-title'>Deduplication</div></a><a href='#card-s04' class='flow-node'><div class='flow-code'>s04</div><div class='flow-title'>L1 Classification &amp; Exclusion</div></a><a href='#card-s05' class='flow-node'><div class='flow-code'>s05</div><div class='flow-title'>SERP Search &amp; Filter</div></a><a href='#card-s06' class='flow-node'><div class='flow-code'>s06</div><div class='flow-title'>Seller Authority Filter</div></a><a href='#card-s08' class='flow-node'><div class='flow-code'>s08</div><div class='flow-title'>Match Catalog (SCOPE)</div></a><a href='#card-s09' class='flow-node'><div class='flow-code'>s09</div><div class='flow-title'>Generate Report</div></a><a href='#card-s10' class='flow-node'><div class='flow-code'>s10</div><div class='flow-title'>Export Data</div></a>
+            </div>
+            <div class="gate"><strong>Core gates:</strong> confidence >= 5 for products; non-English => failType=non_english; category scope/exclude disabled; global exclusions are active; seller levels spam/low are filtered out.</div>
+        </section>
+
+        <section class="overview">
+            <div class="subgrid">
+                <div class="subcard">
+                    <h4>Run Parameters</h4>
+                    <table class='kv'><tr><td>Input file</td><td>externalInfluencers.tsv</td></tr><tr><td>Limit</td><td>none</td></tr><tr><td>Stage range</td><td>s01 -&gt; s10</td></tr><tr><td>Workers</td><td>4</td></tr><tr><td>SERP workers</td><td>4</td></tr></table>
+                </div>
+                <div class="subcard">
+                    <h4>Handoff Focus</h4>
+                    <ul class='compact-list'><li>Read cards from top to bottom; this is the actual filtering order.</li><li>Interface limits are split by endpoint instead of mixed together.</li><li>Full prompts, global exclusions, and full L1 list are embedded below.</li></ul>
+                </div>
+            </div>
+        </section>
+
+        <section class='stage-card' id='card-s01'><div class='stage-head'><div class='stage-badge'>s01</div><div><h2>NOX Input &amp; Fetch</h2><div class='stage-desc'>Fetch post/video content from NOX by channel and date range.</div></div></div><div class='subgrid'><div class='subcard'><h4>Fetch Conditions</h4><table class='kv'><tr><td>Platforms</td><td>{&#x27;youtube&#x27;: 17, &#x27;instagram&#x27;: 58, &#x27;tiktok&#x27;: 27}</td></tr><tr><td>Date range</td><td>2026-03-16 ~ 2026-03-29</td></tr><tr><td>Required identifier</td><td>channelId (derived from noxlink)</td></tr><tr><td>Fetch target</td><td>posts/videos only</td></tr></table></div><div class='subcard'><h4>NOX Video Endpoint</h4><table class='kv'><tr><td>Endpoint map</td><td>{&#x27;youtube&#x27;: &#x27;https://service.noxinfluencer.com/nox/v1/youtube/video&#x27;, &#x27;tiktok&#x27;: &#x27;https://service.noxinfluencer.com/nox/v1/tiktok/video&#x27;, &#x27;instagram&#x27;: &#x27;https://service.noxinfluencer.com/nox/v1/instagram/video&#x27;}</td></tr><tr><td>Method</td><td>GET</td></tr><tr><td>Success code</td><td>code = 10000</td></tr><tr><td>Retry codes</td><td>[50001, 50002, 50003]</td></tr></table></div><div class='subcard'><h4>Request Parameters</h4><table class='kv'><tr><td>noxKey</td><td>required</td></tr><tr><td>channelId</td><td>required</td></tr><tr><td>startDate</td><td>2026-03-16</td></tr><tr><td>endDate</td><td>2026-03-29</td></tr><tr><td>pageSize</td><td>100</td></tr><tr><td>page</td><td>1..N until totalResults reached</td></tr></table></div><div class='subcard'><h4>Runtime Limits</h4><table class='kv'><tr><td>Quota endpoint</td><td>https://service.noxinfluencer.com/nox/v1/key</td></tr><tr><td>Retry policy</td><td>3 retries, 2s delay</td></tr><tr><td>Timeout</td><td>30 seconds per request</td></tr><tr><td>Pagination stop</td><td>stop when len(all_items) &gt;= totalResults or no items returned</td></tr></table><div class='mini-title'>Constraints</div><ul class='compact-list'><li>convertChannelUrlToId requires account/channel homepage URL; post/reel links may fail to resolve</li><li>Use channelId for profile/video endpoints</li><li>Quota-limited API key; check /nox/v1/key when needed</li></ul></div></div></section><section class='stage-card' id='card-s02'><div class='stage-head'><div class='stage-badge'>s02</div><div><h2>LLM Product Extraction</h2><div class='stage-desc'>Apply the full extraction prompt, global exclusions, and confidence gates to raw social content.</div></div></div><div class='subgrid'><div class='subcard span2'><h4>LLM Configuration</h4><table class='kv'><tr><td>Deployment</td><td>gpt-5.4</td></tr><tr><td>Endpoint</td><td>https://ai-bryanliu200821798192.cognitiveservices.azure.com/</td></tr><tr><td>API version</td><td>2024-12-01-preview</td></tr><tr><td>Prompt length</td><td>16454</td></tr></table><div class='mini-title'>Prompt features</div><ul class='compact-list'><li>confidence scoring</li><li>candidate + product split</li><li>promoteVideo: disabled</li><li>non-English filter</li><li>spam/SEO tag detection</li><li>ASMR heuristics</li><li>gameplay heuristics</li><li>collaboration/co-brand rules</li></ul></div><div class='subcard span2'><h4>Active Filters (embedded in prompt)</h4><ul class='compact-list'><li>Global exclusion rules and hard-filter keywords are embedded in the LLM prompt as input.</li><li>Post-LLM code gate: _is_hard_excluded() enforces hard-filter keywords again in code — catches cases where LLM ignores the prompt.</li><li>Confidence gate: only products with confidence &gt;= 5 are kept.</li><li>Language gate: non-English content returns failType=non_english.</li><li>Empty content gate: content &lt; 3 chars skips LLM, returns failType=empty_content.</li></ul></div><div class='subcard span2'><h4>Global Exclusion — Always Exclude Rules</h4><ul class='dense-list'><li>VEHICLES &amp; CAR PARTS: cars, trucks, motorcycles, boats, RVs, ATVs, AND all vehicle parts/accessories — grille, engine, motor, brake light, bumper, exhaust, strobe light, dash cam, phone mount, floor mat, seat cover. ANY automotive product is excluded.</li><li>MOVIES &amp; MEDIA &amp; MUSIC: films, TV shows, DVDs, music albums, vinyl records, singles, EPs, concert tickets, video games, mobile games, card games, trading card games, tabletop games, comics, manga, books, magazines. Gaming HARDWARE (consoles, controllers, keyboards) IS allowed, but game titles and game cards are NOT.</li><li>TOYS &amp; GAMES: dolls, plush toys, action figures, toy sets, collectible figurines, board games, card games, trading cards, collectible card games (e.g. Pokémon cards, Magic: The Gathering), LEGO sets, puzzles, party games. Always excluded regardless of catalog match.</li><li>FOOD &amp; BEVERAGES &amp; DIETARY SUPPLEMENTS: snacks, candy, chocolate, gum, cookies, canned goods, frozen food, condiments, sauces, cereals, protein bars, energy drinks, soft drinks, juice, coffee beans, tea bags, bottled water, meal kits, baking mixes, spices, vitamins, protein powder, dietary supplements, nutritional supplements. Includes ALL edible/drinkable/ingestible consumer products.</li><li>SOFTWARE &amp; DIGITAL PRODUCTS: operating systems (Windows, macOS), software licenses, desktop applications (CleanMyMac, Photoshop), AI tools/services (ChatGPT, Copilot), mobile apps, digital downloads, SaaS subscriptions, antivirus software. Physical tech products that run software ARE allowed (e.g. laptops, phones).</li><li>SWIMWEAR &amp; INTIMATE APPAREL: swimsuits, swimwear, bikinis, tankinis, one-piece suits, two-piece suits, swim tops, swim bottoms, cover-ups, underwear, lingerie, bras, panties, shapewear, bralettes, boxers, briefs, thongs, slips, and other intimate apparel are always excluded, even if they otherwise fit Apparel.</li><li>TOOLS (non-Home-Improvement): tool sets, drill bits, wrenches, etc. are ONLY valid when the video is in the HomeImprovement vertical. In all other verticals, generic tools should NOT be extracted.</li><li>LOW-VALUE UNBRANDED ITEMS: generic novelty trinkets, dollar-store items, unbranded mass-produced commodities typically found on Temu/Wish/AliExpress at &lt;$5 with no recognizable brand (branded budget items like e.l.f. cosmetics ARE allowed)</li><li>SECONDHAND / USED PRODUCTS: used, refurbished, vintage (when clearly old/used), open box, resale, eBay used listing, discontinued. Signals: &#x27;used&#x27;, &#x27;vintage&#x27;, &#x27;open box&#x27;, &#x27;pre-owned&#x27;, &#x27;DVD (year)&#x27; with year &gt;2 years old. Examples: &#x27;Hotel Transylvania 3: Summer Vacation (DVD, 2018)&#x27;, &#x27;Used Nike Air Jordan 2022&#x27;, &#x27;Vintage jacket – resale&#x27;</li><li>NON-PRODUCT ENTITIES: generic content items that are not purchasable SKUs — cars, movies, books, tools (out of context) are hard exclusion rules. Only extract items that correspond to a specific purchasable product with a brand.</li><li>SERVICES / NON-PRODUCTS: restaurant meals, gym memberships, travel bookings, haircut appointments, online courses, app subscriptions (physical subscription boxes ARE allowed)</li><li>REAL ESTATE: houses, apartments, land, rental properties</li></ul></div><div class='subcard'><h4>Global Exclusion — Hard-filter Keywords</h4><pre class='mono large'>motorcycle, motocross, dirt bike, dirt bikes, automotive, vehicle, vehicles, car polish, car wax, car detailing, car paint, car cleaner, car wash, motor oil, engine oil, ATV, snowmobile, go-kart, motorcycle helmet, motorcycle jacket, motorcycle gear, motorcycle boots, motorcycle gloves, riding gear, DVD, Blu-ray, vinyl record, action figure, plush toy, trading cards, LEGO set, swimsuit, swimwear, bikini, tankini, lingerie, real estate, rental property</pre></div><div class='subcard span2'><h4>Full System Prompt</h4><pre class='mono'>You are a product extraction expert. Output only valid JSON. Never guess product names.</pre></div><div class='subcard span2'><h4>Full User Prompt Template</h4><pre class='mono large'>You are a product extraction expert. Extract products mentioned in social media posts.
+
+Current date: {current_date}
+Content:
+{content}
+{category_context}
+{global_exclusions}
+
+HARD RULES (must always be followed):
+
+1. The product name MUST appear explicitly in the content text.
+   - Do NOT guess or complete product names from your knowledge.
+   - EXCEPTION — Collaborations: If the text clearly describes a collaboration (e.g. &quot;X has reunited with Y to put his spin on Z&quot;,
+     &quot;X&#x27;s collaboration with Y&quot;, &quot;X x Y&quot;), you MUST construct the product name as &quot;CollabPartner x ProductLine&quot;
+     (e.g. &quot;@lorenz.og ... his latest spin on the Air Max 95&quot; → name=&quot;Lorenzo x Air Max 95&quot;).
+     Both the collab partner AND the product line must appear in the text.
+   - CO-BRAND PRESERVATION (HARD): If the text explicitly ties two brands/entities to the SAME product
+     (e.g. &quot;Crocs and LEGO ... Brick Clog&quot;, &quot;LEGO Crocs Brick Clog&quot;, &quot;BrandA x BrandB ProductLine&quot;),
+     the extracted product name MUST retain both entities (e.g. &quot;LEGO x Crocs Brick Clog&quot;), not a single-brand rewrite.
+     Do NOT drop, replace, or normalize away an explicitly mentioned collaborator token.
+
+2. The brand MUST be identifiable from the text (via @mention, explicit name, or hashtag).
+   - Retailers (Ulta, Sephora, Amazon, Target) are NOT brands.
+   - Use the OFFICIAL brand name.
+
+3. For each product, provide &quot;evidence&quot;: copy the EXACT substring from the original text that contains the product name.
+
+4. For each product, judge its RELEVANCE for homepage display:
+   - &quot;on_topic&quot;: product is a real, purchasable consumer product suitable for a shopping homepage
+   - &quot;off_topic&quot;: product falls under GLOBAL EXCLUSIONS (vehicles, movies, toys, swimwear, subscription services, etc.),
+     OR is a promotional freebie / giveaway item that CANNOT be purchased separately
+     (e.g. McDonald&#x27;s collectible cards, Happy Meal toys, free gifts with purchase, loyalty rewards)
+     → Subscription services (Netflix, Game Pass, Spotify, Disney+, etc.) are ALWAYS off_topic — never extract
+   - &quot;borderline&quot;: product is unusual but still a legitimate purchasable item
+   Only extract products that are &quot;on_topic&quot; or &quot;borderline&quot;. Do NOT extract &quot;off_topic&quot; products.
+
+HOMEPAGE INCLUSION CRITERIA (MUST satisfy all):
+1) Purchasable: The item is a real consumer product/service that can be obtained independently.
+2) Searchable: The text provides enough identity to search it (at least brand + product name/type).
+3) Primary focus: The product is a main subject of the post (review/recommendation/demo), not incidental tags.
+
+If any criterion is not satisfied, do NOT include in products, regardless of confidence.
+Campaign/engagement slogans without concrete product evidence (e.g. #JoinTeamX, #XChallenge, #Giveaway) must be capped at 2.
+
+5. PRODUCT NAME COMPLETENESS: If the product name is only a single word (e.g. &quot;Rapunzel&quot;, &quot;Elixir&quot;),
+   append its product type/category to make it a searchable name.
+   - WRONG: name=&quot;Rapunzel&quot;, category=&quot;fragrance&quot;  (searching &quot;Disney Rapunzel&quot; finds a movie character)
+   - RIGHT: name=&quot;Rapunzel Fragrance&quot;, category=&quot;fragrance&quot;  (searching &quot;Disney Rapunzel Fragrance&quot; finds the product)
+   - Multi-word names like &quot;Soft Pinch Liquid Blush&quot; or &quot;Airwrap Styler&quot; are already specific enough — do NOT add category to them.
+
+6. LANGUAGE CHECK (MUST be done FIRST, before any extraction):
+   Determine the PRIMARY language of the post content. Ignore brand names, product model numbers, and hashtags when judging language.
+   If the primary language is NOT English, immediately return empty products with failType=&quot;non_english&quot;.
+   Do NOT extract products even if the brand or product name appears to be in English.
+
+SPAM / SEO TAG DETECTION (MUST be checked BEFORE scoring candidates):
+Before scoring any candidates, compare the post TITLE to the products you found.
+If the title clearly indicates the post is about a SPECIFIC TOPIC (e.g. a game like Roblox/Fortnite/Free Fire,
+a challenge, a movie reaction, a comedy skit) and the product mentions appear ONLY in description hashtags
+or keyword-stuffed text that is UNRELATED to that topic, those are SEO spam tags — NOT genuine product mentions.
+→ Cap ALL such spam-tag products at confidence 2, regardless of how specific the model name looks.
+Example: Title=&quot;Rescuing My Roblox Friends from Golden Tsunami&quot;
+  Description has &quot;a01,a11,a10,a20,a30,...,iphone, #Iphone8plus, #j5prime, #j2prime&quot;
+  → The post is about Roblox gameplay; these phone models are spam SEO tags → score 1-2 for ALL of them.
+Only apply this when the mismatch is CLEAR. If the title is vague or the products plausibly relate, score normally.
+
+VIDEO-CONTENT FILTERING (MUST be checked BEFORE scoring candidates):
+If the post is primarily video-first entertainment or creator content (e.g. gameplay, prank, reaction, dance,
+comedy skit, podcast clip, sermon/motivation clip, sports highlight, meme/viral edit) and product words are only
+incidental mentions (hashtags, ambient background, creator handle, generic &quot;shop link in bio&quot;), do NOT treat them
+as homepage-ready products.
+→ Such incidental mentions should usually be capped at confidence 0-2 and not included in products.
+→ Only allow confidence &gt;= 5 when the post clearly foregrounds a purchasable product as a main subject with explicit
+  identity evidence (brand + product name/type + concrete mention in title/description).
+→ For these content-first posts (including tutorial/how-to explainers) where commerce is NOT the primary intent,
+  set failType=&quot;non_commercial&quot;.
+
+GAMEPLAY-SPECIFIC HEURISTICS:
+- If title/caption is clearly gameplay-centric (e.g. &quot;ranked match&quot;, &quot;clutch&quot;, &quot;speedrun&quot;, &quot;boss fight&quot;, &quot;live gameplay&quot;),
+  treat game names, skins, map names, mods, and in-game items as non-shopping content by default.
+- Device/model names that appear only in hashtag blocks or SEO stuffing (e.g. phone model lists under gameplay clips)
+  should be treated as spam-like incidental mentions and capped at 0-2.
+- Only keep confidence &gt;= 5 when there is explicit real-world product intent (e.g. &quot;I use X mouse&quot;, &quot;buy this headset&quot;,
+  &quot;setup details: brand + product&quot;) with concrete purchasable evidence in the post text.
+
+ASMR-SPECIFIC HEURISTICS:
+- If the post is primarily ASMR/performance content (trigger words like &quot;asmr&quot;, &quot;satisfying&quot;, &quot;sleep sounds&quot;, &quot;no talking&quot;),
+  do NOT extract incidental objects/tools used for sound-making as products unless they are explicitly recommended/sold.
+- Generic object mentions in ASMR context (soap, slime, brushes, tapping tools, cups, knives, etc.) are usually props,
+  not purchasable product recommendations; cap at 0-2 unless explicit shopping intent exists.
+- For ASMR creator promos, require strong evidence (brand + concrete product name + purchase/recommendation language)
+  before allowing confidence &gt;= 5.
+
+When choosing failType for content-first posts:
+- Use &quot;non_commercial&quot; for content-first video (gameplay/ASMR/tutorial/reaction/performance) with incidental or weak product signals
+- Use &quot;no_product&quot; ONLY when there is truly no product-like mention at all
+- Use &quot;lifestyle_only&quot; ONLY for pure lifestyle scenes (no commercial intent, no brand/product reference)
+- Use &quot;music_dance&quot; ONLY for clear music/dance-only clips
+
+CANDIDATE SCORING:
+List ALL product-like mentions in the text as candidates, even if you are unsure.
+The confidence score (0-9) determines HOW SPECIFIC the product identification is — this replaces any yes/no extraction rule.
+Score based on how clearly the text identifies a product — NOT on whether you recognize the product.
+You cannot search the web. Do NOT penalize a product just because you are unfamiliar with it.
+If the text signals &quot;this is a specific product&quot; (e.g. hashtag as a name, brand handle + product term, recommendation language like &quot;must have&quot;), trust the text.
+
+Score each candidate&#x27;s confidence from 0 to 9:
+  9: Specific product name + colorway/edition/variant + brand clearly stated
+     (e.g. &quot;Air Jordan 1 High Alaska&quot;, &quot;Soft Pinch Liquid Blush in Joy&quot;)
+  8: Product is clearly specific and searchable (brand + distinct product name),
+    but missing variant-level detail (e.g. no explicit colorway/shade/size/capacity/edition).
+     Typical 8 examples:
+       - Brand + distinct product name that reads near-unique in context
+       - Specific collab/product name that is clearly formed and directly searchable
+  7: Product is specific with brand identifiable (often model/version/collab/distinct name),
+    but some naming context is still incomplete or slightly ambiguous.
+     Typical 7 examples:
+       - Names with model/version numbers (e.g. &quot;EP-133 sampler&quot;, &quot;ABZORB 2010&quot;, &quot;991v1&quot;, &quot;990v4&quot;)
+       - A collaboration/collab version of a product line (e.g. &quot;Lorenzo x Air Max 95&quot;, &quot;Travis Scott x Air Jordan 1&quot;)
+         → The collab name MUST appear in the extracted product name (e.g. name=&quot;Lorenzo x Air Max 95&quot;, NOT just &quot;Air Max 95&quot;)
+       - Co-branded names where BOTH entities are explicit in text (e.g. &quot;LEGO x Crocs Brick Clog&quot;)
+         → Dropping one co-brand entity reduces specificity and should be scored lower.
+       - A distinct hashtag that clearly functions as a product name (e.g. &quot;#AutoScooper&quot;)
+         → EXCLUDE campaign/engagement slogans (e.g. &quot;#JoinTeamX&quot;, &quot;#XChallenge&quot;, &quot;#Giveaway&quot;, &quot;#Contest&quot;) unless concrete product evidence exists
+       - Post is clearly recommending/reviewing ONE product and you can identify a name + brand → usually 7+
+  6: A product line or named range WITHOUT a model number (e.g. &quot;Air Max 95&quot;, &quot;Air Max 90&quot;, &quot;KERATIME&quot; — product series/lines),
+     a collab product where the collab partner is NOT captured (just &quot;Air Max 95&quot; without the collab name → stays at 6),
+     note: series numbers like &quot;95&quot;, &quot;90&quot;, &quot;97&quot; identify which SERIES, not a specific variant — they are NOT model/version numbers,
+     or brand + MODIFIED PRODUCT SUBTYPE — the type word carries a qualifying modifier
+     (material / function / form-factor / usage) that narrows it to a recognizable sub-category.
+     TEST: does the type word contain a modifier that limits the scope to a specific sub-segment of the base category?
+     If yes → 6. If the type word is a bare category with no modifier → 5.
+     ✅ 6 examples: &quot;running shoes&quot; (function), &quot;cushion foundation&quot; (form), &quot;matte lipstick&quot; (finish),
+       &quot;crossbody bag&quot; (form), &quot;wireless earbuds&quot; (tech), &quot;zip-up hoodie&quot; (form), &quot;bomber jacket&quot; (style),
+       &quot;lip gloss&quot; (already a distinct sub-category of lip products)
+     ❌ stays at 5: &quot;sneakers&quot;, &quot;shoes&quot;, &quot;lipstick&quot;, &quot;foundation&quot;, &quot;bag&quot;, &quot;hoodie&quot;, &quot;jacket&quot;
+  5: Brand + a BARE product category/type with NO qualifying modifier.
+     The category is still a recognizable, usable product type, but it maps to a large number of products.
+     Examples: &quot;Nike sneakers&quot; (bare category), &quot;Adidas hoodie&quot; (bare category), &quot;Dior lipstick&quot; (bare category)
+     EXCEPTION: If the brand is a niche/single-product brand where &quot;brand + bare category&quot; effectively identifies
+     ONE specific product (e.g. a brand that only makes one lipstick), score 6 instead — it narrows to a small set like a modified subtype.
+  4: Brand + MIXED collection / mixed-category product bucket (e.g. &quot;new arrival&quot;, &quot;spring collection&quot;, &quot;limited edition&quot;, &quot;trending&quot;, &quot;merch&quot;, &quot;capsule&quot;, &quot;drop&quot;, &quot;kit&quot;).
+    This refers to a collection that can contain multiple product types rather than one stable product category.
+    Examples: &quot;Nike new arrival&quot; (mixed collection), &quot;Adidas spring collection&quot; (mixed types)
+  3: Brand OR category mentioned alone (not both together), or both present but too vague to form a searchable query.
+     Examples: just &quot;@nike&quot; with no product term, just &quot;sneakers&quot; with no brand, &quot;check out their stuff&quot;
+  2: Weak but explicit product-like signal exists (e.g. campaign/engagement slogan or weak brand+term),
+    but still not concretely searchable as a product.
+  1: Seems product-like but uncertain; confirming it would require guessing.
+  0: Not a product at all (e.g. a person&#x27;s name, a movie title, a location)
+
+KEY scoring rules:
+- Model/version numbers (e.g. &quot;2010&quot;, &quot;v1&quot;, &quot;v2&quot;, &quot;133&quot;) → score 7+
+- Collaboration name included in product name (e.g. &quot;Lorenzo x Air Max 95&quot;) → score 7+
+- Hashtag can be score 7+ ONLY when it clearly denotes a product name (e.g. &quot;#AutoScooper&quot;)
+- Campaign/engagement slogans (e.g. &quot;#JoinTeamX&quot;, &quot;#XChallenge&quot;, &quot;#Giveaway&quot;, &quot;#Contest&quot;) with no concrete product evidence → cap at 2
+- Product series/line (e.g. &quot;Air Max 95&quot;, &quot;Air Max 90&quot;, &quot;KERATIME&quot;) → 6 (series numbers like 95/90/97 are NOT model/version numbers)
+- Collab product WITHOUT the collab name captured → 6 (missing the specificity)
+- Brand + MODIFIED product subtype (type word has a qualifying modifier: material/function/form/usage) → 6
+  (e.g. &quot;running shoes&quot;, &quot;cushion foundation&quot;, &quot;matte lipstick&quot;, &quot;crossbody bag&quot;, &quot;lip gloss&quot;)
+- Brand + BARE product category (no modifier, e.g. &quot;sneakers&quot;, &quot;hoodie&quot;, &quot;lipstick&quot;, &quot;bag&quot;) → 5
+- Brand + product type listed/mentioned without strong endorsement → 5
+- Mixed collection / mixed-category bucket (new arrival, spring collection, holiday collection, trending picks, kit) → 4
+- Generic collection words like &quot;merch&quot;, &quot;capsule&quot;, &quot;drop&quot;, &quot;essentials&quot; are 4 by default (mixed bucket)
+  → Only treat as 5 when the post explicitly narrows to a single product type (e.g. &quot;brand tee&quot;, &quot;brand hoodie&quot;)
+- Broad bucket words such as &quot;gear&quot;, &quot;apparel&quot;, &quot;products&quot;, &quot;cosmetics&quot;, &quot;makeup&quot;, &quot;skincare&quot;, &quot;merch&quot;, &quot;kit&quot; are 4 by default
+  → Only allow 5 when explicitly narrowed to ONE stable item type (e.g. &quot;running jacket&quot;, &quot;matte lipstick&quot;, &quot;football jersey&quot;)
+- Brand-only or handle-only mention with no concrete item type (e.g. just &quot;@brand&quot; / brand name) → 3 (never 5)
+- Category-only word with no brand (e.g. just &quot;sneakers&quot; with no brand) → 3
+- Pure category word without enough clear product identity → 3-4
+- Implicit promotion (e.g. &quot;@brand product&quot; in a list or lifestyle post without explicit endorsement language like &quot;recommend&quot;, &quot;must have&quot;, &quot;love&quot;, &quot;review&quot;) → cap at 5
+  → Only @brand + product name with NO endorsement signals → score 5 or lower
+- If uncertain between adjacent scores, choose the LOWER score.
+
+CRITICAL RULE: After scoring all candidates, you MUST populate &quot;products&quot; with EVERY candidate whose confidence &gt;= 5
+that is &quot;on_topic&quot; or &quot;borderline&quot; AND satisfies all HOMEPAGE INCLUSION CRITERIA.
+This is a hard rule — do NOT override it based on subjective judgment. If a candidate meets these conditions, it goes into products.
+
+Only candidates with confidence &gt;= 5 that also pass relevance + homepage gates go into &quot;products&quot;. All candidates (including rejected ones) go into &quot;candidates&quot;.
+
+Output JSON only:
+{{
+  &quot;candidates&quot;: [
+    {{
+      &quot;name&quot;: &quot;best product name you can identify from text&quot;,
+      &quot;brand&quot;: &quot;brand from text&quot;,
+      &quot;confidence&quot;: 8,
+      &quot;reason&quot;: &quot;why this score — what makes it specific or vague&quot;
+    }}
+  ],
+  &quot;products&quot;: [
+    {{
+      &quot;name&quot;: &quot;official product name from text&quot;,
+      &quot;brand&quot;: &quot;brand from text&quot;,
+      &quot;confidence&quot;: 8,
+      &quot;category&quot;: &quot;product category&quot;,
+      &quot;evidence&quot;: &quot;exact quote from text&quot;,
+      &quot;relevance&quot;: &quot;on_topic&quot;,
+      &quot;relevance_reason&quot;: &quot;brief reason&quot;
+    }}
+  ],
+  &quot;failType&quot;: &quot;&quot;
+}}
+
+failType options (when no products with confidence &gt;= 5):
+- &quot;no_product&quot;: No product or brand mentioned at all
+- &quot;lifestyle_only&quot;: Pure lifestyle content
+- &quot;music_dance&quot;: Music/dance/entertainment
+- &quot;empty_content&quot;: Too short to analyze
+- &quot;no_spec_prod&quot;: Brand mentioned but no product name reached confidence &gt;= 5
+- &quot;non_commercial&quot;: Non-commercial-intent content — educational, news, gameplay, ASMR, reaction/prank/comedy video, tutorial, performance, or any content where commerce is NOT the primary purpose
+- &quot;restaurant_food&quot;: Restaurant/venue items only
+- &quot;off_topic&quot;: Products found but all are outside the vertical category
+- &quot;secondhand_outdated&quot;: Products found but all appear secondhand or outdated
+- &quot;non_english&quot;: Content is not in English
+
+- &quot;products&quot; contains ONLY candidates with confidence &gt;= 5 that also pass relevance + homepage gates
+- &quot;candidates&quot; contains ALL product-like mentions regardless of confidence
+- IMPORTANT: ANY candidate with confidence &gt;= 5 that is on_topic/borderline and passes homepage criteria MUST be copied into &quot;products&quot;.
+- If products is non-empty, failType=&quot;&quot;
+- If products is empty, set appropriate failType
+- Output JSON only, no other text</pre></div></div></section><section class='stage-card' id='card-s03'><div class='stage-head'><div class='stage-badge'>s03</div><div><h2>Deduplication</h2><div class='stage-desc'>Two-pass dedup: fast string similarity then LLM semantic merge.</div></div></div><div class='subgrid'><div class='subcard'><h4>Pass 1 — String Dedup</h4><p>Case-insensitive exact match on (brand, productName). Fast and removes obvious duplicates before LLM call.</p></div><div class='subcard'><h4>Pass 2 — LLM Dedup</h4><p>LLM merges near-duplicates using category-specific rules (e.g., lipstick shades are different, phone colors are same). Batched at 80 products per call.</p></div><div class='subcard span2'><h4>LLM Dedup System Prompt</h4><pre class='mono'>You are a specialized Product Data Engineer. Your task is to deduplicate product lists based on specific category-level business rules. Output only valid JSON.</pre></div><div class='subcard span2'><h4>LLM Dedup User Prompt Template</h4><pre class='mono large'>Below is a list of (id, brand, productName) entries. Each item has a unique ID. Your goal is to identify DUPLICATE items and merge them according to strict category definitions.
+
+### Category Definition &amp; Merging Rules:
+Follow these rules strictly to determine if two items are the &quot;SAME&quot; or &quot;DIFFERENT&quot;:
+
+1. **Beauty &amp; Personal Care**:
+   - DIFFERENT: Different colors/shades are DIFFERENT products (e.g., &quot;Dior 999 Red&quot; vs &quot;Dior 100 Nude&quot;).
+   - SAME: Only merge if it&#x27;s the exact same shade with different naming (e.g., &quot;Dior 999&quot; vs &quot;Dior Rouge 999&quot;).
+
+2. **3C &amp; Electronics**:
+   - SAME: Different colors are the SAME product (e.g., &quot;iPhone 17 Orange&quot; and &quot;iPhone 17 Blue&quot; -&gt; Merge to &quot;iPhone 17&quot;).
+   - DIFFERENT: Different models or storage capacities are DIFFERENT (e.g., &quot;iPhone 17&quot; vs &quot;iPhone 17 Pro&quot;).
+
+3. **Apparel &amp; Accessories**:
+   - SAME: Different sizes are the SAME product (e.g., &quot;Nike Tee Size L&quot; and &quot;Nike Tee Size S&quot; -&gt; Merge to &quot;Nike Tee&quot;).
+   - DIFFERENT: Different colors or styles are DIFFERENT.
+
+4. **Home &amp; Household**:
+   - DIFFERENT: Different scents/fragrances are DIFFERENT products (e.g., Tide &quot;Original&quot; vs Tide &quot;Spring Meadow&quot;).
+
+5. **Outdoor &amp; Sports**:
+   - DIFFERENT: Different colors of Jackets/Apparel are DIFFERENT products (Visibility/Safety logic).
+   - DIFFERENT: Different materials for Tents are DIFFERENT.
+   - DIFFERENT: Different colors of climbing ropes are DIFFERENT.
+   - DIFFERENT: Different temperature ratings for Sleeping Bags are DIFFERENT.
+
+### General Cleaning Rules:
+- Merge variations in casing, abbreviations, or typos (e.g., &quot;MAC Eye Shadow&quot; vs &quot;MAC Eyeshadow&quot;).
+- Remove fluff words like &quot;Best Seller&quot;, &quot;New&quot;, or &quot;Official&quot;.
+
+Products to Process:
+{product_list}
+
+### Instructions:
+1. Group products that are the SAME item based on the rules above.
+2. For each group, pick ONE canonical representative (the most complete/official name).
+3. If products are &quot;DIFFERENT&quot; based on the rules (like different lipstick shades), do NOT merge them.
+4. Return JSON ONLY.
+
+Output Format:
+{{
+  &quot;unique&quot;: [
+    {{&quot;id&quot;: &quot;&lt;kept item&#x27;s original ID&gt;&quot;, &quot;brand&quot;: &quot;canonical brand&quot;, &quot;productName&quot;: &quot;canonical product name&quot;}}
+  ],
+  &quot;duplicates&quot;: [
+    {{
+      &quot;kept&quot;: {{&quot;id&quot;: &quot;&lt;ID&gt;&quot;, &quot;brand&quot;: &quot;...&quot;, &quot;productName&quot;: &quot;...&quot;}},
+      &quot;removed&quot;: [{{&quot;id&quot;: &quot;&lt;ID&gt;&quot;, &quot;brand&quot;: &quot;...&quot;, &quot;productName&quot;: &quot;...&quot;}}]
+    }}
+  ]
+}}
+
+- &quot;unique&quot; = the final deduplicated list (all distinct products).
+- &quot;duplicates&quot; = only groups where merging happened (for human review).
+- If no duplicates found, &quot;duplicates&quot; should be an empty list.
+- EVERY product from the input must appear in EITHER &quot;unique&quot; or inside a &quot;duplicates[].removed&quot; entry.
+- The &quot;id&quot; field MUST be the exact original ID from the input. Do NOT invent new IDs.
+</pre></div></div></section><section class='stage-card' id='card-s04'><div class='stage-head'><div class='stage-badge'>s04</div><div><h2>L1 Classification &amp; Exclusion</h2><div class='stage-desc'>Classify deduped products into L1 categories via LLM, then exclude non-shopping categories.</div></div></div><div class='subgrid'><div class='subcard span2'><h4>Full L1 Category List</h4><pre class='mono'>Home Furnishings, Sports &amp; Outdoors, Tools &amp; Hardware, Office Products, Books &amp; Magazines, Clothing, Shoes, Computing, Lawn &amp; Garden, Car &amp; Garage, Health &amp; Wellness, Beauty &amp; Fragrance, Baby &amp; Nursery, Kitchen &amp; Housewares, Electronics, Gourmet Food &amp; Chocolate, Cameras &amp; Optics, Music, Software, Pet Supplies, Toys, Jewelry &amp; Watches, Musical Instruments, Movies, Collectibles &amp; Memorabilia, Video Games, Travel, Arts &amp; Crafts, Miscellaneous, Vehicles, Flowers</pre></div><div class='subcard span2'><h4>L1 Exclusion Filter</h4><ul class='compact-list'><li>Exclude file: l1_exclude_tags.txt — 9 categories excluded before SERP.</li><li>Products classified into excluded L1 categories are dropped and NOT sent to SERP (saves quota).</li><li>Excluded rows are saved to s04_l1/all_l1_excluded.tsv for review.</li></ul><div class='mini-title'>Excluded Categories</div><pre class='mono'>Books &amp; Magazines, Health &amp; Wellness, Gourmet Food &amp; Chocolate, Music, Software, Movies, Collectibles &amp; Memorabilia, Vehicles, Flowers</pre></div></div></section><section class='stage-card' id='card-s05'><div class='stage-head'><div class='stage-badge'>s05</div><div><h2>SERP Search &amp; Filter</h2><div class='stage-desc'>Search products on Google Shopping via SerpAPI, filter out products with no results, and verify market match.</div></div></div><div class='subgrid'><div class='subcard'><h4>SERP Parameters</h4><table class='kv'><tr><td>Engine</td><td>google_shopping</td></tr><tr><td>Top N</td><td>3</td></tr><tr><td>num</td><td>6</td></tr><tr><td>immersive_engine</td><td>google_immersive_product</td></tr></table></div><div class='subcard'><h4>Filters Applied</h4><ul class='compact-list'><li>Internal dedup: products are deduped by (brand, productName) before SERP search — only one query per unique product.</li><li>No-SERP-result drop: products with ZERO Google Shopping results go to all_no_serp.tsv and are DROPPED from the pipeline.</li><li>Google redirect filter: individual SERP results containing &#x27;google.com/search&#x27; or &#x27;google.com/url&#x27; are skipped.</li><li>Empty brand/productName: silently dropped (not sent to SERP).</li></ul></div><div class='subcard span2'><h4>Practical Risk</h4><p>SerpAPI can 429. If that happens, resume from s05 instead of rerunning the whole pipeline.</p></div></div></section><section class='stage-card' id='card-s06'><div class='stage-head'><div class='stage-badge'>s06</div><div><h2>Seller Authority Filter</h2><div class='stage-desc'>Filter matched products by seller/domain quality.</div></div></div><div class='subgrid'><div class='subcard'><h4>Authority Rules</h4><table class='kv'><tr><td>Source file</td><td>seller_level_authority.tsv</td></tr><tr><td>Domain count</td><td>306036</td></tr><tr><td>Keep</td><td>high, average, unknown</td></tr><tr><td>Drop</td><td>spam, low</td></tr></table></div><div class='subcard'><h4>Level Distribution</h4><pre class='mono'>{&#x27;spam&#x27;: 143125, &#x27;average&#x27;: 111652, &#x27;low&#x27;: 46409, &#x27;high&#x27;: 4850}</pre></div></div></section><section class='stage-card' id='card-s08'><div class='stage-head'><div class='stage-badge'>s08</div><div><h2>Match Catalog (SCOPE)</h2><div class='stage-desc'>SCOPE job joins the pipeline&#x27;s SearchLink with Bing catalog OfferFeedDaily to obtain GOIDs. This is a filter: only links that match a catalog offer get a GOID.</div></div></div><div class='subgrid'><div class='subcard span2'><h4>How It Works</h4><ul class='compact-list'><li>Input: s07_merge/merge_all.tsv — all surviving rows with SearchLink from SERP.</li><li>URL Normalization: each SearchLink is normalized via UrlNormalizerv2.RegexParamRIUrlNormalizer to produce NormSearchLink.</li><li>Catalog Join: INNER JOIN NormSearchLink with OfferFeedDaily.ss on NormalizedUrl — only rows with a catalog match survive.</li><li>Provider Ranking: join with ProviderDimensions.view, then ROW_NUMBER() PARTITION BY NormSearchLink ORDER BY ProviderTypeId → keep rnk=1 (best provider).</li><li>Output: s08_scope_matched/matchedDetails.tsv with GlobalOfferId (GOID), Title, Price, Seller, OfferURL, ImageURL, SellerType, etc.</li></ul></div><div class='subcard'><h4>Filter Effect</h4><ul class='compact-list'><li>Rows whose SearchLink has NO catalog match are NOT in matchedDetails — they become &#x27;unmatched&#x27; in s10.</li><li>Only 1 offer per SearchLink is kept (rnk=1, best ProviderTypeId).</li></ul></div><div class='subcard'><h4>Key Data Sources</h4><table class='kv'><tr><td>Catalog</td><td>OfferFeedDaily.ss (Bing Catalog, AMER market)</td></tr><tr><td>Normalizer</td><td>UrlNormalizerv2.RegexParamRIUrlNormalizer</td></tr><tr><td>Provider View</td><td>ProviderDimensions.view (ProviderTypeId ranking)</td></tr><tr><td>Category Map</td><td>CategoryMapping.csv (LLMCatId → CategoryName)</td></tr></table></div></div></section><section class='stage-card' id='card-s09'><div class='stage-head'><div class='stage-badge'>s09</div><div><h2>Generate Report</h2><div class='stage-desc'>Generates an HTML report for human review. No filtering — purely a visualization/QA step.</div></div></div><div class='subgrid'><div class='subcard span2'><h4>Purpose</h4><ul class='compact-list'><li>Calls tools/generate_report.py to produce an interactive HTML report.</li><li>Combines data from all pipeline stages (s01–s07) plus catalog match (s08).</li><li>No data is filtered or dropped in this stage — it is read-only.</li><li>Output: s09_report/report_vertical_{MMDD}.html</li></ul></div><div class='subcard'><h4>Optional Parameters</h4><table class='kv'><tr><td>--tag</td><td>Tag for report title (e.g. '5M')</td></tr><tr><td>--min-confidence</td><td>Confidence threshold for display filtering</td></tr><tr><td>--input-influencers</td><td>Influencer TSV for follower/social_link data</td></tr></table></div></div></section><section class='stage-card' id='card-s10'><div class='stage-head'><div class='stage-badge'>s10</div><div><h2>Export Data</h2><div class='stage-desc'>Joins pipeline output with catalog match and influencer data, applies final filters, deduplicates, and splits into matched/unmatched exports.</div></div></div><div class='subgrid'><div class='subcard span2'><h4>Join Logic</h4><ul class='compact-list'><li>Load s07_merge/merge_all.tsv (all pipeline products).</li><li>Load s08_scope_matched/matchedDetails.tsv (catalog matches by SearchLink).</li><li>Load s01_fetch/all_videos.tsv (video metadata: views, likes, comments).</li><li>Load s02_extract/all_products.tsv (confidence scores).</li><li>Optionally load influencer input TSV (followers, social_link, avatar).</li></ul></div><div class='subcard'><h4>Filters Applied</h4><ul class='compact-list'><li>Confidence filter: only products with confidence &gt;= 6 are kept (default, configurable via --min-confidence).</li><li>Seller authority filter on catalog offers: skip offers from low/spam seller domains (uses seller_level_authority.tsv).</li><li>Google redirect filter: skip catalog rows with &#x27;google.com/search&#x27; in SearchLink.</li></ul></div><div class='subcard'><h4>Dedup & Sort</h4><ul class='compact-list'><li>Sort by: seller_authority (high first) → SellerType (DTC &gt; CategorySpecialist &gt; UniversalSeller) → search_rank.</li><li>Dedup: keep only 1 best row per (brand, productName) pair.</li></ul></div><div class='subcard'><h4>Output Split</h4><table class='kv'><tr><td>Matched (has GOID)</td><td>joined_export_vertical_{MMDD}.tsv — rows where SearchLink matched catalog</td></tr><tr><td>Unmatched (no GOID)</td><td>joined_export_vertical_{MMDD}_failed.tsv — rows with no catalog match</td></tr></table><div class='mini-title'>Output Columns</div><pre class='mono'>Source, GOID, ProductTitle, ProductPrice, ProductSellerName,
+ProductURL, ProductImageURL, SearchLink, ShoppingLink,
+SocialPostURL, SocialPostTitle, SocialPostDescription,
+SocialPostViews, SocialPostLikes, SocialPostComments,
+SocialPostPublishTime, SocialInfluencerAccountName,
+SocialInfluencerFollowers, SocialInfluencerAccountLink,
+SocialInfluencerAvatar, SocialInfluencerPlatform,
+ExtractedBrand, ExtractedProductName, Vertical,
+DataSource, SellerAuthority, SellerType</pre></div></div></section>
+    </div>
+    <button class="back-to-top" onclick="window.scrollTo({top:0})" title="Back to top">&#8593;</button>
+    <script>
+        window.addEventListener('scroll', function() {
+            var btn = document.querySelector('.back-to-top');
+            if (window.scrollY > 400) btn.classList.add('visible');
+            else btn.classList.remove('visible');
+        });
+    </script>
+</body>
+</html>
