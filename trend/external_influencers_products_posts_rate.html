@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Influencer Output Report — 2026-03-16 ~ 2026-03-29</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #16324f 0%, #244c5a 45%, #f1efe8 100%);
+  color: #17212b;
+}
+.wrap { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.hero {
+  background: rgba(255,255,255,0.92);
+  border-radius: 20px;
+  padding: 28px 30px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.14);
+  margin-bottom: 18px;
+}
+h1 { margin: 0 0 8px; font-size: 30px; color: #16324f; }
+.sub { color: #4b5d6b; font-size: 15px; }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 18px 0; }
+.card {
+  background: rgba(255,255,255,0.94);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+}
+.metric-label { font-size: 13px; color: #607180; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.metric-value { font-size: 34px; font-weight: 700; color: #16324f; }
+.metric-note { font-size: 13px; color: #607180; margin-top: 6px; }
+.section-title { font-size: 20px; color: #16324f; margin: 0 0 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; background: #e9eef2; color: #173042; padding: 11px 10px; position: sticky; top: 0; white-space: nowrap; }
+td { padding: 10px; border-bottom: 1px solid #e3e7ea; vertical-align: top; }
+tr:hover td { background: #f8fafb; }
+.table-wrap { max-height: 72vh; overflow: auto; border-radius: 14px; border: 1px solid #dde4e8; }
+.formula { font-size: 14px; color: #51616e; margin-top: 10px; line-height: 1.7; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.chip { background: #e9f1f5; color: #244c5a; padding: 6px 10px; border-radius: 999px; font-size: 13px; }
+.sort-btn {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: inherit;
+}
+.sort-btn::after {
+  content: '↕';
+  font-size: 12px;
+  color: #6d7f8c;
+}
+.sort-btn[data-dir="asc"]::after { content: '↑'; color: #16324f; }
+.sort-btn[data-dir="desc"]::after { content: '↓'; color: #16324f; }
+@media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) {
+  .wrap { padding: 14px; }
+  .hero, .card { padding: 16px; border-radius: 16px; }
+  .grid { grid-template-columns: 1fr; }
+  h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+  <div class="wrap">
+    <div class="hero">
+      <h1>Influencer Output Report</h1>
+      <div class="sub">Run: 20260402_174849 | Date range: 2026-03-16 ~ 2026-03-29 | Generated: 2026-04-07 11:51</div>
+      <div class="chips">
+        <div class="chip">All input accounts are listed for comparison</div>
+        <div class="chip">Total posts from s01_fetch/all_videos.tsv</div>
+        <div class="chip">Has-product posts and products from s07_merge/merge_all.tsv</div>
+        <div class="chip">Input file: externalInfluencers.tsv</div>
+      </div>
+      <div class="formula">
+        products/posts = unique final products / total fetched posts<br>
+        post(hasProduct)/products = posts with at least one final product / unique final products<br>
+        post hit rate = posts with at least one final product / total fetched posts
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="metric-label">Input Rows</div>
+        <div class="metric-value">102</div>
+        <div class="metric-note">Raw rows from input TSV</div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Unique Accounts</div>
+        <div class="metric-value">97</div>
+        <div class="metric-note">Account-level comparison rows</div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Output Accounts</div>
+        <div class="metric-value">42</div>
+        <div class="metric-note">Accounts with final kept product output</div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Total Posts</div>
+        <div class="metric-value">809</div>
+        <div class="metric-note">Fetched posts across these influencers</div>
+      </div>
+      <div class="card">
+        <div class="metric-label">Posts With Product</div>
+        <div class="metric-value">93</div>
+        <div class="metric-note">Hit rate 11.5%</div>
+      </div>
+      <div class="card" style="grid-column: span 2;">
+        <div class="metric-label">Unique Products</div>
+        <div class="metric-value">154</div>
+        <div class="metric-note">products/posts 0.19 | post/products 0.60</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 18px;">
+      <h2 class="section-title">Platform Summary</h2>
+      <table class="sortable-table">
+        <thead>
+          <tr>
+            <th><button class="sort-btn" data-sort-type="text">Platform</button></th>
+            <th><button class="sort-btn" data-sort-type="number">Influencers</button></th>
+            <th><button class="sort-btn" data-sort-type="number">Total Posts</button></th>
+            <th><button class="sort-btn" data-sort-type="number">Posts With Product</button></th>
+            <th><button class="sort-btn" data-sort-type="number">Unique Products</button></th>
+            <th><button class="sort-btn" data-sort-type="percent">Post Hit Rate</button></th>
+            <th><button class="sort-btn" data-sort-type="number">Products/Posts</button></th>
+            <th><button class="sort-btn" data-sort-type="number">Post(hasProduct)/Products</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td>instagram</td>
+          <td>58</td>
+          <td>555</td>
+          <td>65</td>
+          <td>111</td>
+          <td>11.7%</td>
+          <td>0.20</td>
+          <td>0.59</td>
+        </tr>
+        
+        <tr>
+          <td>tiktok</td>
+          <td>26</td>
+          <td>202</td>
+          <td>20</td>
+          <td>28</td>
+          <td>9.9%</td>
+          <td>0.14</td>
+          <td>0.71</td>
+        </tr>
+        
+        <tr>
+          <td>youtube</td>
+          <td>13</td>
+          <td>52</td>
+          <td>8</td>
+          <td>15</td>
+          <td>15.4%</td>
+          <td>0.29</td>
+          <td>0.53</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Influencer Detail</h2>
+      <div class="table-wrap">
+        <table class="sortable-table" data-renumber="true">
+          <thead>
+            <tr>
+              <th><button class="sort-btn" data-sort-type="number">#</button></th>
+              <th><button class="sort-btn" data-sort-type="text">noxId</button></th>
+              <th><button class="sort-btn" data-sort-type="text">accountLink</button></th>
+              <th><button class="sort-btn" data-sort-type="number">post</button></th>
+              <th><button class="sort-btn" data-sort-type="number">products</button></th>
+              <th><button class="sort-btn" data-sort-type="number">products/post</button></th>
+              <th><button class="sort-btn" data-sort-type="percent">post(with product)/post</button></th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr>
+          <td>1</td>
+          <td>696087936</td>
+          <td><a href="https://www.instagram.com/fourhandsfurniture/" target="_blank" rel="noreferrer">open</a></td>
+          <td>10</td>
+          <td>27</td>
+          <td>2.70</td>
+          <td>80.0%</td>
+        </tr>
+        
+        <tr>
+          <td>2</td>
+          <td>42242486</td>
+          <td><a href="https://www.instagram.com/mudpiegift/" target="_blank" rel="noreferrer">open</a></td>
+          <td>51</td>
+          <td>17</td>
+          <td>0.33</td>
+          <td>27.5%</td>
+        </tr>
+        
+        <tr>
+          <td>3</td>
+          <td>33429127851</td>
+          <td><a href="https://www.instagram.com/enfliquecreative/" target="_blank" rel="noreferrer">open</a></td>
+          <td>17</td>
+          <td>8</td>
+          <td>0.47</td>
+          <td>35.3%</td>
+        </tr>
+        
+        <tr>
+          <td>4</td>
+          <td>UCjHBvutnv4fE6EoBjbBZHKg</td>
+          <td><a href="https://www.youtube.com/channel/UCjHBvutnv4fE6EoBjbBZHKg" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>8</td>
+          <td>2.00</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>5</td>
+          <td>6885732801040614405</td>
+          <td><a href="https://www.tiktok.com/@rileejsmith" target="_blank" rel="noreferrer">open</a></td>
+          <td>11</td>
+          <td>6</td>
+          <td>0.55</td>
+          <td>54.5%</td>
+        </tr>
+        
+        <tr>
+          <td>6</td>
+          <td>7123967345884333102</td>
+          <td><a href="https://www.tiktok.com/@couture.to.the.max" target="_blank" rel="noreferrer">open</a></td>
+          <td>15</td>
+          <td>5</td>
+          <td>0.33</td>
+          <td>13.3%</td>
+        </tr>
+        
+        <tr>
+          <td>7</td>
+          <td>6924755247550694405</td>
+          <td><a href="https://www.tiktok.com/@_catben_" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>5</td>
+          <td>1.25</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>8</td>
+          <td>51009949750</td>
+          <td><a href="https://www.instagram.com/linenoaksinteriors/" target="_blank" rel="noreferrer">open</a></td>
+          <td>16</td>
+          <td>5</td>
+          <td>0.31</td>
+          <td>6.2%</td>
+        </tr>
+        
+        <tr>
+          <td>9</td>
+          <td>18185606</td>
+          <td><a href="https://www.instagram.com/teresalaucar/" target="_blank" rel="noreferrer">open</a></td>
+          <td>10</td>
+          <td>4</td>
+          <td>0.40</td>
+          <td>30.0%</td>
+        </tr>
+        
+        <tr>
+          <td>10</td>
+          <td>39135408568</td>
+          <td><a href="https://www.instagram.com/simplysalfinds/" target="_blank" rel="noreferrer">open</a></td>
+          <td>17</td>
+          <td>4</td>
+          <td>0.24</td>
+          <td>11.8%</td>
+        </tr>
+        
+        <tr>
+          <td>11</td>
+          <td>59227795532</td>
+          <td><a href="https://www.instagram.com/becominghomebody/" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>4</td>
+          <td>0.44</td>
+          <td>22.2%</td>
+        </tr>
+        
+        <tr>
+          <td>12</td>
+          <td>184706775</td>
+          <td><a href="https://www.instagram.com/saratoufali/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>4</td>
+          <td>1.00</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>13</td>
+          <td>1582596672</td>
+          <td><a href="https://www.instagram.com/thejungalow/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>4</td>
+          <td>1.00</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>14</td>
+          <td>UCMY3YXnCbP7SuO0MB4rfZyQ</td>
+          <td><a href="https://www.youtube.com/channel/UCMY3YXnCbP7SuO0MB4rfZyQ" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>3</td>
+          <td>1.00</td>
+          <td>100.0%</td>
+        </tr>
+        
+        <tr>
+          <td>15</td>
+          <td>6811703970856469510</td>
+          <td><a href="https://www.tiktok.com/@vanesamaro91" target="_blank" rel="noreferrer">open</a></td>
+          <td>13</td>
+          <td>3</td>
+          <td>0.23</td>
+          <td>15.4%</td>
+        </tr>
+        
+        <tr>
+          <td>16</td>
+          <td>1539080675</td>
+          <td><a href="https://www.instagram.com/elpetersondesign/" target="_blank" rel="noreferrer">open</a></td>
+          <td>12</td>
+          <td>3</td>
+          <td>0.25</td>
+          <td>16.7%</td>
+        </tr>
+        
+        <tr>
+          <td>17</td>
+          <td>4854673481</td>
+          <td><a href="https://www.instagram.com/kinsey_walsh/" target="_blank" rel="noreferrer">open</a></td>
+          <td>8</td>
+          <td>3</td>
+          <td>0.38</td>
+          <td>25.0%</td>
+        </tr>
+        
+        <tr>
+          <td>18</td>
+          <td>6778631110957319173</td>
+          <td><a href="https://www.tiktok.com/@.sara_parker" target="_blank" rel="noreferrer">open</a></td>
+          <td>7</td>
+          <td>3</td>
+          <td>0.43</td>
+          <td>28.6%</td>
+        </tr>
+        
+        <tr>
+          <td>19</td>
+          <td>3766964</td>
+          <td><a href="https://www.instagram.com/patriciarodi/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>3</td>
+          <td>0.75</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>20</td>
+          <td>UCg_H_I8E-RQDRZwdHcMpcOA</td>
+          <td><a href="https://www.youtube.com/channel/UCg_H_I8E-RQDRZwdHcMpcOA" target="_blank" rel="noreferrer">open</a></td>
+          <td>2</td>
+          <td>3</td>
+          <td>1.50</td>
+          <td>100.0%</td>
+        </tr>
+        
+        <tr>
+          <td>21</td>
+          <td>3049991874</td>
+          <td><a href="https://www.instagram.com/blessed_ranch/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>3</td>
+          <td>1.00</td>
+          <td>33.3%</td>
+        </tr>
+        
+        <tr>
+          <td>22</td>
+          <td>229764434</td>
+          <td><a href="https://www.instagram.com/elnazhamai/" target="_blank" rel="noreferrer">open</a></td>
+          <td>15</td>
+          <td>2</td>
+          <td>0.13</td>
+          <td>13.3%</td>
+        </tr>
+        
+        <tr>
+          <td>23</td>
+          <td>6937757571853272069</td>
+          <td><a href="https://www.tiktok.com/@izzipoopi" target="_blank" rel="noreferrer">open</a></td>
+          <td>14</td>
+          <td>2</td>
+          <td>0.14</td>
+          <td>14.3%</td>
+        </tr>
+        
+        <tr>
+          <td>24</td>
+          <td>6894341208409490438</td>
+          <td><a href="https://www.tiktok.com/@hairanatomyuk" target="_blank" rel="noreferrer">open</a></td>
+          <td>8</td>
+          <td>2</td>
+          <td>0.25</td>
+          <td>25.0%</td>
+        </tr>
+        
+        <tr>
+          <td>25</td>
+          <td>7303829380</td>
+          <td><a href="https://www.instagram.com/angelarosehome/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>2</td>
+          <td>0.50</td>
+          <td>50.0%</td>
+        </tr>
+        
+        <tr>
+          <td>26</td>
+          <td>4538997</td>
+          <td><a href="https://www.instagram.com/amberinteriors/" target="_blank" rel="noreferrer">open</a></td>
+          <td>14</td>
+          <td>2</td>
+          <td>0.14</td>
+          <td>7.1%</td>
+        </tr>
+        
+        <tr>
+          <td>27</td>
+          <td>21513085236</td>
+          <td><a href="https://www.instagram.com/itsemilyleah/" target="_blank" rel="noreferrer">open</a></td>
+          <td>11</td>
+          <td>2</td>
+          <td>0.18</td>
+          <td>9.1%</td>
+        </tr>
+        
+        <tr>
+          <td>28</td>
+          <td>66723631643</td>
+          <td><a href="https://www.instagram.com/divaa.finds/" target="_blank" rel="noreferrer">open</a></td>
+          <td>6</td>
+          <td>2</td>
+          <td>0.33</td>
+          <td>16.7%</td>
+        </tr>
+        
+        <tr>
+          <td>29</td>
+          <td>51581895883</td>
+          <td><a href="https://www.instagram.com/rangerhome_nw/" target="_blank" rel="noreferrer">open</a></td>
+          <td>6</td>
+          <td>2</td>
+          <td>0.33</td>
+          <td>16.7%</td>
+        </tr>
+        
+        <tr>
+          <td>30</td>
+          <td>46885793082</td>
+          <td><a href="https://www.instagram.com/apieceofmyhaven/" target="_blank" rel="noreferrer">open</a></td>
+          <td>38</td>
+          <td>1</td>
+          <td>0.03</td>
+          <td>2.6%</td>
+        </tr>
+        
+        <tr>
+          <td>31</td>
+          <td>10482644</td>
+          <td><a href="https://www.instagram.com/rachalfam/" target="_blank" rel="noreferrer">open</a></td>
+          <td>36</td>
+          <td>1</td>
+          <td>0.03</td>
+          <td>2.8%</td>
+        </tr>
+        
+        <tr>
+          <td>32</td>
+          <td>376069472</td>
+          <td><a href="https://www.instagram.com/thehouseofsequins/" target="_blank" rel="noreferrer">open</a></td>
+          <td>28</td>
+          <td>1</td>
+          <td>0.04</td>
+          <td>3.6%</td>
+        </tr>
+        
+        <tr>
+          <td>33</td>
+          <td>51601270212</td>
+          <td><a href="https://www.instagram.com/ourlittlepieceofidahome/" target="_blank" rel="noreferrer">open</a></td>
+          <td>11</td>
+          <td>1</td>
+          <td>0.09</td>
+          <td>9.1%</td>
+        </tr>
+        
+        <tr>
+          <td>34</td>
+          <td>7748051748</td>
+          <td><a href="https://www.instagram.com/daddy_papa_and_me_make3/" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>1</td>
+          <td>0.11</td>
+          <td>11.1%</td>
+        </tr>
+        
+        <tr>
+          <td>35</td>
+          <td>103</td>
+          <td><a href="https://www.instagram.com/ijustine/" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>1</td>
+          <td>0.11</td>
+          <td>11.1%</td>
+        </tr>
+        
+        <tr>
+          <td>36</td>
+          <td>48688275450</td>
+          <td><a href="https://www.instagram.com/mati_espy_home/" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>1</td>
+          <td>0.11</td>
+          <td>11.1%</td>
+        </tr>
+        
+        <tr>
+          <td>37</td>
+          <td>7016847654236079109</td>
+          <td><a href="https://www.tiktok.com/@letimomlife" target="_blank" rel="noreferrer">open</a></td>
+          <td>8</td>
+          <td>1</td>
+          <td>0.12</td>
+          <td>12.5%</td>
+        </tr>
+        
+        <tr>
+          <td>38</td>
+          <td>196582193</td>
+          <td><a href="https://www.instagram.com/farahjmerhi/" target="_blank" rel="noreferrer">open</a></td>
+          <td>7</td>
+          <td>1</td>
+          <td>0.14</td>
+          <td>14.3%</td>
+        </tr>
+        
+        <tr>
+          <td>39</td>
+          <td>61222348062</td>
+          <td><a href="https://www.instagram.com/white.at.home/" target="_blank" rel="noreferrer">open</a></td>
+          <td>7</td>
+          <td>1</td>
+          <td>0.14</td>
+          <td>14.3%</td>
+        </tr>
+        
+        <tr>
+          <td>40</td>
+          <td>6801249999201272838</td>
+          <td><a href="https://www.tiktok.com/@julianna_claire" target="_blank" rel="noreferrer">open</a></td>
+          <td>6</td>
+          <td>1</td>
+          <td>0.17</td>
+          <td>16.7%</td>
+        </tr>
+        
+        <tr>
+          <td>41</td>
+          <td>50057117814</td>
+          <td><a href="https://www.instagram.com/greenssweethome/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>1</td>
+          <td>0.25</td>
+          <td>25.0%</td>
+        </tr>
+        
+        <tr>
+          <td>42</td>
+          <td>UCQqKTplFlXRk8YRZkLDn4-w</td>
+          <td><a href="https://www.youtube.com/channel/UCQqKTplFlXRk8YRZkLDn4-w" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>1</td>
+          <td>0.33</td>
+          <td>33.3%</td>
+        </tr>
+        
+        <tr>
+          <td>43</td>
+          <td>5831967</td>
+          <td><a href="https://www.tiktok.com/@charlidamelio" target="_blank" rel="noreferrer">open</a></td>
+          <td>27</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>44</td>
+          <td>6799443445053916165</td>
+          <td><a href="https://www.tiktok.com/@remibader" target="_blank" rel="noreferrer">open</a></td>
+          <td>21</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>45</td>
+          <td>49045314853</td>
+          <td><a href="https://www.instagram.com/fourthandeastmain/" target="_blank" rel="noreferrer">open</a></td>
+          <td>20</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>46</td>
+          <td>28039799</td>
+          <td><a href="https://www.instagram.com/lex_nicoleta/" target="_blank" rel="noreferrer">open</a></td>
+          <td>17</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>47</td>
+          <td>56570975669</td>
+          <td><a href="https://www.instagram.com/brookes_buys/" target="_blank" rel="noreferrer">open</a></td>
+          <td>15</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>48</td>
+          <td>45279708439</td>
+          <td><a href="https://www.instagram.com/heartandsaultravel/" target="_blank" rel="noreferrer">open</a></td>
+          <td>15</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>49</td>
+          <td>395600278</td>
+          <td><a href="https://www.instagram.com/studiomcgee/" target="_blank" rel="noreferrer">open</a></td>
+          <td>15</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>50</td>
+          <td>22724094</td>
+          <td><a href="https://www.instagram.com/homegoods/" target="_blank" rel="noreferrer">open</a></td>
+          <td>13</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>51</td>
+          <td>UCbjQbTvvGe4DJW09CdR5-iA</td>
+          <td><a href="https://www.youtube.com/channel/UCbjQbTvvGe4DJW09CdR5-iA" target="_blank" rel="noreferrer">open</a></td>
+          <td>13</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>52</td>
+          <td>6554283305829667855</td>
+          <td><a href="https://www.tiktok.com/@demibagby" target="_blank" rel="noreferrer">open</a></td>
+          <td>12</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>53</td>
+          <td>196287972</td>
+          <td><a href="https://www.instagram.com/thehillarystyle/" target="_blank" rel="noreferrer">open</a></td>
+          <td>11</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>54</td>
+          <td>45756303</td>
+          <td><a href="https://www.instagram.com/beckiowens/" target="_blank" rel="noreferrer">open</a></td>
+          <td>10</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>55</td>
+          <td>6832870752501793798</td>
+          <td><a href="https://www.tiktok.com/@carolina.mccauley" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>56</td>
+          <td>6745892773859165189</td>
+          <td><a href="https://www.tiktok.com/@nabela" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>57</td>
+          <td>UCdrOXx0skHiNM-0xlvHnplw</td>
+          <td><a href="https://www.youtube.com/channel/UCdrOXx0skHiNM-0xlvHnplw" target="_blank" rel="noreferrer">open</a></td>
+          <td>9</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>58</td>
+          <td>64089105736</td>
+          <td><a href="https://cn.noxinfluencer.com/instagram/channel/64089105736" target="_blank" rel="noreferrer">open</a></td>
+          <td>8</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>59</td>
+          <td>6762609913108005894</td>
+          <td><a href="https://www.tiktok.com/@leanadeeb" target="_blank" rel="noreferrer">open</a></td>
+          <td>8</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>60</td>
+          <td>43511145523</td>
+          <td><a href="https://cn.noxinfluencer.com/instagram/channel/43511145523" target="_blank" rel="noreferrer">open</a></td>
+          <td>7</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>61</td>
+          <td>4513719426</td>
+          <td><a href="https://www.instagram.com/mochileros.viajeros/" target="_blank" rel="noreferrer">open</a></td>
+          <td>7</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>62</td>
+          <td>6879520653066847234</td>
+          <td><a href="https://www.tiktok.com/@dearmodern" target="_blank" rel="noreferrer">open</a></td>
+          <td>6</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>63</td>
+          <td>UCpYbQ2PPKV2QNUiUumdoIbg</td>
+          <td><a href="https://www.youtube.com/channel/UCpYbQ2PPKV2QNUiUumdoIbg" target="_blank" rel="noreferrer">open</a></td>
+          <td>6</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>64</td>
+          <td>64605803519</td>
+          <td><a href="https://www.instagram.com/gfbeef/" target="_blank" rel="noreferrer">open</a></td>
+          <td>5</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>65</td>
+          <td>6751135205430477830</td>
+          <td><a href="https://www.tiktok.com/@brittany.xavier" target="_blank" rel="noreferrer">open</a></td>
+          <td>5</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>66</td>
+          <td>UClqnSQHUZA7o_XAVmGUqafA</td>
+          <td><a href="https://www.youtube.com/channel/UClqnSQHUZA7o_XAVmGUqafA" target="_blank" rel="noreferrer">open</a></td>
+          <td>5</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>67</td>
+          <td>52561733514</td>
+          <td><a href="https://www.instagram.com/operation_niki/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>68</td>
+          <td>503178605</td>
+          <td><a href="https://www.instagram.com/thetiffanyconcept/" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>69</td>
+          <td>6694694071464576005</td>
+          <td><a href="https://www.tiktok.com/@lonefoxhome" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>70</td>
+          <td>7405142045072311328</td>
+          <td><a href="https://www.tiktok.com/@velcheva.vibe" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>71</td>
+          <td>UCsJlLWZeP2_-2ysp-0OIvTQ</td>
+          <td><a href="https://www.youtube.com/channel/UCsJlLWZeP2_-2ysp-0OIvTQ" target="_blank" rel="noreferrer">open</a></td>
+          <td>4</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>72</td>
+          <td>197277191</td>
+          <td><a href="https://www.instagram.com/alexisnicolehome/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>73</td>
+          <td>197277191</td>
+          <td><a href="https://www.instagram.com/alexisnicolehome/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>74</td>
+          <td>5019396</td>
+          <td><a href="https://www.instagram.com/amberlancaster/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>75</td>
+          <td>7332112489</td>
+          <td><a href="https://www.instagram.com/chrissymarieblog/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>76</td>
+          <td>1706890705</td>
+          <td><a href="https://www.instagram.com/coupleinthekitchen/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>77</td>
+          <td>3463108735</td>
+          <td><a href="https://www.instagram.com/williamfrohne/" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>78</td>
+          <td>6638665207483645958</td>
+          <td><a href="https://www.tiktok.com/@karruechett" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>79</td>
+          <td>6722618095775794181</td>
+          <td><a href="https://www.tiktok.com/@teresalauracaruso" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>80</td>
+          <td>6778288136049918981</td>
+          <td><a href="https://www.tiktok.com/@wisdm8" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>81</td>
+          <td>UCTrUzPhcJwgDbBndUxrv8QA</td>
+          <td><a href="https://www.youtube.com/channel/UCTrUzPhcJwgDbBndUxrv8QA" target="_blank" rel="noreferrer">open</a></td>
+          <td>3</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>82</td>
+          <td>57912042387</td>
+          <td><a href="https://www.instagram.com/elysian__living/" target="_blank" rel="noreferrer">open</a></td>
+          <td>2</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>83</td>
+          <td>509591</td>
+          <td><a href="https://www.instagram.com/saradietschy/" target="_blank" rel="noreferrer">open</a></td>
+          <td>2</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>84</td>
+          <td>6809048068970857477</td>
+          <td><a href="https://www.tiktok.com/@emilyrayna" target="_blank" rel="noreferrer">open</a></td>
+          <td>2</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>85</td>
+          <td>59870472628</td>
+          <td><a href="https://www.instagram.com/cleanyourhomee/" target="_blank" rel="noreferrer">open</a></td>
+          <td>1</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>86</td>
+          <td>1992242266</td>
+          <td><a href="https://www.instagram.com/em_august/" target="_blank" rel="noreferrer">open</a></td>
+          <td>1</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>87</td>
+          <td>252534770</td>
+          <td><a href="https://www.instagram.com/inspire_me_home_decor/" target="_blank" rel="noreferrer">open</a></td>
+          <td>1</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>88</td>
+          <td>64589766016</td>
+          <td><a href="https://www.instagram.com/cnadismit/" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>89</td>
+          <td>268227254</td>
+          <td><a href="https://www.instagram.com/kidsquarantineandme/" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>90</td>
+          <td>52519543083</td>
+          <td><a href="https://www.instagram.com/techjoyce/" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>91</td>
+          <td>417445782</td>
+          <td><a href="https://www.instagram.com/walkaboottravel/" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>92</td>
+          <td>6687574356099302406</td>
+          <td><a href="https://www.tiktok.com/@aurikatariina" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>93</td>
+          <td>6775812613437129734</td>
+          <td><a href="https://www.tiktok.com/@brialiving" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>94</td>
+          <td>7265672294328009760</td>
+          <td><a href="https://www.tiktok.com/@taros.house" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>95</td>
+          <td>UC92MuvmXsdEhW1QBgDFBM2w</td>
+          <td><a href="https://www.youtube.com/channel/UC92MuvmXsdEhW1QBgDFBM2w" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>96</td>
+          <td>UCf0WmZk5F5_1Qm9CNgEZNuA</td>
+          <td><a href="https://www.youtube.com/channel/UCf0WmZk5F5_1Qm9CNgEZNuA" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>97</td>
+          <td>UCrHPA2WD9LdlIeFmi8XGYPw</td>
+          <td><a href="https://www.youtube.com/channel/UCrHPA2WD9LdlIeFmi8XGYPw" target="_blank" rel="noreferrer">open</a></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0.00</td>
+          <td>0.0%</td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<script>
+function parseSortableValue(text, type) {
+  const value = text.trim();
+  if (type === 'number') {
+    const parsed = Number(value.replace(/,/g, ''));
+    return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
+  }
+  if (type === 'percent') {
+    const parsed = Number(value.replace('%', '').replace(/,/g, ''));
+    return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
+  }
+  return value.toLowerCase();
+}
+
+function renumberTable(table) {
+  if (table.dataset.renumber !== 'true') {
+    return;
+  }
+  Array.from(table.tBodies[0].rows).forEach((row, index) => {
+    if (row.cells.length > 0) {
+      row.cells[0].textContent = String(index + 1);
+    }
+  });
+}
+
+document.querySelectorAll('.sortable-table').forEach((table) => {
+  const buttons = table.querySelectorAll('thead .sort-btn');
+  buttons.forEach((button, columnIndex) => {
+    button.addEventListener('click', () => {
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+      const currentDir = button.dataset.dir === 'asc' ? 'asc' : button.dataset.dir === 'desc' ? 'desc' : '';
+      const nextDir = currentDir === 'asc' ? 'desc' : 'asc';
+      buttons.forEach((item) => delete item.dataset.dir);
+      button.dataset.dir = nextDir;
+      const type = button.dataset.sortType || 'text';
+      rows.sort((left, right) => {
+        const leftValue = parseSortableValue(left.cells[columnIndex]?.textContent || '', type);
+        const rightValue = parseSortableValue(right.cells[columnIndex]?.textContent || '', type);
+        if (leftValue < rightValue) {
+          return nextDir === 'asc' ? -1 : 1;
+        }
+        if (leftValue > rightValue) {
+          return nextDir === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+      rows.forEach((row) => tbody.appendChild(row));
+      renumberTable(table);
+    });
+  });
+});
+</script>
+</body>
+</html>
