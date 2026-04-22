@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>NOX Extraction Pipeline — 完整流程文档</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --code-bg: #f1f5f9;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 28px 80px;
+  }
+  header {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: white;
+    padding: 48px 28px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  }
+  header h1 { margin: 0 0 8px; font-size: 2em; font-weight: 600; }
+  header .subtitle { opacity: .9; font-size: 1em; }
+  header .meta { margin-top: 12px; opacity: .75; font-size: .85em; }
+
+  nav.toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  nav.toc h2 { margin-top: 0; font-size: 1.1em; color: var(--primary-dark); }
+  nav.toc ol {
+    column-count: 2;
+    column-gap: 28px;
+    margin: 0;
+    padding-left: 20px;
+  }
+  nav.toc li { break-inside: avoid; margin: 3px 0; }
+  nav.toc a { color: var(--text); text-decoration: none; }
+  nav.toc a:hover { color: var(--primary); text-decoration: underline; }
+
+  section.stage {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  section.stage h2 {
+    margin: 0 0 4px;
+    color: var(--primary-dark);
+    font-size: 1.5em;
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 10px;
+    display: inline-block;
+  }
+  section.stage h3 {
+    margin: 24px 0 10px;
+    font-size: 1.1em;
+    color: var(--text);
+    border-left: 4px solid var(--primary);
+    padding-left: 10px;
+  }
+  section.stage h4 {
+    margin: 16px 0 8px;
+    font-size: 1em;
+    color: var(--primary-dark);
+  }
+  .stage-tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: .75em;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  .stage-tag.external { background: var(--accent); }
+  .stage-tag.post { background: #8b5cf6; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+    font-size: .92em;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f1f5f9;
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: .9em;
+    color: #c026d3;
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-size: .88em;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+
+  .flowchart {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: Consolas, monospace;
+    font-size: .85em;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.5;
+  }
+
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: #fef3c7;
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+  }
+  .callout.info { border-color: var(--primary); background: #dbeafe; }
+  .callout.success { border-color: var(--success); background: #d1fae5; }
+  .callout.danger { border-color: var(--danger); background: #fee2e2; }
+
+  ul, ol { padding-left: 24px; }
+  li { margin: 3px 0; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: .8em;
+    font-weight: 600;
+  }
+  .badge.keep { background: #d1fae5; color: #065f46; }
+  .badge.drop { background: #fee2e2; color: #991b1b; }
+  .badge.score { background: #e0e7ff; color: #3730a3; font-family: Consolas, monospace; }
+
+  .rule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .rule-box {
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #fafbfc;
+  }
+  .rule-box h5 { margin: 0 0 6px; color: var(--primary-dark); }
+
+  footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .85em;
+    padding: 28px 0 0;
+  }
+
+  @media (max-width: 720px) {
+    nav.toc ol { column-count: 1; }
+    .rule-grid { grid-template-columns: 1fr; }
+    section.stage { padding: 20px 18px; }
+    header { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<header>
+  <h1>NOX Extraction Pipeline — 完整流程文档</h1>
+  <div class="subtitle">Pipeline v2 · 11-stage 生产流程</div>
+  <div class="meta">生成日期：2026-04-22 · 所属项目：CatalogExpansionDev / nox_extraction</div>
+</header>
+
+<div class="container">
+
+<!-- ========== TOC ========== -->
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#overview">流程总览</a></li>
+    <li><a href="#s01">S01 — Fetch</a></li>
+    <li><a href="#s02">S02 — Extract（LLM 产品提取）</a></li>
+    <li><a href="#s03">S03 — Dedup（去重）</a></li>
+    <li><a href="#s04">S04 — L1 Classify（品类分类）</a></li>
+    <li><a href="#s05">S05 — SERP</a></li>
+    <li><a href="#s06">S06 — Seller Filter</a></li>
+    <li><a href="#s07">S07 — Merge</a></li>
+    <li><a href="#s08">S08 — SCOPE Matching（外部）</a></li>
+    <li><a href="#s08b">S08b — Image Filter</a></li>
+    <li><a href="#s09">S09 — Verify（LLM 评分）</a></li>
+    <li><a href="#s10">S10 — Report</a></li>
+    <li><a href="#s11">S11 — Export</a></li>
+    <li><a href="#config">配置文件 &amp; Azure OpenAI</a></li>
+  </ol>
+</nav>
+
+<!-- ========== OVERVIEW ========== -->
+<section class="stage" id="overview">
+<h2>1. 流程总览</h2>
+
+<div class="flowchart">┌──────────────────────────────────────────────────────────────────┐
+│  run.py 主入口                                                   │
+│  参数: --date, --days, --workers, --from, --to, --limit         │
+│  自动化: S01 → S02 → S03 → S04 → S05 → S06 → S07              │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  S01 Fetch ─── NOX API 获取视频                                  │
+│       ↓  all_videos.tsv                                          │
+│  S02 Extract ── LLM 从标题/描述提取产品                          │
+│       ↓  all_products.tsv                                        │
+│  S03 Dedup ──── 字符串 + LLM 去重                                │
+│       ↓  all_products.tsv (去重后)                               │
+│  S04 L1 ─────── LLM L1品类分类 + 排除标签过滤                    │
+│       ↓  all_l1.tsv                                              │
+│  S05 SERP ───── SerpAPI Google Shopping 搜索                     │
+│       ↓  all_serp_matched.tsv                                    │
+│  S06 Seller ─── 卖家域名权威度过滤                               │
+│       ↓  all_seller_ok.tsv                                       │
+│  S07 Merge ──── 复制到标准路径                                   │
+│       ↓  merge_all.tsv                                           │
+│                                                                  │
+│  ============== 外部阶段 (SCOPE/Aether) ======================= │
+│                                                                  │
+│  S08 SCOPE ──── Cosmos 目录匹配                                  │
+│       ↓  matchedDetails.tsv                                      │
+│                                                                  │
+│  ============== 后处理 (run_post_scope.py) ===================== │
+│                                                                  │
+│  S08b Image ─── 图片 URL 质量过滤                                │
+│  S09 Verify ─── LLM 帖子/产品一致性评分 (0-5)                    │
+│  S10 Report ─── 生成 HTML 报告                                   │
+│  S11 Export ─── 导出最终 TSV                                     │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘</div>
+
+<h3>默认参数</h3>
+<table>
+  <tr><th>参数</th><th>默认值</th><th>说明</th></tr>
+  <tr><td><code>max_workers</code></td><td>4</td><td>并行工作线程数</td></tr>
+  <tr><td><code>serp_workers</code></td><td>20</td><td>SERP 专用并行数</td></tr>
+  <tr><td><code>batch_size</code></td><td>10</td><td>S01 抓取批次大小</td></tr>
+  <tr><td><code>days</code></td><td>1</td><td>日期范围（天）</td></tr>
+  <tr><td><code>heartbeat_seconds</code></td><td>30</td><td>心跳间隔</td></tr>
+</table>
+</section>
+
+<!-- ========== S01 ========== -->
+<section class="stage" id="s01">
+<h2>2. S01 — Fetch <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>调用 NOX Influencer API，按平台获取每个 influencer 在指定日期范围内发布的视频。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><th>类型</th><th>文件 / 内容</th></tr>
+  <tr><td>输入</td><td>Influencer 列表（按平台分组），参数 <code>start_date</code>、<code>end_date</code></td></tr>
+  <tr><td>输出</td><td><code>s01_fetch/all_videos.tsv</code> — 视频字段</td></tr>
+  <tr><td>输出</td><td><code>s01_fetch/all_fetch_errors.tsv</code> — 失败记录</td></tr>
+  <tr><td>输出</td><td><code>s01_fetch/all_raw_nox.jsonl</code> — NOX API 原始 JSON</td></tr>
+</table>
+
+<h3>输出列</h3>
+<pre>inf_id, alias, platform, channelId, videoId, url, publishTime,
+views, likes, comments, tags, title, description</pre>
+
+<h3>NOX API 端点</h3>
+<table>
+  <tr><th>平台</th><th>URL</th></tr>
+  <tr><td>YouTube</td><td><code>https://service.noxinfluencer.com/nox/v1/youtube/video</code></td></tr>
+  <tr><td>TikTok</td><td><code>https://service.noxinfluencer.com/nox/v1/tiktok/video</code></td></tr>
+  <tr><td>Instagram</td><td><code>https://service.noxinfluencer.com/nox/v1/instagram/video</code></td></tr>
+  <tr><td>配额查询</td><td><code>https://service.noxinfluencer.com/nox/v1/key?noxKey={KEY}</code></td></tr>
+</table>
+
+<h3>请求参数</h3>
+<pre>{
+  "noxKey": "&lt;API_KEY&gt;",
+  "channelId": "&lt;channel_id&gt;",
+  "startDate": "2026-01-01",
+  "endDate":   "2026-01-07",
+  "country":   "US",
+  "language":  "en",
+  "pageSize":  100,
+  "page":      1
+}</pre>
+
+<p><code>country</code> / <code>language</code> 为 NOX 地区与语言参数，来自配置 <code>NOX_REGION</code>、<code>NOX_LANGUAGE</code>。</p>
+
+<h3>分页与重试</h3>
+<ul>
+  <li>从 <code>page=1</code> 开始，每页 <strong>100</strong> 条，直到 <code>len(items) &gt;= total</code></li>
+  <li>成功条件：<code>api_code == 10000</code></li>
+  <li>可重试错误码：<code>{50001, 50002, 50003}</code></li>
+  <li>最大重试 <strong>3</strong> 次，间隔 <strong>2</strong> 秒</li>
+</ul>
+
+<div class="callout info">
+<strong>调度策略：</strong>平台轮转（round-robin）均衡请求；每批 10 个 influencer 用 <code>ThreadPoolExecutor</code> 并行。
+标题/描述中的换行、Tab 被替换为 <code>||</code>（TSV 安全）。
+</div>
+</section>
+
+<!-- ========== S02 ========== -->
+<section class="stage" id="s02">
+<h2>3. S02 — Extract <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>使用 Azure OpenAI 从视频标题/描述中提取提及的产品。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s01_fetch/all_videos.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s02_extract/all_products.tsv</code> — 提取到的产品</td></tr>
+  <tr><td>输出</td><td><code>s02_extract/all_failed.tsv</code> — 失败视频（含 <code>failType</code>）</td></tr>
+  <tr><td>输出</td><td><code>s02_extract/checkpoint.jsonl</code> — 增量检查点</td></tr>
+</table>
+
+<h3>System Prompt</h3>
+<pre>You are a product extraction expert. Output only valid JSON. Never guess product names.</pre>
+
+<h3>User Prompt — 完整原文</h3>
+<p>以下是发送给 LLM 的 <strong>User Prompt 完整模板</strong>（来自 <code>lib/product_extractor.py</code> 的 <code>USER_PROMPT_TEMPLATE</code>，占位符 <code>{content}</code>、<code>{category_context}</code>、<code>{global_exclusions}</code>、<code>{current_date}</code> 在运行时替换）：</p>
+
+<details open>
+<summary style="cursor:pointer;color:var(--primary-dark);font-weight:600;margin-bottom:8px;">展开 / 折叠 User Prompt 完整原文</summary>
+<pre>You are a product extraction expert. Extract products mentioned in social media posts.
+
+Current date: {current_date}
+Content:
+{content}
+{category_context}
+{global_exclusions}
+
+HARD RULES (must always be followed):
+
+1. The product name MUST appear explicitly in the content text.
+   - Do NOT guess or complete product names from your knowledge.
+   - EXCEPTION — Collaborations: If the text clearly describes a collaboration (e.g. "X has reunited with Y to put his spin on Z",
+     "X's collaboration with Y", "X x Y"), you MUST construct the product name as "CollabPartner x ProductLine"
+     (e.g. "@lorenz.og ... his latest spin on the Air Max 95" → name="Lorenzo x Air Max 95").
+     Both the collab partner AND the product line must appear in the text.
+   - CO-BRAND PRESERVATION (HARD): If the text explicitly ties two brands/entities to the SAME product
+     (e.g. "Crocs and LEGO ... Brick Clog", "LEGO Crocs Brick Clog", "BrandA x BrandB ProductLine"),
+     the extracted product name MUST retain both entities (e.g. "LEGO x Crocs Brick Clog"), not a single-brand rewrite.
+     Do NOT drop, replace, or normalize away an explicitly mentioned collaborator token.
+
+2. The brand MUST be identifiable from the text (via @mention, explicit name, or hashtag).
+   - Retailers (Ulta, Sephora, Amazon, Target) are NOT brands.
+   - Use the OFFICIAL brand name.
+
+3. For each product, provide "evidence": copy the EXACT substring from the original text that contains the product name.
+
+4. For each product, judge its RELEVANCE for homepage display:
+   - "on_topic": product is a real, purchasable consumer product suitable for a shopping homepage
+   - "off_topic": product falls under GLOBAL EXCLUSIONS (vehicles, movies, toys, swimwear, subscription services, etc.),
+     OR is a promotional freebie / giveaway item that CANNOT be purchased separately
+     (e.g. McDonald's collectible cards, Happy Meal toys, free gifts with purchase, loyalty rewards)
+     → Subscription services (Netflix, Game Pass, Spotify, Disney+, etc.) are ALWAYS off_topic — never extract
+   - "borderline": product is unusual but still a legitimate purchasable item
+   Only extract products that are "on_topic" or "borderline". Do NOT extract "off_topic" products.
+
+HOMEPAGE INCLUSION CRITERIA (MUST satisfy all):
+1) Purchasable: The item is a real consumer product/service that can be obtained independently.
+2) Searchable: The text provides enough identity to search it (at least brand + product name/type).
+3) Primary focus: The product is a main subject of the post (review/recommendation/demo), not incidental tags.
+
+If any criterion is not satisfied, do NOT include in products, regardless of confidence.
+Campaign/engagement slogans without concrete product evidence (e.g. #JoinTeamX, #XChallenge, #Giveaway) must be capped at 2.
+
+5. PRODUCT NAME COMPLETENESS: If the product name is only a single word (e.g. "Rapunzel", "Elixir"),
+   append its product type/category to make it a searchable name.
+   - WRONG: name="Rapunzel", category="fragrance"  (searching "Disney Rapunzel" finds a movie character)
+   - RIGHT: name="Rapunzel Fragrance", category="fragrance"  (searching "Disney Rapunzel Fragrance" finds the product)
+   - Multi-word names like "Soft Pinch Liquid Blush" or "Airwrap Styler" are already specific enough — do NOT add category to them.
+   VARIANT / SHADE / COLORWAY INCLUSION (HARD RULE):
+   When the text specifies a shade, color, variant, size, or edition (e.g. "in 09 dreamy Dawn", "shade 35",
+   "color Opal", "size 8", "Limited Edition"), you MUST include it in the product name.
+   - WRONG: name="Cloud Topia Blush"  (shade "09 dreamy Dawn" is mentioned but lost)
+   - RIGHT: name="Cloud Topia Blush 09 Dreamy Dawn"
+   - WRONG: name="Lifter Concealer"  (shade 35 is mentioned but lost)
+   - RIGHT: name="Lifter Concealer Shade 35"
+   This ensures downstream search queries can match the exact variant the creator used.
+
+6. LANGUAGE CHECK (MUST be done FIRST, before any extraction):
+   Determine the PRIMARY language of the post content. Ignore brand names, product model numbers, and hashtags when judging language.
+   If the primary language is NOT English, immediately return empty products with failType="non_english".
+   Do NOT extract products even if the brand or product name appears to be in English.
+
+SPAM / SEO TAG DETECTION (MUST be checked BEFORE scoring candidates):
+Before scoring any candidates, compare the post TITLE to the products you found.
+If the title clearly indicates the post is about a SPECIFIC TOPIC (e.g. a game like Roblox/Fortnite/Free Fire,
+a challenge, a movie reaction, a comedy skit) and the product mentions appear ONLY in description hashtags
+or keyword-stuffed text that is UNRELATED to that topic, those are SEO spam tags — NOT genuine product mentions.
+→ Cap ALL such spam-tag products at confidence 2, regardless of how specific the model name looks.
+Example: Title="Rescuing My Roblox Friends from Golden Tsunami"
+  Description has "a01,a11,a10,a20,a30,...,iphone, #Iphone8plus, #j5prime, #j2prime"
+  → The post is about Roblox gameplay; these phone models are spam SEO tags → score 1-2 for ALL of them.
+Only apply this when the mismatch is CLEAR. If the title is vague or the products plausibly relate, score normally.
+
+VIDEO-CONTENT FILTERING (MUST be checked BEFORE scoring candidates):
+If the post is primarily video-first entertainment or creator content (e.g. gameplay, prank, reaction, dance,
+comedy skit, podcast clip, sermon/motivation clip, sports highlight, meme/viral edit) and product words are only
+incidental mentions (hashtags, ambient background, creator handle, generic "shop link in bio"), do NOT treat them
+as homepage-ready products.
+→ Such incidental mentions should usually be capped at confidence 0-2 and not included in products.
+→ Only allow confidence &gt;= 5 when the post clearly foregrounds a purchasable product as a main subject with explicit
+  identity evidence (brand + product name/type + concrete mention in title/description).
+→ For these content-first posts (including tutorial/how-to explainers) where commerce is NOT the primary intent,
+  set failType="non_commercial".
+
+GAMEPLAY-SPECIFIC HEURISTICS:
+- If title/caption is clearly gameplay-centric (e.g. "ranked match", "clutch", "speedrun", "boss fight", "live gameplay"),
+  treat game names, skins, map names, mods, and in-game items as non-shopping content by default.
+- Device/model names that appear only in hashtag blocks or SEO stuffing (e.g. phone model lists under gameplay clips)
+  should be treated as spam-like incidental mentions and capped at 0-2.
+- Only keep confidence &gt;= 5 when there is explicit real-world product intent (e.g. "I use X mouse", "buy this headset",
+  "setup details: brand + product") with concrete purchasable evidence in the post text.
+
+ASMR-SPECIFIC HEURISTICS:
+- If the post is primarily ASMR/performance content (trigger words like "asmr", "satisfying", "sleep sounds", "no talking"),
+  do NOT extract incidental objects/tools used for sound-making as products unless they are explicitly recommended/sold.
+- Generic object mentions in ASMR context (soap, slime, brushes, tapping tools, cups, knives, etc.) are usually props,
+  not purchasable product recommendations; cap at 0-2 unless explicit shopping intent exists.
+- For ASMR creator promos, require strong evidence (brand + concrete product name + purchase/recommendation language)
+  before allowing confidence &gt;= 5.
+
+When choosing failType for content-first posts:
+- Use "non_commercial" for content-first video (gameplay/ASMR/tutorial/reaction/performance) with incidental or weak product signals
+- Use "no_product" ONLY when there is truly no product-like mention at all
+- Use "lifestyle_only" ONLY for pure lifestyle scenes (no commercial intent, no brand/product reference)
+- Use "music_dance" ONLY for clear music/dance-only clips
+
+CANDIDATE SCORING:
+List ALL product-like mentions in the text as candidates, even if you are unsure.
+The confidence score (0-9) determines HOW SPECIFIC the product identification is — this replaces any yes/no extraction rule.
+Score based on how clearly the text identifies a product — NOT on whether you recognize the product.
+You cannot search the web. Do NOT penalize a product just because you are unfamiliar with it.
+If the text signals "this is a specific product" (e.g. hashtag as a name, brand handle + product term, recommendation language like "must have"), trust the text.
+
+Score each candidate's confidence from 0 to 9:
+  9: Specific product name + colorway/edition/variant + brand clearly stated
+     (e.g. "Air Jordan 1 High Alaska", "Soft Pinch Liquid Blush in Joy")
+  8: Product is clearly specific and searchable (brand + distinct product name),
+    but missing variant-level detail (e.g. no explicit colorway/shade/size/capacity/edition).
+     Typical 8 examples:
+       - Brand + distinct product name that reads near-unique in context
+       - Specific collab/product name that is clearly formed and directly searchable
+  7: Product is specific with brand identifiable (often model/version/collab/distinct name),
+    but some naming context is still incomplete or slightly ambiguous.
+     Typical 7 examples:
+       - Names with model/version numbers (e.g. "EP-133 sampler", "ABZORB 2010", "991v1", "990v4")
+       - A collaboration/collab version of a product line (e.g. "Lorenzo x Air Max 95", "Travis Scott x Air Jordan 1")
+         → The collab name MUST appear in the extracted product name (e.g. name="Lorenzo x Air Max 95", NOT just "Air Max 95")
+       - Co-branded names where BOTH entities are explicit in text (e.g. "LEGO x Crocs Brick Clog")
+         → Dropping one co-brand entity reduces specificity and should be scored lower.
+       - A distinct hashtag that clearly functions as a product name (e.g. "#AutoScooper")
+         → EXCLUDE campaign/engagement slogans (e.g. "#JoinTeamX", "#XChallenge", "#Giveaway", "#Contest") unless concrete product evidence exists
+       - Post is clearly recommending/reviewing ONE product and you can identify a name + brand → usually 7+
+  6: A product line or named range WITHOUT a model number (e.g. "Air Max 95", "Air Max 90", "KERATIME" — product series/lines),
+     a collab product where the collab partner is NOT captured (just "Air Max 95" without the collab name → stays at 6),
+     note: series numbers like "95", "90", "97" identify which SERIES, not a specific variant — they are NOT model/version numbers,
+     or brand + MODIFIED PRODUCT SUBTYPE — the type word carries a qualifying modifier
+     (material / function / form-factor / usage) that narrows it to a recognizable sub-category.
+     TEST: does the type word contain a modifier that limits the scope to a specific sub-segment of the base category?
+     If yes → 6. If the type word is a bare category with no modifier → 5.
+     ✅ 6 examples: "running shoes" (function), "cushion foundation" (form), "matte lipstick" (finish),
+       "crossbody bag" (form), "wireless earbuds" (tech), "zip-up hoodie" (form), "bomber jacket" (style),
+       "lip gloss" (already a distinct sub-category of lip products)
+     ❌ stays at 5: "sneakers", "shoes", "lipstick", "foundation", "bag", "hoodie", "jacket"
+  5: Brand + a BARE product category/type with NO qualifying modifier.
+     The category is still a recognizable, usable product type, but it maps to a large number of products.
+     Examples: "Nike sneakers" (bare category), "Adidas hoodie" (bare category), "Dior lipstick" (bare category)
+     CRITICAL: The product category/type word (e.g. "sneakers", "hoodie", "lipstick", "floor cleaner")
+     MUST appear explicitly in the text. You CANNOT infer the category from your knowledge of the brand.
+     If only the brand name appears with NO product type word in the text, this is a brand-only mention → score 3.
+     Example: "Narwal's Spring Sale is LIVE" → only brand "Narwal" appears, no product type word → score 3, NOT 5.
+     EXCEPTION: If the brand is a niche/single-product brand where "brand + bare category" effectively identifies
+     ONE specific product (e.g. a brand that only makes one lipstick), score 6 instead — it narrows to a small set like a modified subtype.
+  4: Brand + MIXED collection / mixed-category product bucket (e.g. "new arrival", "spring collection", "limited edition", "trending", "merch", "capsule", "drop", "kit").
+    This refers to a collection that can contain multiple product types rather than one stable product category.
+    Examples: "Nike new arrival" (mixed collection), "Adidas spring collection" (mixed types)
+  3: Brand OR category mentioned alone (not both together), or both present but too vague to form a searchable query.
+     Examples: just "@nike" with no product term, just "sneakers" with no brand, "check out their stuff"
+  2: Weak but explicit product-like signal exists (e.g. campaign/engagement slogan or weak brand+term),
+    but still not concretely searchable as a product.
+  1: Seems product-like but uncertain; confirming it would require guessing.
+  0: Not a product at all (e.g. a person's name, a movie title, a location)
+
+KEY scoring rules:
+- Model/version numbers (e.g. "2010", "v1", "v2", "133") → score 7+
+- Collaboration name included in product name (e.g. "Lorenzo x Air Max 95") → score 7+
+- Hashtag can be score 7+ ONLY when it clearly denotes a product name (e.g. "#AutoScooper")
+- Campaign/engagement slogans (e.g. "#JoinTeamX", "#XChallenge", "#Giveaway", "#Contest") with no concrete product evidence → cap at 2
+- Product series/line (e.g. "Air Max 95", "Air Max 90", "KERATIME") → 6 (series numbers like 95/90/97 are NOT model/version numbers)
+- Collab product WITHOUT the collab name captured → 6 (missing the specificity)
+- Brand + MODIFIED product subtype (type word has a qualifying modifier: material/function/form/usage) → 6
+  (e.g. "running shoes", "cushion foundation", "matte lipstick", "crossbody bag", "lip gloss")
+- Brand + BARE product category (no modifier, e.g. "sneakers", "hoodie", "lipstick", "bag") → 5
+- Brand + product type listed/mentioned without strong endorsement → 5
+- Mixed collection / mixed-category bucket (new arrival, spring collection, holiday collection, trending picks, kit) → 4
+- Generic collection words like "merch", "capsule", "drop", "essentials" are 4 by default (mixed bucket)
+  → Only treat as 5 when the post explicitly narrows to a single product type (e.g. "brand tee", "brand hoodie")
+- Broad bucket words such as "gear", "apparel", "products", "cosmetics", "makeup", "skincare", "merch", "kit" are 4 by default
+  → Only allow 5 when explicitly narrowed to ONE stable item type (e.g. "running jacket", "matte lipstick", "football jersey")
+- Brand-only or handle-only mention with no concrete item type (e.g. just "@brand" / brand name) → 3 (never 5)
+- Category-only word with no brand (e.g. just "sneakers" with no brand) → 3
+- Pure category word without enough clear product identity → 3-4
+- Implicit promotion (e.g. "@brand product" in a list or lifestyle post without explicit endorsement language like "recommend", "must have", "love", "review") → cap at 5
+  → Only @brand + product name with NO endorsement signals → score 5 or lower
+- If uncertain between adjacent scores, choose the LOWER score.
+
+CRITICAL RULE: After scoring all candidates, you MUST populate "products" with EVERY candidate whose confidence &gt;= 5
+that is "on_topic" or "borderline" AND satisfies all HOMEPAGE INCLUSION CRITERIA.
+This is a hard rule — do NOT override it based on subjective judgment. If a candidate meets these conditions, it goes into products.
+
+Only candidates with confidence &gt;= 5 that also pass relevance + homepage gates go into "products". All candidates (including rejected ones) go into "candidates".
+
+Output JSON only:
+{
+  "candidates": [
+    {
+      "name": "best product name you can identify from text",
+      "brand": "brand from text",
+      "confidence": 8,
+      "reason": "why this score — what makes it specific or vague"
+    }
+  ],
+  "products": [
+    {
+      "name": "official product name from text",
+      "brand": "brand from text",
+      "confidence": 8,
+      "category": "product category",
+      "evidence": "exact quote from text",
+      "relevance": "on_topic",
+      "relevance_reason": "brief reason"
+    }
+  ],
+  "failType": ""
+}
+
+failType options (when no products with confidence &gt;= 5):
+- "no_product": No product or brand mentioned at all
+- "lifestyle_only": Pure lifestyle content
+- "music_dance": Music/dance/entertainment
+- "empty_content": Too short to analyze
+- "no_spec_prod": Brand mentioned but no product name reached confidence &gt;= 5
+- "non_commercial": Non-commercial-intent content — educational, news, gameplay, ASMR, reaction/prank/comedy video, tutorial, performance, or any content where commerce is NOT the primary purpose
+- "restaurant_food": Restaurant/venue items only
+- "off_topic": Products found but all are outside the vertical category
+- "secondhand_outdated": Products found but all appear secondhand or outdated
+- "non_english": Content is not in English
+
+- "products" contains ONLY candidates with confidence &gt;= 5 that also pass relevance + homepage gates
+- "candidates" contains ALL product-like mentions regardless of confidence
+- IMPORTANT: ANY candidate with confidence &gt;= 5 that is on_topic/borderline and passes homepage criteria MUST be copied into "products".
+- If products is non-empty, failType=""
+- If products is empty, set appropriate failType
+- Output JSON only, no other text</pre>
+</details>
+
+<h3>Global Exclusions — 完整原文</h3>
+<p>运行时 <code>{global_exclusions}</code> 占位符由 <code>config/category_rules.json</code> 的 <code>_global_exclusions.always_exclude</code> 列表展开，注入到 User Prompt 中：</p>
+<details open>
+<summary style="cursor:pointer;color:var(--primary-dark);font-weight:600;margin-bottom:8px;">展开 / 折叠 Global Exclusions 完整原文</summary>
+<pre>--- GLOBAL EXCLUSIONS (always skip these) ---
+  1. VEHICLES &amp; CAR PARTS: cars, trucks, motorcycles, boats, RVs, ATVs, AND all vehicle parts/accessories
+     — grille, engine, motor, brake light, bumper, exhaust, strobe light, dash cam, phone mount,
+     floor mat, seat cover. ANY automotive product is excluded.
+  2. MOVIES &amp; MEDIA &amp; MUSIC: films, TV shows, DVDs, music albums, vinyl records, singles, EPs, concert
+     tickets, video games, mobile games, card games, trading card games, tabletop games, comics, manga,
+     books, magazines. Gaming HARDWARE (consoles, controllers, keyboards) IS allowed, but game titles
+     and game cards are NOT.
+  3. TOYS &amp; GAMES: dolls, plush toys, action figures, toy sets, collectible figurines, board games,
+     card games, trading cards, collectible card games (e.g. Pokémon cards, Magic: The Gathering),
+     LEGO sets, puzzles, party games. Always excluded regardless of catalog match.
+  4. FOOD &amp; BEVERAGES &amp; DIETARY SUPPLEMENTS: snacks, candy, chocolate, gum, cookies, canned goods,
+     frozen food, condiments, sauces, cereals, protein bars, energy drinks, soft drinks, juice, coffee
+     beans, tea bags, bottled water, meal kits, baking mixes, spices, vitamins, protein powder, dietary
+     supplements, nutritional supplements. Includes ALL edible/drinkable/ingestible consumer products.
+  5. SOFTWARE &amp; DIGITAL PRODUCTS: operating systems (Windows, macOS), software licenses, desktop
+     applications (CleanMyMac, Photoshop), AI tools/services (ChatGPT, Copilot), mobile apps, digital
+     downloads, SaaS subscriptions, antivirus software. Physical tech products that run software ARE
+     allowed (e.g. laptops, phones).
+  6. SWIMWEAR &amp; INTIMATE APPAREL: swimsuits, swimwear, bikinis, tankinis, one-piece suits, two-piece
+     suits, swim tops, swim bottoms, cover-ups, underwear, lingerie, bras, panties, shapewear, bralettes,
+     boxers, briefs, thongs, slips, and other intimate apparel are always excluded, even if they
+     otherwise fit Apparel.
+  7. TOOLS (non-Home-Improvement): tool sets, drill bits, wrenches, etc. are ONLY valid when the video
+     is in the HomeImprovement vertical. In all other verticals, generic tools should NOT be extracted.
+  8. LOW-VALUE UNBRANDED ITEMS: generic novelty trinkets, dollar-store items, unbranded mass-produced
+     commodities typically found on Temu/Wish/AliExpress at &lt;$5 with no recognizable brand
+     (branded budget items like e.l.f. cosmetics ARE allowed)
+  9. SECONDHAND / USED PRODUCTS: used, refurbished, vintage (when clearly old/used), open box, resale,
+     eBay used listing, discontinued. Signals: 'used', 'vintage', 'open box', 'pre-owned',
+     'DVD (year)' with year &gt;2 years old. Examples: 'Hotel Transylvania 3: Summer Vacation (DVD, 2018)',
+     'Used Nike Air Jordan 2022', 'Vintage jacket – resale'
+ 10. NON-PRODUCT ENTITIES: generic content items that are not purchasable SKUs — cars, movies, books,
+     tools (out of context) are hard exclusion rules. Only extract items that correspond to a specific
+     purchasable product with a brand.
+ 11. SERVICES / NON-PRODUCTS: restaurant meals, gym memberships, travel bookings, haircut appointments,
+     online courses, app subscriptions (physical subscription boxes ARE allowed)
+ 12. REAL ESTATE: houses, apartments, land, rental properties</pre>
+</details>
+
+<h4>Hard-Filter Keywords（LLM 后置代码级二次拦截）</h4>
+<p><code>_is_hard_excluded()</code> 在 LLM 输出后再做关键字硬拦截（全词匹配，忽略大小写），对 <code>name + brand + category</code> 文本执行：</p>
+<pre>motorcycle, motocross, dirt bike, dirt bikes,
+automotive, vehicle, vehicles,
+car polish, car wax, car detailing, car paint,
+car cleaner, car wash, motor oil, engine oil,
+ATV, snowmobile, go-kart,
+motorcycle helmet, motorcycle jacket, motorcycle gear,
+motorcycle boots, motorcycle gloves, riding gear,
+DVD, Blu-ray, vinyl record,
+action figure, plush toy, trading cards, LEGO set,
+swimsuit, swimwear, bikini, tankini, lingerie,
+real estate, rental property</pre>
+
+<h3>User Prompt — 中文摘要（便于理解）</h3>
+
+<h4>规则 1 — 产品名必须出现在文本中</h4>
+<ul>
+  <li>不得猜测或补全产品名</li>
+  <li><strong>合作款例外：</strong>文本明确描述合作关系 → 格式 <code>CollabPartner x ProductLine</code>（如 "Lorenzo x Air Max 95"）</li>
+  <li><strong>联名品牌保留：</strong>文本中明确关联双品牌 → 提取名称必须保留双方（如 "LEGO x Crocs Brick Clog"）</li>
+</ul>
+
+<h4>规则 2 — 品牌必须可识别</h4>
+<ul>
+  <li>通过 @提及、显式名称或 hashtag 识别</li>
+  <li>零售商（Ulta, Sephora, Amazon, Target）不算品牌</li>
+  <li>使用官方品牌名</li>
+</ul>
+
+<h4>规则 3 — Evidence</h4>
+<p>复制原文中包含产品名的<strong>原文子串</strong>作为证据。</p>
+
+<h4>规则 4 — 首页展示相关性判断</h4>
+<table>
+  <tr><th>判定</th><th>说明</th></tr>
+  <tr><td><span class="badge keep">on_topic</span></td><td>真实可购买的消费品，适合购物首页</td></tr>
+  <tr><td><span class="badge drop">off_topic</span></td><td>全局排除类别 / 促销赠品（不可单独购买）</td></tr>
+  <tr><td><span class="badge keep">borderline</span></td><td>不常见但仍为合法可购买商品</td></tr>
+</table>
+
+<div class="callout danger">
+<strong>全局排除（off_topic）：</strong>Vehicles · Movies · Toys · Swimwear · 订阅服务（Netflix / Game Pass / Spotify / Disney+）· 促销赠品（McDonald's 收藏卡、快乐儿童餐玩具、购买赠品、会员奖品）
+</div>
+
+<h4>首页准入三条件（全部满足才提取）</h4>
+<ol>
+  <li><strong>Purchasable：</strong>真实消费品/服务，可独立获取</li>
+  <li><strong>Searchable：</strong>至少 brand + product name/type</li>
+  <li><strong>Primary focus：</strong>产品是帖子主题（评测/推荐/演示），非附带标签</li>
+</ol>
+
+<h4>规则 5 — 产品名完整性</h4>
+<ul>
+  <li>单字产品名须追加类型（"Rapunzel" → "Rapunzel Fragrance"）</li>
+  <li><strong>色号/变体硬规则：</strong>文本中提到的色号、颜色、变体、尺寸、版本必须包含在产品名中
+    <br>❌ "Cloud Topia Blush" &nbsp;→&nbsp; ✅ "Cloud Topia Blush 09 Dreamy Dawn"
+  </li>
+</ul>
+
+<h4>规则 6 — 语言检查（最先执行）</h4>
+<p>非英语 → 直接返回空产品，<code>failType="non_english"</code>（忽略品牌名和 hashtag 的语言）</p>
+
+<h3>置信度评分体系（0-9）</h3>
+<table>
+  <tr><th>分数</th><th>定义</th><th>典型示例</th></tr>
+  <tr><td><span class="badge score">9</span></td><td>具体产品名 + 色号/版本/变体 + 品牌明确</td><td>"Air Jordan 1 High Alaska"、"Soft Pinch Liquid Blush in Joy"</td></tr>
+  <tr><td><span class="badge score">8</span></td><td>品牌 + 独特产品名，但缺变体级信息</td><td>品牌 + 独特产品名，可直接搜索</td></tr>
+  <tr><td><span class="badge score">7</span></td><td>型号/版本/合作款名称</td><td>"EP-133 sampler"、"Lorenzo x Air Max 95"、"991v1"</td></tr>
+  <tr><td><span class="badge score">6</span></td><td>产品线/系列（无型号），或品牌 + 带修饰词的产品子类型</td><td>"Air Max 95"（系列号≠型号）、"running shoes"、"matte lipstick"</td></tr>
+  <tr><td><span class="badge score">5</span></td><td>品牌 + 裸产品类别（无修饰词）</td><td>"Nike sneakers"、"Dior lipstick"</td></tr>
+  <tr><td><span class="badge score">4</span></td><td>品牌 + 混合集合/多品类概念</td><td>"new arrival"、"spring collection"、"merch"、"capsule"</td></tr>
+  <tr><td><span class="badge score">3</span></td><td>仅品牌或仅类别单独出现</td><td>仅 "@nike" / 仅 "sneakers"</td></tr>
+  <tr><td><span class="badge score">2</span></td><td>弱但显式的产品信号</td><td>活动口号、弱品牌+术语</td></tr>
+  <tr><td><span class="badge score">1</span></td><td>疑似产品但不确定</td><td>需猜测才能确认</td></tr>
+  <tr><td><span class="badge score">0</span></td><td>非产品</td><td>人名、电影名、地点</td></tr>
+</table>
+
+<div class="callout success">
+<strong>提取阈值：</strong><code>confidence &gt;= 5</code> 且 relevance 为 <code>on_topic</code>/<code>borderline</code> 且满足首页准入条件 → 进入 <code>products</code>。<br>
+<strong>关键规则：</strong>相邻分数犹豫时<strong>选低分</strong>；hashtag 达 7+ 仅当它明确代表产品名（如 <code>#AutoScooper</code>）；活动口号（<code>#JoinTeamX</code>, <code>#Giveaway</code>）上限 2。
+</div>
+
+<h3>内容过滤规则</h3>
+<table>
+  <tr><th>内容类型</th><th>处理</th></tr>
+  <tr><td>SEO 垃圾标签</td><td>标题主题与描述 hashtag 中产品名不匹配 → 全部上限 2</td></tr>
+  <tr><td>游戏内容</td><td>游戏名/皮肤/地图/模组/游戏内物品 → 非购物，上限 0-2</td></tr>
+  <tr><td>ASMR 内容</td><td>通用道具（肥皂、软泥、刷子）→ 上限 0-2，除非有明确购物意图</td></tr>
+  <tr><td>视频优先内容</td><td>游戏/整蛊/反应/舞蹈/喜剧/播客 → <code>failType="non_commercial"</code></td></tr>
+</table>
+
+<h3>failType 枚举</h3>
+<table>
+  <tr><th>failType</th><th>含义</th></tr>
+  <tr><td><code>no_product</code></td><td>无任何产品/品牌提及</td></tr>
+  <tr><td><code>lifestyle_only</code></td><td>纯生活方式内容</td></tr>
+  <tr><td><code>music_dance</code></td><td>音乐/舞蹈/娱乐</td></tr>
+  <tr><td><code>empty_content</code></td><td>内容太短无法分析</td></tr>
+  <tr><td><code>no_spec_prod</code></td><td>有品牌但无产品名达到 confidence &gt;= 5</td></tr>
+  <tr><td><code>non_commercial</code></td><td>非商业意图（教育/新闻/游戏/ASMR/反应等）</td></tr>
+  <tr><td><code>restaurant_food</code></td><td>仅餐厅/场地项目</td></tr>
+  <tr><td><code>off_topic</code></td><td>产品属于排除品类</td></tr>
+  <tr><td><code>secondhand_outdated</code></td><td>二手/过时产品</td></tr>
+  <tr><td><code>non_english</code></td><td>非英语内容</td></tr>
+</table>
+
+<h3>输出 JSON 格式</h3>
+<pre>{
+  "candidates": [
+    {"name": "...", "brand": "...", "confidence": 8, "reason": "..."}
+  ],
+  "products": [
+    {
+      "name": "...", "brand": "...", "confidence": 8,
+      "category": "...", "evidence": "...",
+      "relevance": "on_topic", "relevance_reason": "..."
+    }
+  ],
+  "failType": ""
+}</pre>
+
+<div class="callout info"><strong>断点续传：</strong>每个视频处理完立即写入 <code>checkpoint.jsonl</code>；恢复时跳过已处理 <code>videoId</code>。</div>
+</section>
+
+<!-- ========== S03 ========== -->
+<section class="stage" id="s03">
+<h2>4. S03 — Dedup <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>两轮去重 —— 先字符串精确匹配，再用 LLM 语义去重。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s02_extract/all_products.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s03_dedup/all_products.tsv</code> — 去重后唯一产品</td></tr>
+  <tr><td>输出</td><td><code>s03_dedup/all_dedup_removed.tsv</code> — 被去除的重复项及映射</td></tr>
+</table>
+
+<h3>去重流程</h3>
+<pre>1. 字符串去重 — 按 brand+productName 精确分组
+       ↓
+2. 分配 UUID — 每行获得 8 字符 hex _dedup_id
+       ↓
+3. LLM 去重 — 产品数 &gt;= 2 时触发
+       ↓
+4. 孤儿处理 — 不在 kept/removed 中的 ID 默认保留
+       ↓
+5. 审计构建 — 记录 removed→kept 映射</pre>
+
+<h3>System Prompt</h3>
+<pre>You are a specialized Product Data Engineer.
+Your task is to deduplicate product lists based on
+specific category-level business rules.
+Output only valid JSON.</pre>
+
+<h3>品类级合并规则</h3>
+<table>
+  <tr><th>品类</th><th><span class="badge keep">SAME（合并）</span></th><th><span class="badge drop">DIFFERENT（保留）</span></th></tr>
+  <tr><td>美妆护肤</td><td>同色号不同命名（"Dior 999" vs "Dior Rouge 999"）</td><td>不同色号（"Dior 999 Red" vs "Dior 100 Nude"）</td></tr>
+  <tr><td>3C 电子</td><td>不同颜色（"iPhone 17 Orange" / "iPhone 17 Blue" → "iPhone 17"）</td><td>不同型号/容量（"iPhone 17" vs "iPhone 17 Pro"）</td></tr>
+  <tr><td>服饰配件</td><td>不同尺码（"Nike Tee L" / "Nike Tee S" → "Nike Tee"）</td><td>不同颜色/款式</td></tr>
+  <tr><td>家居日用</td><td>—</td><td>不同香型（Tide "Original" vs "Spring Meadow"）</td></tr>
+  <tr><td>户外运动</td><td>—</td><td>不同颜色（夹克/绳索）、不同材质（帐篷）、不同温标（睡袋）</td></tr>
+</table>
+
+<h3>通用清理规则</h3>
+<ul>
+  <li>合并大小写、缩写、拼写错误变体</li>
+  <li>移除修饰词："Best Seller"、"New"、"Official"</li>
+</ul>
+
+<h3>输出 JSON 格式</h3>
+<pre>{
+  "unique": [
+    {"id": "&lt;保留项ID&gt;", "brand": "规范品牌", "productName": "规范产品名"}
+  ],
+  "duplicates": [
+    {
+      "kept": {"id": "&lt;ID&gt;", "brand": "...", "productName": "..."},
+      "removed": [{"id": "&lt;ID&gt;", "brand": "...", "productName": "..."}]
+    }
+  ]
+}</pre>
+
+<div class="callout info"><strong>容错：</strong>LLM 失败 → 回退到仅字符串去重结果；孤儿 ID 默认保留。</div>
+</section>
+
+<!-- ========== S04 ========== -->
+<section class="stage" id="s04">
+<h2>5. S04 — L1 Classify <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>LLM 将产品分类到 L1 品类，再根据排除列表过滤（减少 SERP 配额消耗）。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s03_dedup/all_products.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s04_l1/all_l1.tsv</code> — 保留行（含 <code>LLM_L1Category</code>）</td></tr>
+  <tr><td>输出</td><td><code>s04_l1/all_l1_excluded.tsv</code> — 被排除行（含 <code>google_shop_link</code>）</td></tr>
+</table>
+
+<h3>L1 品类分类表</h3>
+<pre>Arts &amp; Crafts          Beauty &amp; Fragrance      Cameras &amp; Optics
+Clothing &amp; Shoes       Computing               Electronics
+Health &amp; Wellness      Jewelry &amp; Watches       Musical Instruments
+Software               Sports &amp; Outdoors       Tools &amp; Hardware
+Travel                 Video Games             Miscellaneous</pre>
+
+<h3>System Prompt</h3>
+<pre>You output valid JSON only.</pre>
+
+<h3>单项分类 Prompt</h3>
+<pre>You are a strict product taxonomy classifier.
+Select exactly one L1 category from the list below.
+If unsure, choose Miscellaneous.
+
+L1 List:
+{l1_block}
+
+Item:
+Brand: {brand}, ProductName: {productName}, Category: {category}, Title: {title}
+
+Output JSON only:
+{"l1": "&lt;one from list&gt;"}</pre>
+
+<h3>批量分类 Prompt</h3>
+<pre>You are a strict product taxonomy classifier.
+For each item below, select exactly one L1 category from the list.
+If unsure, choose Miscellaneous.
+
+L1 List:
+{l1_block}
+
+Items:
+1. Brand: X, ProductName: Y, Category: Z, Title: W
+2. ...
+
+Output JSON only:
+{"results": [{"index": 1, "l1": "&lt;one from list&gt;"}]}</pre>
+
+<h3>排除标签（<code>config/l1_exclude_tags.txt</code>）</h3>
+<table>
+  <tr><th>L1 类别</th><th>状态</th></tr>
+  <tr><td>Books &amp; Magazines</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Health &amp; Wellness</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Gourmet Food &amp; Chocolate</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Music</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Software</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Movies</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Collectibles &amp; Memorabilia</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Vehicles</td><td><span class="badge drop">排除</span></td></tr>
+  <tr><td>Flowers</td><td><span class="badge drop">排除</span></td></tr>
+</table>
+
+<p><strong>被排除行的 Google Shopping 链接格式：</strong></p>
+<pre>https://www.google.com/search?tbm=shop&amp;q={URL编码的brand+productName}</pre>
+
+<div class="callout info"><strong>容错：</strong>LLM 失败 → 默认分类为 <code>Miscellaneous</code>（不会被排除）。</div>
+</section>
+
+<!-- ========== S05 ========== -->
+<section class="stage" id="s05">
+<h2>6. S05 — SERP <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>调用 SerpAPI Google Shopping 搜索产品，获取购买链接和商家信息。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s04_l1/all_l1.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s05_serp/all_serp_matched.tsv</code> — 匹配到搜索结果</td></tr>
+  <tr><td>输出</td><td><code>s05_serp/all_serp_mismatch.tsv</code> — 不匹配</td></tr>
+  <tr><td>输出</td><td><code>s05_serp/all_no_serp.tsv</code> — 无搜索结果</td></tr>
+  <tr><td>输出</td><td><code>s05_serp/serp_raw_cache.jsonl</code> — 原始 API 响应（可选）</td></tr>
+</table>
+
+<h3>输出列</h3>
+<pre>platform, alias, videoUrl, publishTime, brand, productName, category,
+LLM_L1Category, evidence, title, confidence,
+search_rank, search_title, search_snippet, search_source, search_link,
+search_price, serp_match, serp_match_reason, serp_status</pre>
+
+<h3>SerpAPI 请求</h3>
+
+<h4>Step 1：Google Shopping Light 搜索</h4>
+<pre>{
+  "q":        "{brand} {productName}",
+  "api_key":  "&lt;SERP_API_KEY&gt;",
+  "engine":   "google_shopping_light",
+  "gl":       "us",
+  "hl":       "en"
+}</pre>
+
+<h4>Step 2：Immersive Product 详情页</h4>
+<pre>{
+  "engine":     "google_immersive_product",
+  "page_token": "&lt;from shopping_results[].immersive_product_page_token&gt;",
+  "api_key":    "&lt;SERP_API_KEY&gt;",
+  "gl":         "us",
+  "hl":         "en"
+}</pre>
+
+<h3>匹配逻辑</h3>
+<ol>
+  <li>执行 Google Shopping 搜索，获取 <code>shopping_results</code></li>
+  <li>过滤二手商品</li>
+  <li>对每个 top 结果，如有 <code>immersive_product_page_token</code> 则获取详情页</li>
+  <li>从详情页提取 <code>product_results.stores[]</code>（商家列表）</li>
+  <li>按商家名去重（不区分大小写）</li>
+  <li>返回前 N 个结果（默认 <code>SERP_TOP_N=3</code>）</li>
+</ol>
+
+<h3>参数</h3>
+<table>
+  <tr><th>参数</th><th>默认值</th></tr>
+  <tr><td><code>SERP_WORKERS</code></td><td>20</td></tr>
+  <tr><td><code>SERP_TOP_N</code></td><td>3</td></tr>
+  <tr><td>请求超时</td><td>20 秒</td></tr>
+  <tr><td><code>SKIP_SERP</code> 开关</td><td><code>False</code>（可跳过）</td></tr>
+</table>
+</section>
+
+<!-- ========== S06 ========== -->
+<section class="stage" id="s06">
+<h2>7. S06 — Seller Filter <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>根据卖家域名权威度过滤 SERP 结果，移除垃圾/低质量卖家。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s05_serp/all_serp_matched.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s06_seller/all_seller_ok.tsv</code> — 保留行</td></tr>
+  <tr><td>输出</td><td><code>s06_seller/all_seller_filtered.tsv</code> — 过滤行</td></tr>
+</table>
+
+<h3>权威度等级</h3>
+<table>
+  <tr><th>等级</th><th>处理</th></tr>
+  <tr><td><code>high</code></td><td><span class="badge keep">保留</span></td></tr>
+  <tr><td><code>average</code></td><td><span class="badge keep">保留</span></td></tr>
+  <tr><td><code>unknown</code></td><td><span class="badge keep">保留</span></td></tr>
+  <tr><td><code>low</code></td><td><span class="badge drop">过滤</span></td></tr>
+  <tr><td><code>spam</code></td><td><span class="badge drop">过滤</span></td></tr>
+</table>
+
+<h3>查询逻辑</h3>
+<ol>
+  <li>从 <code>config/seller_level_authority.tsv</code> 加载 <strong>域名 → 等级</strong> 映射</li>
+  <li>提取 <code>search_link</code> 的域名（去除 <code>www.</code>，小写化）</li>
+  <li>先查 <code>search_source</code>，再回退到域名查询</li>
+  <li>设置 <code>seller_authority</code> 字段，过滤 <code>spam</code>/<code>low</code></li>
+</ol>
+
+<div class="callout info"><strong>容错：</strong>无配置文件 → 全部通过，不做过滤。</div>
+</section>
+
+<!-- ========== S07 ========== -->
+<section class="stage" id="s07">
+<h2>8. S07 — Merge <span class="stage-tag">自动化</span></h2>
+<p><strong>目的：</strong>将 S06 的输出复制到标准路径，保持向后兼容。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s06_seller/all_seller_ok.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s07_merge/merge_all.tsv</code> — S06 输出的副本</td></tr>
+</table>
+<ul>
+  <li><code>shutil.copy2()</code> 简单复制</li>
+  <li>预创建 <code>s08_matched/</code> 目录供 SCOPE 输出使用</li>
+</ul>
+</section>
+
+<!-- ========== S08 ========== -->
+<section class="stage" id="s08">
+<h2>9. S08 — SCOPE Catalog Matching <span class="stage-tag external">外部</span></h2>
+<p><strong>目的：</strong>通过 SCOPE 脚本在 Cosmos 上运行目录匹配，将 S07 的产品列表与 Bing 产品目录进行匹配。</p>
+
+<div class="callout">
+此阶段在 pipeline 之外执行（通过 SCOPE/Aether），非 Python 自动化。
+</div>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s07_merge/merge_all.tsv</code>（上传到 Cosmos）</td></tr>
+  <tr><td>输出</td><td><code>s08_matched/matchedDetails.tsv</code> 或 <code>s08_scope_matched/matchedDetails.tsv</code></td></tr>
+</table>
+
+<h3>新增列（来自目录匹配）</h3>
+<pre>GlobalOfferId, Brand, Title, Description, ImageURL, SearchLink, ...</pre>
+</section>
+
+<!-- ========== S08b ========== -->
+<section class="stage" id="s08b">
+<h2>10. S08b — Image Filter <span class="stage-tag post">后处理</span></h2>
+<p><strong>目的：</strong>过滤 S08 匹配结果中图片 URL 无效的行。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s08_scope_matched/matchedDetails.tsv</code> 或 <code>s08_matched/matchedDetails.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s08b_image_filter/matchedDetails.tsv</code> — 有效图片</td></tr>
+  <tr><td>输出</td><td><code>s08b_image_filter/image_failed.tsv</code> — 无效/空图片</td></tr>
+</table>
+
+<h3>过滤条件</h3>
+<div class="callout info">
+<strong>有效图片标准：</strong> <code>ImageURL</code> 以 <code>/th?id</code> 开头（Bing 产品缩略图格式）
+</div>
+<ul>
+  <li>空 <code>ImageURL</code> → <span class="badge drop">过滤</span></li>
+  <li>仅含 hash 的 URL → <span class="badge drop">过滤</span></li>
+  <li>其他格式 → <span class="badge drop">过滤</span></li>
+  <li>以 <code>/th?id</code> 开头 → <span class="badge keep">保留</span></li>
+</ul>
+</section>
+
+<!-- ========== S09 ========== -->
+<section class="stage" id="s09">
+<h2>11. S09 — Verify <span class="stage-tag post">后处理</span></h2>
+<p><strong>目的：</strong>组合图片质量验证和 LLM 帖子-产品一致性评分（0-5 分制），过滤低质量匹配。</p>
+
+<h3>输入 / 输出</h3>
+<table>
+  <tr><td>输入</td><td><code>s08_scope_matched/matchedDetails.tsv</code></td></tr>
+  <tr><td>输入</td><td><code>s07_merge/merge_all.tsv</code></td></tr>
+  <tr><td>输入</td><td><code>s01_fetch/all_videos.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s09_verify/matchedDetails_image_ok.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s09_verify/image_failed.tsv</code></td></tr>
+  <tr><td>输出</td><td><code>s09_verify/post_product_verify.tsv</code> — 所有已评分</td></tr>
+  <tr><td>输出</td><td><code>s09_verify/post_product_verify_kept.tsv</code> — score &gt;= min_score</td></tr>
+  <tr><td>输出</td><td><code>s09_verify/summary.json</code> — 执行统计</td></tr>
+</table>
+
+<h3>System Prompt</h3>
+<pre>You are a quality-verification assistant for an influencer product pipeline.
+
+Score each catalog product against the original social post on a 0-5 scale.
+
+Scoring:
+  5: Brand + product + variant all align.
+  4: Brand + product line align, variant differs.
+  3: Brand + category align, specific line/model is generic or unclear in post.
+  2: Brand/category near-match but specific line/model does not match.
+  1: Brand only, category differs.
+  0: Unrelated or negative sentiment mention.
+
+Return ONLY JSON:
+{
+  "results": [
+    {"GlobalOfferId":"&lt;id&gt;", "score": &lt;0-5&gt;, "reason":"&lt;short reason&gt;"}
+  ]
+}</pre>
+
+<h3>User Prompt 模板</h3>
+<pre>=== ORIGINAL POST ===
+Platform: {platform}
+Post URL: {videoUrl}
+Title: {title}
+Description: {description}
+
+=== CATALOG PRODUCTS MATCHED ===
+- [{GlobalOfferId}] Brand: {brand} | Title: {title} | Description: {desc[:300]}...
+（每个匹配产品重复此行）</pre>
+
+<h3>评分分制（0-5）</h3>
+<table>
+  <tr><th>分数</th><th>含义</th></tr>
+  <tr><td><span class="badge score">5</span></td><td>品牌 + 产品 + 变体全部对齐</td></tr>
+  <tr><td><span class="badge score">4</span></td><td>品牌 + 产品线对齐，变体不同</td></tr>
+  <tr><td><span class="badge score">3</span></td><td>品牌 + 品类对齐，具体型号模糊/不清</td></tr>
+  <tr><td><span class="badge score">2</span></td><td>品牌/品类近似匹配，具体型号不符</td></tr>
+  <tr><td><span class="badge score">1</span></td><td>仅品牌匹配，品类不同</td></tr>
+  <tr><td><span class="badge score">0</span></td><td>无关或负面情绪提及</td></tr>
+</table>
+
+<div class="callout success"><strong>过滤阈值：</strong>默认 <code>min_score=3</code>，保留 score &gt;= 3 的行。</div>
+
+<h3>Azure OpenAI 调用参数</h3>
+<table>
+  <tr><td><code>temperature</code></td><td>0（确定性输出）</td></tr>
+  <tr><td><code>max_completion_tokens</code></td><td>2048</td></tr>
+  <tr><td>并行 workers</td><td>5（默认）</td></tr>
+</table>
+
+<h3>处理逻辑</h3>
+<ol>
+  <li>图片过滤（同 S08b）</li>
+  <li>按 <code>(alias, videoUrl, platform)</code> 分组帖子</li>
+  <li>查找每个产品的目录信息（从 s07/s08 数据）</li>
+  <li>并行调用 Azure OpenAI 评分</li>
+  <li>解析 JSON 响应（处理 markdown 代码块包裹）</li>
+  <li>按 <code>min_score</code> 过滤</li>
+</ol>
+</section>
+
+<!-- ========== S10 ========== -->
+<section class="stage" id="s10">
+<h2>12. S10 — Report <span class="stage-tag post">后处理</span></h2>
+<p><strong>目的：</strong>基于 S09 验证结果生成 HTML 报告。</p>
+
+<h3>输出</h3>
+<p><code>s10_report/report_vertical_{MMDD}[_confN].html</code></p>
+
+<h3>逻辑</h3>
+<ul>
+  <li>委托给 <code>tools/generate_report.py</code></li>
+  <li>从 manifest 或 run_id 提取日期（MMDD 格式）</li>
+  <li>可附加 <code>_conf{min_confidence}</code> 后缀</li>
+</ul>
+</section>
+
+<!-- ========== S11 ========== -->
+<section class="stage" id="s11">
+<h2>13. S11 — Export <span class="stage-tag post">后处理</span></h2>
+<p><strong>目的：</strong>生成最终 join 导出 TSV，合并 S07 和 S08/S09 数据。</p>
+
+<h3>输出</h3>
+<table>
+  <tr><td><code>s11_export/joined_export_vertical_{MMDD}[_{tag}].tsv</code></td><td>匹配行</td></tr>
+  <tr><td><code>s11_export/joined_export_vertical_{MMDD}[_{tag}]_failed.tsv</code></td><td>未匹配行</td></tr>
+</table>
+
+<h3>逻辑</h3>
+<ul>
+  <li>委托给 <code>tools/export_joined_data.py</code></li>
+  <li>Join S07 merge 数据与 S08/S09 匹配结果</li>
+  <li>按 <code>min_confidence</code> 阈值过滤（默认 6）</li>
+</ul>
+</section>
+
+<!-- ========== CONFIG ========== -->
+<section class="stage" id="config">
+<h2>14. 配置文件 &amp; Azure OpenAI</h2>
+
+<h3>配置文件一览</h3>
+<table>
+  <tr><th>文件</th><th>用途</th></tr>
+  <tr><td><code>config/settings.json</code></td><td>Azure OpenAI、NOX、SERP API 密钥和端点</td></tr>
+  <tr><td><code>config/settings.local.json</code></td><td>本地覆盖配置（优先级更高）</td></tr>
+  <tr><td><code>config/l1_exclude_tags.txt</code></td><td>S04 L1 品类排除列表</td></tr>
+  <tr><td><code>config/seller_level_authority.tsv</code></td><td>S06 卖家域名→权威度映射</td></tr>
+  <tr><td><code>data/input/llm_l1_taxonomy.tsv</code></td><td>L1 品类分类表</td></tr>
+  <tr><td><code>data/input/input_Influencers.tsv</code></td><td>Influencer 输入列表</td></tr>
+  <tr><td><code>lib/category_rules.json</code></td><td>全局排除类别规则</td></tr>
+</table>
+
+<h3>Azure OpenAI 配置</h3>
+<h4>配置加载顺序</h4>
+<ol>
+  <li><code>pipeline/config/settings.json</code></li>
+  <li><code>pipeline/config/settings.local.json</code>（覆盖）</li>
+  <li>环境变量（最高优先级）</li>
+</ol>
+
+<h4>环境变量</h4>
+<table>
+  <tr><th>变量</th><th>说明</th></tr>
+  <tr><td><code>AZURE_OPENAI_ENDPOINT</code></td><td>Azure OpenAI 端点</td></tr>
+  <tr><td><code>AZURE_OPENAI_API_KEY</code></td><td>API 密钥</td></tr>
+  <tr><td><code>AZURE_OPENAI_DEPLOYMENT</code></td><td>模型部署名</td></tr>
+  <tr><td><code>AZURE_OPENAI_API_VERSION</code></td><td>API 版本</td></tr>
+  <tr><td><code>SERP_API_KEY</code></td><td>SerpAPI 密钥</td></tr>
+  <tr><td><code>NOX_KEY</code></td><td>NOX API 密钥</td></tr>
+  <tr><td><code>NOX_REGION</code></td><td>NOX 请求地区（映射到 video API 参数 <code>country</code>）</td></tr>
+  <tr><td><code>NOX_LANGUAGE</code></td><td>NOX 请求语言（映射到 video API 参数 <code>language</code>）</td></tr>
+</table>
+
+<h4>别名映射</h4>
+<ul>
+  <li><code>nox_api_key</code> → <code>NOX_KEY</code></li>
+  <li><code>nox_region</code> / <code>nox_country</code> → <code>NOX_REGION</code></li>
+  <li><code>nox_language</code> → <code>NOX_LANGUAGE</code></li>
+  <li><code>serp_api_key</code> → <code>SERP_API_KEY</code></li>
+</ul>
+
+<h3>后处理编排器 <code>run_post_scope.py</code></h3>
+<p>编排 S09 → S10 → S11 的顺序执行：</p>
+<pre>python stages/run_post_scope.py --run-id 20260315_120000 \
+  --workers 5 --min-score 3 --min-confidence 4 --tag brands_v2</pre>
+<p>合并 S09、S10、S11 的全部参数，一次性完成后处理流程。</p>
+</section>
+
+<footer>
+<p>NOX Extraction Pipeline · 生成日期：2026-04-22 · 版本：v2 (11-stage)</p>
+</footer>
+
+</div>
+</body>
+</html>
