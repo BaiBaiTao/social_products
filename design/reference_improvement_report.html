@@ -61,7 +61,42 @@
 <h1>S09 Verify 测试总结报告</h1>
 <p style="color:#666">测试集: 214 cases (batch1: 95, batch2: 119) | MIN_SCORE = 3 | 日期: 2026-05-09</p>
 
-<h2>一、两个维度的精准度对比</h2>
+<h2>一、Golden Set 构成</h2>
+
+<table>
+  <tr>
+    <th></th>
+    <th>总数</th>
+    <th>Positive (VALID)</th>
+    <th>Negative (INVALID)</th>
+    <th>Positive 占比</th>
+  </tr>
+  <tr>
+    <td><strong>batch1</strong></td>
+    <td>95</td>
+    <td>64</td>
+    <td>31</td>
+    <td>67.4%</td>
+  </tr>
+  <tr>
+    <td><strong>batch2</strong></td>
+    <td>119</td>
+    <td>110</td>
+    <td>9</td>
+    <td>92.4%</td>
+  </tr>
+  <tr style="font-weight:bold; background:#f0f0f0">
+    <td>合计</td>
+    <td>214</td>
+    <td>174</td>
+    <td>40</td>
+    <td>81.3%</td>
+  </tr>
+</table>
+<p class="footnote">Positive (VALID) = 期望 LLM 判定保留的案例；Negative (INVALID) = 期望 LLM 判定拒绝的案例。<br>
+batch1: 手工挑选的多品类案例；batch2: 通过 pipeline 自动采集的扩展案例。</p>
+
+<h2>二、两个维度的精准度对比</h2>
 
 <div class="comparison">
   <div class="card" style="flex:1; text-align:center">
@@ -84,7 +119,7 @@
   <br>其中 34 个原始 FAIL 经人工确认为 Golden Set 标注错误，LLM 判断正确
 </div>
 
-<h2>二、失败案例人工审核明细</h2>
+<h2>三、失败案例人工审核明细</h2>
 
 <div class="metrics">
   <div class="metric card">
@@ -152,7 +187,7 @@
   </tr>
 </table>
 
-<h2>三、Golden Set 质量评估</h2>
+<h2>四、Golden Set 质量评估</h2>
 
 <div class="card card-yellow">
   <strong>Golden Set 标注准确率: 83.2%</strong> (178/214)
@@ -178,7 +213,7 @@
 
 <p class="footnote">注: 修正后 Golden Set 基于人工复核结果。FN 中 LLM_CORRECT 的案例从 VALID 改为 INVALID，FP 中 LLM_CORRECT 的案例从 INVALID 改为 VALID。AMBIGUOUS 保持原始标注。</p>
 
-<h2>四、LLM 真正错误案例明细 (8 条)</h2>
+<h2>五、LLM 真正错误案例明细 (8 条)</h2>
 <p>以下案例中 LLM 的判断与人工复核不一致，属于 LLM 的真正失误。</p>
 
 <div class="case-card">
@@ -421,7 +456,7 @@
   </div>
 </div>
 
-<h2>五、存疑案例 (2 条)</h2>
+<h2>六、存疑案例 (2 条)</h2>
 <p>以下案例难以明确判定 LLM 对错，需进一步讨论。</p>
 
 <div class="case-card">
@@ -484,7 +519,7 @@
   </div>
 </div>
 
-<h2>六、Golden Set 需修正案例 (34 条)</h2>
+<h2>七、Golden Set 需修正案例 (34 条)</h2>
 <p>以下案例经人工复核确认 LLM 判断正确，原始 Golden Set 标注有误，需要修正。</p>
 
 <h3>VALID → INVALID (24 条): 原标 VALID 但实际不应保留</h3>
@@ -1511,13 +1546,13 @@
   </div>
 </div>
 
-<h2>七、LLM 错误案例分数分布</h2>
+<h2>八、LLM 错误案例分数分布</h2>
 <div class="card">
   Score 2: 1 个错误<br>
   Score 3: 7 个错误<br>
 </div>
 
-<h2>八、全部失败案例一览 (44 条)</h2>
+<h2>九、全部失败案例一览 (44 条)</h2>
 <p>完整的 44 条失败案例及人工审核结果，供参考。</p>
 <table>
   <tr>
@@ -1972,7 +2007,7 @@
   </tr>
 </table>
 
-<h2>九、关键结论</h2>
+<h2>十、关键结论</h2>
 <div class="card">
 <ol>
   <li><strong>LLM 实际精准度 95.3%</strong>，远高于原始 golden set 衡量的 79.4%。差距主要来自 golden set 标注质量 (准确率仅 83.2%)。</li>
