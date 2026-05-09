@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>S09 Verify 测试总结报告</title>
+<style>
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 30px; max-width: 1100px; }
+  h1 { color: #1a1a2e; border-bottom: 3px solid #16213e; padding-bottom: 10px; }
+  h2 { color: #16213e; margin-top: 30px; border-left: 4px solid #0f3460; padding-left: 12px; }
+  h3 { color: #333; margin-top: 20px; }
+  .card { background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 15px 0; border: 1px solid #dee2e6; }
+  .card-green { background: #d4edda; border-color: #c3e6cb; }
+  .card-red { background: #f8d7da; border-color: #f5c6cb; }
+  .card-blue { background: #d1ecf1; border-color: #bee5eb; }
+  .card-yellow { background: #fff3cd; border-color: #ffeeba; }
+  .big-num { font-size: 48px; font-weight: bold; margin: 0; }
+  .big-label { font-size: 14px; color: #666; margin: 0; }
+  .metrics { display: flex; gap: 20px; flex-wrap: wrap; }
+  .metric { text-align: center; min-width: 120px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 10px 0; }
+  th { background: #343a40; color: white; padding: 8px; text-align: left; }
+  td { padding: 8px; border-bottom: 1px solid #dee2e6; }
+  tr:hover { background: #e9ecef; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  .tag-fn { background: #f8d7da; color: #721c24; }
+  .tag-fp { background: #fff3cd; color: #856404; }
+  .tag-correct { background: #d4edda; color: #155724; }
+  .tag-wrong { background: #f8d7da; color: #721c24; }
+  .tag-ambiguous { background: #e2e3e5; color: #383d41; }
+  .comparison { display: flex; gap: 30px; align-items: center; }
+  .arrow { font-size: 36px; color: #28a745; }
+  .footnote { font-size: 12px; color: #888; margin-top: 5px; }
+  .case-card { border: 1px solid #dee2e6; border-radius: 8px; margin: 15px 0; overflow: hidden; }
+  .case-header { background: #f0f0f0; padding: 10px 15px; font-size: 14px; border-bottom: 1px solid #dee2e6; }
+  .case-body { padding: 12px 15px; }
+  .case-row { display: flex; margin-bottom: 8px; }
+  .case-label { min-width: 110px; font-weight: bold; color: #555; font-size: 12px; padding-top: 2px; }
+  .case-value { flex: 1; font-size: 13px; word-break: break-word; }
+  .post-content { max-height: 120px; overflow-y: auto; background: #fafafa; padding: 6px 10px; border-radius: 4px; font-size: 12px; line-height: 1.5; }
+  .llm-reason { background: #f0f8ff; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-style: italic; }
+</style>
+</head>
+<body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+<h1>S09 Verify 测试总结报告</h1>
+<p style="color:#666">测试集: 214 cases (batch1: 95, batch2: 119) | MIN_SCORE = 3 | 日期: 2026-05-09</p>
+
+<h2>一、两个维度的精准度对比</h2>
+
+<div class="comparison">
+  <div class="card" style="flex:1; text-align:center">
+    <p class="big-label">维度1: 原始 Golden Set 精准度</p>
+    <p class="big-num" style="color:#dc3545">79.4%</p>
+    <p>170 / 214 PASS</p>
+    <p class="footnote">基于原始标注的 VALID/INVALID，未经人工复核</p>
+  </div>
+  <div class="arrow">→</div>
+  <div class="card card-green" style="flex:1; text-align:center">
+    <p class="big-label">维度2: 人工审核后精准度</p>
+    <p class="big-num" style="color:#28a745">95.3%</p>
+    <p>204 / 214 PASS</p>
+    <p class="footnote">FAIL 案例经人工复核，AMBIGUOUS 计为 FAIL (保守)</p>
+  </div>
+</div>
+
+<div class="card card-blue">
+  <strong>精准度提升: +15.9% (34 cases)</strong>
+  <br>其中 34 个原始 FAIL 经人工确认为 Golden Set 标注错误，LLM 判断正确
+</div>
+
+<h2>二、失败案例人工审核明细</h2>
+
+<div class="metrics">
+  <div class="metric card">
+    <p class="big-num" style="color:#333">44</p>
+    <p class="big-label">总失败案例</p>
+  </div>
+  <div class="metric card card-green">
+    <p class="big-num" style="color:#155724">34</p>
+    <p class="big-label">LLM 正确<br>(Golden Set 标注错误)</p>
+  </div>
+  <div class="metric card card-red">
+    <p class="big-num" style="color:#721c24">8</p>
+    <p class="big-label">LLM 错误<br>(真正的 LLM 失误)</p>
+  </div>
+  <div class="metric card">
+    <p class="big-num" style="color:#6c757d">2</p>
+    <p class="big-label">存疑<br>(AMBIGUOUS)</p>
+  </div>
+</div>
+
+<h3>按错误类型分</h3>
+<table>
+  <tr>
+    <th>错误类型</th>
+    <th>原始数量</th>
+    <th>LLM 正确 (Golden Set 错)</th>
+    <th>LLM 错误 (真正失误)</th>
+    <th>存疑</th>
+    <th>真实错误率</th>
+  </tr>
+  <tr>
+    <td><span class="tag tag-fn">FN (应保留但拒绝)</span></td>
+    <td>27</td>
+    <td>24</td>
+    <td>1</td>
+    <td>2</td>
+    <td>1/214 = 0.5%</td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-fp">FP (应拒绝但保留)</span></td>
+    <td>17</td>
+    <td>10</td>
+    <td>7</td>
+    <td>0</td>
+    <td>7/214 = 3.3%</td>
+  </tr>
+  <tr style="font-weight:bold; background:#f0f0f0">
+    <td>合计</td>
+    <td>44</td>
+    <td>34</td>
+    <td>8</td>
+    <td>2</td>
+    <td>8/214 = 3.7%</td>
+  </tr>
+</table>
+
+<h3>按 Batch 分</h3>
+<table>
+  <tr><th>Batch</th><th>原始 FAIL</th><th>LLM 正确</th><th>LLM 错误</th><th>存疑</th></tr>
+  <tr>
+    <td>batch1</td><td>18</td><td>12</td><td>6</td><td>0</td>
+  </tr>
+  <tr>
+    <td>batch2</td><td>26</td><td>22</td><td>2</td><td>2</td>
+  </tr>
+</table>
+
+<h2>三、Golden Set 质量评估</h2>
+
+<div class="card card-yellow">
+  <strong>Golden Set 标注准确率: 83.2%</strong> (178/214)
+  <br>需修正的标注: 34 条 (15.9%)
+  <br>存疑标注: 2 条 (0.9%)
+</div>
+
+<table>
+  <tr><th>指标</th><th>原始 Golden Set</th><th>修正后 Golden Set</th><th>变化</th></tr>
+  <tr>
+    <td>VALID 标签数</td>
+    <td>174</td>
+    <td>160</td>
+    <td>-14</td>
+  </tr>
+  <tr>
+    <td>INVALID 标签数</td>
+    <td>40</td>
+    <td>54</td>
+    <td>+14</td>
+  </tr>
+</table>
+
+<p class="footnote">注: 修正后 Golden Set 基于人工复核结果。FN 中 LLM_CORRECT 的案例从 VALID 改为 INVALID，FP 中 LLM_CORRECT 的案例从 INVALID 改为 VALID。AMBIGUOUS 保持原始标注。</p>
+
+<h2>四、LLM 真正错误案例明细 (8 条)</h2>
+<p>以下案例中 LLM 的判断与人工复核不一致，属于 LLM 的真正失误。</p>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#4</strong> — Galaxy Home Furniture
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank">https://www.youtube.com/watch?v=3urZaBYUyCE</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Ultimate couch experience. 📌 Stop scrolling and watch the best couch #coolgadgets #trendingproducts</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Mavigadget couch</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.walmart.com/ip/Aviator-Modern-Style-Recliner-Sectional-Sofa-made-with-Wood-in-Gray/5704570022?wmlspartner=wlpa&selectedSellerId=1795" target="_blank">Aviator Modern Style Recliner Sectional Sofa made with Wood in Gray</a> ($2727)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes a reclining sectional/sofa with charging/storage/headrests, but no brand or product line is identified. Catalog is a sectional recliner sofa in the same category, but specific identity cannot be confirmed.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#10</strong> — Hardell
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">https://www.youtube.com/watch?v=A52cSzPzjzI</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">20 Must-Have Amazon Tools Under $30 (Surprisingly Useful!)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>CARTMAN 39 Piece Tool Set</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.lowes.com/pd/HARDELL-Mini-Cordless-Rotary-Tool-with-230pcs-Accessories/5017136205" target="_blank">HARDELL Mini Cordless Rotary Tool with 230pcs Accessories</a> ($69.59)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes HARDELL mini cordless rotary tool, matching brand and category, but does not specify the 230-piece accessory variant; also catalog price exceeds the post's under-$30 constraint, capping score at 3.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#11</strong> — Wagner
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank">https://www.youtube.com/watch?v=0wF3R1D4efw</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">20 Budget DIY Tools Under $100 You’ll Actually Use | Amazon Must-Haves</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>DEKOPRO Home Tool Kit</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.homedepot.com/p/Wagner-Flexio-3500-Electric-Handheld-HVLP-Paint-Sprayer-2419306/316886238" target="_blank">Flexio 3500 Electric Handheld HVLP Paint Sprayer</a> ($179)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes a Wagner FLEXiO paint sprayer, so brand + category match, but it does not specify the exact FLEXiO model. Also the post is for tools under $100, while this catalog item is $179, so score is capped at 3.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#12</strong> — Makita
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=Sv_3siqNNJM" target="_blank">https://www.youtube.com/watch?v=Sv_3siqNNJM</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">20 Smart Makita Tools Under $50 Every DIYer Needs</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Makita ImpactX</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.homedepot.com/p/Makita-116-MPH-459-CFM-18V-LXT-Lithium-Ion-Brushless-Cordless-Leaf-Blower-Tool-Only-XBU03Z/311137108" target="_blank">116 MPH 459 CFM 18V LXT Lithium-Ion Brushless Cordless Leaf Blower (Tool-Only)</a> ($179)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Makita cordless blower/leaf blower under $50, but does not specify a model; catalog is a Makita leaf blower model. Brand and category match, product line not identified in post, and price would cap at 3 anyway.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#16</strong> — Hardell
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">https://www.youtube.com/watch?v=A52cSzPzjzI</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">20 Must-Have Amazon Tools Under $30 (Surprisingly Useful!)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>CARTMAN 39 Piece Tool Set</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.lowes.com/pd/HARDELL-Mini-Cordless-Rotary-Tool-with-230pcs-Accessories/5017136205" target="_blank">HARDELL Mini Cordless Rotary Tool with 230pcs Accessories</a> ($69.59)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes HARDELL mini cordless rotary tool, matching brand and category, but does not specify the exact 230pcs variant; also catalog price exceeds the post's under-$30 constraint, capping score at 3.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#17</strong> — Wagner
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank">https://www.youtube.com/watch?v=0wF3R1D4efw</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">20 Budget DIY Tools Under $100 You’ll Actually Use | Amazon Must-Haves</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>DEKOPRO Home Tool Kit</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.homedepot.com/p/Wagner-Flexio-3500-Electric-Handheld-HVLP-Paint-Sprayer-2419306/316886238" target="_blank">Flexio 3500 Electric Handheld HVLP Paint Sprayer</a> ($179)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes a Wagner FLEXiO paint sprayer, so brand + category match, but the specific FLEXiO model/version is not stated. Also the post is for tools under $100, while this catalog item is $179, so score is capped at 3.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN</span>
+    <strong>#19</strong> — Charlotte Tilbury
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank">https://www.instagram.com/p/DV7lx0XDHFI/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Oscars ready with @thetonyabrewer + @charlottetilbury 💄<br><br>#GetTheLook<br><br>SKINCARE<br>NEW! Magic Cream <br>Magic Hydrator Mist <br>Magic Serum Crystal Elixir <br>Immediate Eye Revival Patches <br><br>COMPLEXION <br>Pillow Talk Beauty Soulmates Palette in NEW! Rosewood <br>NEW! Airbrush Flawless Blur Concealer - 4.5 <br>Airbrush Flawless Foundation - 5W <br>Hollywood Contour Wand - Fair <br>Airbrush Flawless Finish Powder -1 + 2 <br>Beauty Light Wand - Pillow Talk Original <br>Unreal Blush Healthy Glow Stick - Rosy Glow |...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>airbrush flawless foundation - 5w</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.charlottetilbury.com/us/product/airbrush-flawless-foundation-shade-5-cool" target="_blank">Charlotte Tilbury Airbrush Flawless Foundation - 5 Cool</a> ($52)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Charlotte Tilbury Airbrush Flawless Foundation and specifies shade 5W, while catalog is shade 5 Cool; same product line but conflicting specified shade.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP</span>
+    <strong>#44</strong> — r.e.m. beauty
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWJpjwAlBdk/" target="_blank">https://www.instagram.com/p/DWJpjwAlBdk/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">mélange kissed cheeks (& lips) by @r.e.m.beauty + sunrise with my babies ♡</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>mélange kissed cheeks (& lips)</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.target.com/p/r-e-m-beauty-purse-essentials-cheek-38-lash-set-2ct-ulta-beauty/-/A-94233467" target="_blank">r.e.m. beauty Purse Essentials Cheek & Lash Set - 2ct - Ulta Beauty</a> ($24)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes r.e.m. beauty makeup for cheeks/lips, but does not identify the specific Purse Essentials Cheek & Lash Set product line.</div>
+    </div>
+  </div>
+</div>
+
+<h2>五、存疑案例 (2 条)</h2>
+<p>以下案例难以明确判定 LLM 对错，需进一步讨论。</p>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-ambiguous">FN</span>
+    <strong>#28</strong> — Apple
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=V4UG-qF7ytA" target="_blank">https://www.youtube.com/watch?v=V4UG-qF7ytA</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Inside Quenlin Blackwell’s Gucci Bag | In the Bag | Vogue</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>apple wired headphones</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.apple.com/us/xc/product/MYQY3AM/A" target="_blank">EarPods (USB-C) - Apple</a> ($19)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">The post is an 'in the bag' lifestyle feature, not promoting the headphones for purchase; also it mentions Apple wired headphones generally, not specifically EarPods (USB-C).</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-ambiguous">FN</span>
+    <strong>#33</strong> — Nike
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWFhCuyjpIU/" target="_blank">https://www.instagram.com/p/DWFhCuyjpIU/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Nike Basketball is dropping a new Kobe 9 EM Protro a month, steadily supplying ballers with new colorway options for hooping. Dropping this Summer is a "Steam" colorway that features a light pastel green against a clean white base. Are you a fan?⁠<br>⁠<br>Head to our BIO for a closer look.</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>kobe 9 em protro</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.nike.com/t/kobe-ix-elite-low-em-protro-basketball-shoes-KFJiXrkW/IH1401-600" target="_blank">Nike Kobe IX Elite Low EM Protro Basketball Shoes in Red, Size: 10 | IH1401-600</a> ($190)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Nike Kobe 9 EM Protro 'Steam' colorway; catalog is Nike Kobe IX Elite Low EM Protro in red. Same brand/category but different specific product/version/colorway.</div>
+    </div>
+  </div>
+</div>
+
+<h2>六、Golden Set 需修正案例 (34 条)</h2>
+<p>以下案例经人工复核确认 LLM 判断正确，原始 Golden Set 标注有误，需要修正。</p>
+
+<h3>VALID → INVALID (24 条): 原标 VALID 但实际不应保留</h3>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#1</strong> — Bobbi Brown
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.tiktok.com/@leilanigreen/video/7626463602853055757" target="_blank">https://www.tiktok.com/@leilanigreen/video/7626463602853055757</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">now THISSSS is a LIP COMBO! 🧡😩 @Bobbi Brown lip pencil - brownstone @M·A·C Cosmetics peachstock @maccosmetics lipglass cushion- Yes! @maccosmetics lip glass</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>lip pencil brownstone</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.bobbibrowncosmetics.com/product/2343/32757/makeup/lips/lip-liner/lip-liner-pencil#/shade/Rose_%287)" target="_blank">Bobbi Brown Lip Liner Pencil, Rose (7) - 0.04 oz</a> ($35)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Bobbi Brown lip pencil and specifies shade Brownstone; catalog is Bobbi Brown Lip Liner Pencil but shade Rose (7), so same product line with different specified L5 attribute.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#2</strong> — Makeup By Mario
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank">https://www.instagram.com/p/DXZJoR4CptF/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">YOUR INFINITE BEAUTY<br><br>Make Ethereal EyesTM The Original yours and create endless looks to reflect your infinite beauty.<br><br>Shop now at makeupbymario.com and @sephora.</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Ethereal EyesTM The Original</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.makeupbymario.com/products/ethereal-eyes-eyeshadow-palette-moonlight-copy?variant=41785633865793&country=US&currency=USD&glcountry=US" target="_blank">Ethereal Eyes Eyeshadow Palette: Moonlight</a> ($69)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Makeup By Mario Ethereal Eyes 'The Original'; catalog is Ethereal Eyes Eyeshadow Palette 'Moonlight,' a different named variant/product line version.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#20</strong> — NATASHA DENONA
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXesB_fm2-I/" target="_blank">https://www.instagram.com/p/DXesB_fm2-I/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Revealed 🚨NEW! HY-GLAM Setting Powder ✨💛 and new tool #natashadenona <br><br>A waterproof translucent loose setting powder transforms any base into long-wearing, sweat-proof & hydrophobic. Ultra-lightweight featuring ND Grip Tech & new ND Aeroslip Technology melts into the skin to blur, set and smooth without emphasizing fine lines, veiling the complexion in an invisible layer that never looks dry or cakey & universally flattering for all skin tones, delivers an impeccable soft-focus finish free fro...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>HY-GLAM Setting Powder</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.ulta.com/p/hy-glam-foundation-pimprod2053981?sku=2644575&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200003347183" target="_blank">NATASHA DENONA HY-GLAM Foundation</a> ($52)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Natasha Denona HY-GLAM Setting Powder, but catalog product is HY-GLAM Foundation; same brand/category family but different product line/type.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#21</strong> — Valentino
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV_tu99EWJ7/" target="_blank">https://www.instagram.com/p/DV_tu99EWJ7/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">solo dates > getting my mood right with the new @valentino.beauty born in roma purple melancholia💜 #valentinobeautypartner #borninromapurple #borninroma #fragrance</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>born in roma purple melancholia fragrance</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.ulta.com/p/uomo-born-in-roma-purple-melancholia-eau-de-toilette-pimprod2057500?sku=2653812&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200003408126" target="_blank">Valentino Uomo Born in Roma Purple Melancholia Eau de Toilette</a> ($110)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Valentino Born in Roma Purple Melancholia fragrance, but catalog is the Uomo (men's) version; same brand/category, different product line/version.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#22</strong> — Valentino
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV64g4RkmA5/" target="_blank">https://www.instagram.com/p/DV64g4RkmA5/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">the way I can tell someone is wearing @valentino.beauty just by walking by them 🥹🫶 I’ve been wearing Donna Born in Roma for years now & im so excited they’ve introduced a beautiful new scent I can add to my collection!! 💗💜  #purplehour #valentinobeautypartner #borninromapurple #fragrance #borninroma</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>donna born in roma</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.ulta.com/p/donna-born-in-roma-eau-de-parfum-pimprod2016295?sku=2588308&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200002800236" target="_blank">Valentino Donna Born In Roma Eau de Parfum</a> ($110)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Valentino fragrance and mentions Donna Born in Roma, but specifically highlights a beautiful new scent (#borninromapurple/Purple Hour), which conflicts with the catalog's standard Donna Born In Roma Eau de Parfum.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#23</strong> — Pete & Pedro
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=p0VmAWm7WKg" target="_blank">https://www.youtube.com/watch?v=p0VmAWm7WKg</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">10 Things You Should Quietly Eliminate From Your Life (Tell No One)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>icon fragrance</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.nordstrom.com/s/icon-edp/8004412?color=None" target="_blank">Pete & Pedro ICON EDP in None at Nordstrom</a> ($50)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">The post is motivational/lifestyle content, not promoting this specific fragrance; the product link appears only in the description sidebar.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#24</strong> — Samsung
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.tiktok.com/@rominagafur/video/7619478304130600222" target="_blank">https://www.tiktok.com/@rominagafur/video/7619478304130600222</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">My new galaxy s26 ultra display just shattered! So I got the dbrand screen protector and ghost case! #brokenphone #s26ultra #screenprotector</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>galaxy s26 ultra</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.samsung.com/us/smartphones/galaxy-s26-ultra/buy/galaxy-s26-ultra-256gb-at-t-sku-sm-s948uzkaatt" target="_blank">Samsung Galaxy S26 Ultra 256GB in Black (AT&T)(SM-S948UZKAATT)</a> ($1299.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post is about buying/using dbrand screen protector and Ghost case after the phone shattered; the Samsung phone is mentioned as the damaged device, not promoted as a consumer option.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#25</strong> — Nothing
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=iuuLBjIT4vo" target="_blank">https://www.youtube.com/watch?v=iuuLBjIT4vo</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">I have a bad feeling about this...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Nothing 4a Pro</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://swiftronicsinc.com/products/nothing-phone-4a-pro-a069p-global-model-dual-sim-unlocked-5g?variant=53422608515438" target="_blank">Nothing Phone 4a Pro (A069P) Global Model Dual Sim Unlocked - 5G 12GB+256GB / Silver</a> ($589.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post is a teardown/disassembly of the Nothing Phone 4a Pro, not promoting it as a consumer purchase option.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#26</strong> — Samsung
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.tiktok.com/@carterpcs/video/7619533236309429534" target="_blank">https://www.tiktok.com/@carterpcs/video/7619533236309429534</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Why Samsung stopped making the Trifold after 3 months.. #carterpcs #tech #samsung #trifold</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>trifold</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://bludiode.com/en/phones-and-smartphones/samsung-galaxy-z-trifold-16gb512gb-crafted-black-30573/?RgExcludeLocationDetection&SubmitCurrency=2&id_currency=2" target="_blank">Samsung Galaxy Z Trifold 16GB+512GB Crafted Black + 1-Year Warranty</a> ($3529.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post is explanatory/news-style about why Samsung stopped making the Trifold, not promoting it as a consumer purchase option.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#27</strong> — Beats
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV_WV00kiIL/" target="_blank">https://www.instagram.com/p/DV_WV00kiIL/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">@beatsbydre and Nike partner for the first time to drop the Powebeats Pro 2 in the iconic "Neon" colorway. For the first time in Beats history, the brand will share the branding by featuring the Swoosh on the right ear.⁠<br>⁠<br>Beats is owned by Apple, whose CEO Tim Cook is on the Nike Board Of Directors.⁠<br>⁠<br>Early access is open now, while a wider launch is scheduled on March 20th. Full details in our BIO.</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>powebeats pro 2</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.target.com/p/powerbeats-pro-2-high-performance-earbuds-hyper-purple/-/A-94577840" target="_blank">Powerbeats Pro 2 - High-Performance Earbuds - Hyper Purple</a> ($249.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes the Nike x Beats Powerbeats Pro 2 in the Neon collab colorway; catalog is standard Powerbeats Pro 2 in Hyper Purple, so product line matches but collab/colorway edition conflicts.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#29</strong> — Apple
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.tiktok.com/@khalilslife/video/7618259326397844750" target="_blank">https://www.tiktok.com/@khalilslife/video/7618259326397844750</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">The internet is debating after a man shared photos claiming most people have been wearing Apple AirPods the wrong way. In his post, he shows the earbuds being placed in the ear and then slightly rotated so the stem angles more toward the face, saying it creates a tighter fit and improves the sound. The discussion blew up after someone asked Grok on X if the idea was actually correct. The Al responded that Apple's instructions do suggest inserting the AirPod and gently turning it until it sits co...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>apple airpods</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.bestbuy.com/product/apple-airpods-4-white/JJGCQ83JQ5/sku/10190062" target="_blank">Apple - AirPods 4 - White</a> ($129.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post is educational/how-to about wearing AirPods, not promoting purchase or a specific AirPods 4 product.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#30</strong> — Insta360
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.tiktok.com/@rominagafur/video/7617892782648134943" target="_blank">https://www.tiktok.com/@rominagafur/video/7617892782648134943</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Insta360 Go Ultra is the best camera for vlogging, here's why! Use my code ROMINA to get 15% off + a free Mic Air. #Insta360;#Insta360GOUltra #pocketcamera #vloggingcamera #compactcamera  @insta360 official</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>mic air</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://store.insta360.com/US/product/mic-air?c=3945&freelist=gmc" target="_blank">Mic Air Mic Air Transmitter</a> ($50)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes the Insta360 GO Ultra camera; Mic Air is only mentioned as a free bonus, not the product being promoted.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#31</strong> — Jordan
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank">https://www.instagram.com/p/DV3uxIakuNX/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Air Jordan 3 "Spring Is In The Air"⁠<br>Dropping one week before Easter, this Retro channels the fun pastels of the holiday onto the timeless Air Jordan 3. Dropping in women's and full kids sizes on March 28th.⁠<br>⁠<br>Head to our BIO for a closer look.⁠<br>⁠<br>📷️ @solebox</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>air jordan 3 "spring is in the air"</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.nike.com/t/air-jordan-3-retro-sail-and-jade-aura-mens-shoes-kZBhO53Z/IF4396-100" target="_blank">Jordan 3 Retro "Sail and Jade Aura" Baby/Toddler Shoes</a> ($215)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Air Jordan 3 "Spring Is In The Air"; catalog is Jordan 3 Retro "Sail and Jade Aura." Same brand/category, but named colorway/edition conflicts.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#32</strong> — Nike
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">https://www.instagram.com/p/DWFloM8kzZA/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Debuting last year, the @nike GT Future was making waves when it was first seen on the feet of Wale, bringing back that feeling of Foamposite nostalgia as well as those notable sneaker fit pics by the DMV native himself.⁠<br>⁠<br>Fast-forward to today, the shoe has seen a number of colorways releasing, including coveted ones like the "Warning Label" for All-Star, "Galaxy Aura," "Fire," and more.⁠<br>⁠<br>Now, a new iteration in collaboration with the return of the Swooshman is landing and its releasing ...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>gt future "fire"</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.goat.com/sneakers/gt-future-fire-fz5590-800?sizing=13.5" target="_blank">Nike GT Future 'Fire'</a> ($892)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes a Nike GT Future collaboration/limited iteration, while catalog is the standard GT Future 'Fire' colorway; different specific product line/version.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#34</strong> — Nike
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">https://www.instagram.com/p/DWFloM8kzZA/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Debuting last year, the @nike GT Future was making waves when it was first seen on the feet of Wale, bringing back that feeling of Foamposite nostalgia as well as those notable sneaker fit pics by the DMV native himself.⁠<br>⁠<br>Fast-forward to today, the shoe has seen a number of colorways releasing, including coveted ones like the "Warning Label" for All-Star, "Galaxy Aura," "Fire," and more.⁠<br>⁠<br>Now, a new iteration in collaboration with the return of the Swooshman is landing and its releasing ...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>gt future "warning label"</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.goat.com/sneakers/nike-gt-future-ep-all-star-warning-label-ib6679-900" target="_blank">Nike GT Future EP 'All-Star Warning Label'</a> ($1935)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes the Nike GT Future generally and mentions multiple colorways including 'Warning Label,' but the featured product is a new collaboration iteration, not specifically the 'All-Star Warning Label' SKU.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#35</strong> — ANTA
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWAXdt1kn0E/" target="_blank">https://www.instagram.com/p/DWAXdt1kn0E/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">@sneakerpolitics continues its 20th Anniversary celebration with a collaboration with Dallas Mavericks star Kyrie Irving and the ANTA KAI 3. Their "Patchwork" design reflects the idea that different communities, stitched together, can form something greater.⁠<br>⁠<br>The release begins on March 20th at the Fahim J. Minkah Community Park (33000 Highland Woods, Dallas, TX 75241) after a ribbon-cutting ceremony for the newly resurfaced court spearheaded by Kyrie and Politics. Remaining pairs will drop ...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>anta kai 3</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.dickssportinggoods.com/p/anta-kai-3-432hz-basketball-shoes-25antabaskk3432htzqdy/25antabaskk3432htzqdy?sku=27944472" target="_blank">ANTA KAI 3 '432Hz' Basketball Shoes, Men's, M8/W9.5, Purple/Orange</a> ($134.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes the ANTA KAI 3 but specifically the Sneaker Politics/Kyrie Irving 'Patchwork' collaboration; catalog is a different KAI 3 colorway ('432Hz'). Same brand/category, different specific product line/version/collab.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#36</strong> — Nike
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXetvefjQ0e/" target="_blank">https://www.instagram.com/p/DXetvefjQ0e/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">The Nike Kobe 3 Protro Low is the next addition to the “Mambacita” Collection 🖤<br><br>Featuring a clean white upper paired with black patent details and subtle gold accents, this pair pays tribute to Kobe Bryant’s daughter, Gigi. Expected to release on May 1st for $190, the design blends performance with meaning! Images via swisschenhz/Reddit, Info via @mambakixx. <br><br>Who’s trying to cop this one? 🐍<br><br>#kobebryant #gigibryant #nikekobe #footwear</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Nike Kobe 3 Protro Low Mambacita</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.goat.com/sneakers/nike-kobe-3-protro-low-mamba-magic-if2497-500" target="_blank">Nike Kobe 3 Protro Low 'Mamba Magic'</a> ($169)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Nike Kobe 3 Protro Low from the Mambacita collection, while catalog is Nike Kobe 3 Protro Low 'Mamba Magic'—same brand/category but different named release/product line.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#37</strong> — Nike
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DVqpDUKGduQ/" target="_blank">https://www.instagram.com/p/DVqpDUKGduQ/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Early mornings. Empty gyms. The Unseen Hours Collection ignites the Nike Ja 3, GT Cut 1, and GT Future in some of Nike Basketball’s boldest color executions yet.⁠<br>⁠<br>Dropping March 19th exclusively at @footlocker; head to our BIO for a closer look.</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>nike gt cut 1</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.goat.com/sneakers/nike-air-zoom-gt-cut-ep-eybl-volt-bright-crimson-ih3991-700" target="_blank">Nike Air Zoom GT Cut 'EYBL - Volt Bright Crimson'</a> ($199)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Nike GT Cut 1 from the Unseen Hours Collection, while catalog is Nike Air Zoom GT Cut 'EYBL - Volt Bright Crimson'; same brand/category but different specific product/colorway line.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#38</strong> — Timberland
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV9oXhJErTb/" target="_blank">https://www.instagram.com/p/DV9oXhJErTb/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Supreme's partnership with MM6 Maison Margiela continues with another capsule dropping this week featuring the fashion house's money motif from 2008. Part of the collection is a Timberland 6" Boot covered in US currency and lined with white sherpa fleece.⁠<br>⁠<br>For a closer look, head to SneakerNews.com; these are dropping on March 19th.</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>timberland 6" boot</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.dickssportinggoods.com/p/timberland-mens-6-premium-400g-waterproof-boots-16tldmcn6prmmwht4fbo/16tldmcn6prmmwht4fbo?sku=25912774" target="_blank">Timberland Men's 6' Premium 400g Waterproof Boots, Size 10, Wheat</a> ($209.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes a specific Supreme x MM6 Maison Margiela Timberland 6" Boot collab with sherpa lining; catalog is a standard Timberland 6" Premium Waterproof Boot, so brand/category match but product line/version conflicts.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#39</strong> — Salomon
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWI0a-smYTe/" target="_blank">https://www.instagram.com/p/DWI0a-smYTe/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Sakura Salomons anyone? 🌸⁠<br>⁠<br>The @salomonsportstyle XA PRO 3D steps out in a sakura-coded “XAKURA,” courtesy of @atmos.pink_official. Same trail-built pair, just reworked for city rotation with that seasonal tint.⁠<br>⁠<br>Raffles are live now, with a wider release set for April 11.⁠<br>Photo: atmos pink</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>xa pro 3d</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.salomon.com/en-us/product/xa-pro-3d-v9-gore-tex-li3151/L47881700" target="_blank">Salomon - Trail Running Shoes XA PRO 3D V9 GTX - 10.5 Men's - Transparent Yellow / Black</a> ($160)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes the Salomon XA PRO 3D atmos pink “XAKURA” collab, while catalog is XA PRO 3D V9 GTX standard model; product line/version and collab differ.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#40</strong> — Moncler Genius
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank">https://www.instagram.com/p/DWDo5meFqB1/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">@moncler stepped in a new direction with the introduction of the Trailgrip sneaker during FW22. Since then, the technical shoe has evolved into a franchise, with everything from a boot to a 3D-printed version having released. At the same time, collaborators such as Salehe Bembury and fragment design have reworked the line.⁠<br>⁠<br>As SS26 continues, the Trailgrip shoe is lighter than ever with the introduction of the Trailgrip LP. Rooted in a minimalist design approach, it draws inspiration from sc...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>salehe bembury x trailgrip</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.mrporter.com/en-us/mens/product/moncler-genius/shoes/low-top-sneakers/plus-salehe-bembury-trailgrip-grain-rubber-trimmed-gore-tex-ballistic-nylon-sneakers/1647597313714652" target="_blank">Moncler Genius + Salehe Bembury Trailgrip Grain Rubber-Trimmed GORE-TEX Ballistic Nylon Sneakers - Men - Brown Sneakers - EU 39</a> ($795)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Moncler Trailgrip LP, but catalog is the Salehe Bembury collaboration Trailgrip sneaker; same brand/category, different product line/version/collab.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#41</strong> — Moncler
+    <span style="float:right">LLM Score: <strong>2</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank">https://www.instagram.com/p/DWDo5meFqB1/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">@moncler stepped in a new direction with the introduction of the Trailgrip sneaker during FW22. Since then, the technical shoe has evolved into a franchise, with everything from a boot to a 3D-printed version having released. At the same time, collaborators such as Salehe Bembury and fragment design have reworked the line.⁠<br>⁠<br>As SS26 continues, the Trailgrip shoe is lighter than ever with the introduction of the Trailgrip LP. Rooted in a minimalist design approach, it draws inspiration from sc...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>trailgrip sneaker</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.ssense.com/en-us/men/product/moncler/black-trailgrip-lite-2-sneakers/15767781" target="_blank">Moncler Black Trailgrip Lite 2 Sneakers</a> ($680)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Moncler Trailgrip LP sneakers, while catalog product is Moncler Trailgrip Lite 2 Sneakers; same brand/category but different product line/model.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#42</strong> — Schott N.Y.C.
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DV8SjTjlsg1/" target="_blank">https://www.instagram.com/p/DV8SjTjlsg1/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">@supremenewyork and @mm6maisonmargiela are reuniting for Spring 2026, delivering another heavy-hitting collection that merges downtown grit with avant-garde deconstruction.⁠<br>⁠<br>The range is stacked with standout outerwear, including a Schott Leather Jacket, a hooded shearling bomber, and a deconstructed denim trucker. Additionally, the drop features a full technical lineup, from cotton football jerseys and silk scarves to a boxing-inspired collaboration with @everlast, including a heavy bag and...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>schott leather jacket</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.schottnyc.com/products/118-classic-perfecto-leather-motorcycle-jacket?variant=49851184152862&country=US&currency=USD&utm_source=bing" target="_blank">118 | Cowhide Perfecto Motorcycle Jacket Black / 44</a> ($1020)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post is fashion news about a Supreme x MM6 collection drop, not promoting this specific Schott jacket as a consumer product; only mentions a generic Schott leather jacket within the collection.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fn">FN → 改为 INVALID</span>
+    <strong>#43</strong> — in stock
+    <span style="float:right">LLM Score: <strong>0</strong>/5 → <strong>REJECTED</strong> | Expected: <strong>VALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=cA2Hkr3Iu14" target="_blank">https://www.youtube.com/watch?v=cA2Hkr3Iu14</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Why This Designer Is Over the Eames Chair</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>eames chair</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://store.hermanmiller.com/living-room-furniture-lounge-chairs-ottomans/eames-lounge-chair-and-ottoman/100077567.html?lang=en_US" target="_blank">Eames Lounge Chair and Ottoman</a> ($7925)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">The post is commentary/opinion about being 'over' the Eames chair, not promoting it as a consumer purchase option.</div>
+    </div>
+  </div>
+</div>
+
+<h3>INVALID → VALID (10 条): 原标 INVALID 但实际应保留</h3>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#3</strong> — Dior
+    <span style="float:right">LLM Score: <strong>4</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">https://www.youtube.com/watch?v=OhfA1Aw97Bw</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Love Story Star Sarah Pidgeon's Springtime Makeup Routine | Beauty Secrets | Vogue</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Bioderma Sensibio H2O Micellar Water</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.ulta.com/p/forever-skin-contour-stick-pimprod2047285?sku=2629067&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200003269509" target="_blank">Dior Forever Skin Contour Stick - 03 Medium</a> ($50)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post explicitly promotes Dior Forever Skin Contour Stick in the routine/shop list; catalog is the same product line, with shade 03 Medium as an L5 variant not specified in the post.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#5</strong> — Pottery Barn
+    <span style="float:right">LLM Score: <strong>4</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXiBlFmEjaP/" target="_blank">https://www.instagram.com/p/DXiBlFmEjaP/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">An outdoor space made for summer days that turn into slow, easy nights ☀️@_desertcottage_ created a relaxed, welcoming backyard with our Huntington Sectional and Cayman Outdoor Coffee Table—perfect for gathering and relaxing. Tap to shop the look. #mypotterybarn</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Huntington Sectional</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.potterybarn.com/products/cayman-round-concrete-top-outdoor-coffee-table/?catalogId=84&sku=7705178&cm_ven=PLA&cm_cat=MSN&cm_pla=Outdoor%20%3E%20Coffee%20%26%20Console%20Tables" target="_blank">Cayman FSC(R) Eucalyptus Round 40" Outdoor Nesting Coffee Table, Biscotti/White Concrete Top | Pottery Barn</a> ($799)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Pottery Barn Cayman Outdoor Coffee Table; catalog is the same Cayman outdoor coffee table line. Post does not specify exact shape/material/configuration details, so same line match but not full L4/L5 confirmation.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#6</strong> — Moto Motion
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank">https://www.youtube.com/watch?v=3urZaBYUyCE</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Ultimate couch experience. 📌 Stop scrolling and watch the best couch #coolgadgets #trendingproducts</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Mavigadget couch</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.gardner-white.com/product/194256-maverick2-grey-audio-triple-power-reclining-sofa" target="_blank">Maverick2 Grey Audio Triple Power Reclining Sofa</a> ($5419.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes a reclining sofa with USB charging and premium features; catalog is a Moto Motion reclining sofa in the same category, but the post does not identify a specific brand or product line.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#7</strong> — Graco
+    <span style="float:right">LLM Score: <strong>5</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXPc2iHFlSy/" target="_blank">https://www.instagram.com/p/DXPc2iHFlSy/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Say hello to the Pristine Collection — a beautifully soft blue designed to bring calm, comfort, and style to baby’s everyday moments. 💙 <br><br>Featuring parent favorites like the Graco Pack ’n Play, Anywhere Dreamer Playard, Graco Slim Spaces Compact, Baby Swing, Graco Ready2Dine DLX Highchair, and Graco Jumpstart Activity Bouncer — this collection blends thoughtful design with the essentials families rely on every day. <br><br>A fresh look for baby gear that fits beautifully into your home.</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Graco Pack ’n Play</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://business.walmart.com/ip/Graco-Pack-n-Play-Anywhere-Dreamer-Playard-Unisex-Marlo/258274762?wmlspartner=wmbpla&selectedSellerId=0" target="_blank">Graco Pack n Play Anywhere Dreamer Infant Playard, Marlo, Unisex</a> ($149)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post explicitly promotes the Graco Pack ’n Play Anywhere Dreamer Playard from the Pristine Collection; catalog is the same Graco product line/model. Color/style variant is not conflicting.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#8</strong> — Callaway
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=uDw5R6pT1lc" target="_blank">https://www.youtube.com/watch?v=uDw5R6pT1lc</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Rising LPGA Star Who's Still in School?!</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Quantum driver</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.dickssportinggoods.com/p/callaway-quantum-max-driver-25calmgolfqntmmxdvnbi/25calmgolfqntmmxdvnbi" target="_blank">Callaway Quantum Max Driver, Right Hand, Men's, Carbon</a> ($649.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Callaway Quantum driver family and Rose Zhang's Quantum driver setup, but does not specify the exact product line/model such as Quantum Max; brand and category match, product line is not clearly identified.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#9</strong> — Specialized
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXUusQijMRh/" target="_blank">https://www.instagram.com/p/DXUusQijMRh/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">Remco’s Revenge in Amstel 🚲🙌🍻⁠<br>⁠<br>For Remco Evenepoel, the Amstel Gold Race was unfinished business. Last year, after an epic chase, victory slipped away in the sprint. This time, he was determined to finish it. In a decisive finale, Remco turned the tables, outsprinting the defending winner to claim the Amstel win aboard his Tarmac SL8 with Turbo Cotton TLR tires.⁠<br>⁠<br>Shop the Winning Gear -> Link In Bio⁠<br>⁠<br>#iamspecialized</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Tarmac SL8</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.specialized.com/us/en/tarmac-sl8-pro-shimano-ultegra-di2/p/4221576?color=5460161-4221576&searchText=94926-1261" target="_blank">2026 Specialized Tarmac SL8 Pro - Shimano Ultegra Di2 | White Performance Road Bike Size - XXL | Carbon</a> ($8499.99)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Specialized Tarmac SL8 as winning gear, but does not specify the Pro Shimano Ultegra Di2 variant; brand and bike line/category match, exact model/version unknown.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#13</strong> — Seven Springs Farm Organic
+    <span style="float:right">LLM Score: <strong>3</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">https://www.youtube.com/watch?v=fPo7lS5qpQA</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Alaska Fish Fertilizer [5-1-1] (Gallon)</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.7springsfarm.com/products/azomite-granular-44-lb-bag?variant=39386613907661" target="_blank">Azomite Granular - 44 lb Bag</a> ($28.4)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Azomite trace minerals (44 lb) as a product used often for gardening; brand/product line not specified beyond Azomite mineral amendment, so brand/category match but exact product line is unclear.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#14</strong> — Espoma
+    <span style="float:right">LLM Score: <strong>5</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">https://www.youtube.com/watch?v=fPo7lS5qpQA</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Alaska Fish Fertilizer [5-1-1] (Gallon)</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.lowes.com/pd/Espoma-Organic-Plant-Tone-5-3-3-All-Purpose-Natural-Fertilizer-for-Flowers-Vegetables-Trees-and-Shrubs-50-lb-Bag/5016826955" target="_blank">Espoma Organic Plant-Tone 5-3-3 All-Purpose Natural Fertilizer for Flowers Vegetables Trees and Shrubs - 50 lb Bag</a> ($63.67)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post explicitly lists Espoma PlantTone 5-3-3 (50lb); brand, product line, formula, and size all match the catalog product.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#15</strong> — Jacks Nutrients
+    <span style="float:right">LLM Score: <strong>5</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">https://www.youtube.com/watch?v=fPo7lS5qpQA</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Alaska Fish Fertilizer [5-1-1] (Gallon)</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://hydrobuilder.com/products/jacks-nutrients-professional-20-20-20-general-purpose-fertilizer-25lb?variant=49777031872790&country=US&currency=USD&utm_medium=product_sync&utm_source=bing&utm_content=sag_organic&utm_campaign=sag_organic" target="_blank">Jack's Nutrients 20-20-20 Fertilizer, 25lb - General Purpose</a> ($127.68)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post explicitly lists Jack's All Purpose 20-20-20 (25lb); catalog is the same Jack's 20-20-20 general purpose fertilizer in 25lb.</div>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <span class="tag tag-fp">FP → 改为 VALID</span>
+    <strong>#18</strong> — Maison Margiela
+    <span style="float:right">LLM Score: <strong>5</strong>/5 → <strong>KEPT</strong> | Expected: <strong>INVALID</strong></span>
+  </div>
+  <div class="case-body">
+    <div class="case-row">
+      <div class="case-label">帖子链接</div>
+      <div class="case-value"><a href="https://www.instagram.com/p/DXWDzqCjsfq/" target="_blank">https://www.instagram.com/p/DXWDzqCjsfq/</a></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子内容</div>
+      <div class="case-value post-content">@maisonmargiela said forget laces, just wrap the whole thing.⁠<br>⁠<br>The Future sneaker is back from its Spring/Summer 2011 debut, still built around that signature wraparound construction. This time, padded panels cross over the foot in one continuous, almost woven motion, locking everything in without the usual lace setup.⁠<br>⁠<br>Crafted in Italy from soft calf leather, the mid-top keeps things clean with hidden fastenings and minimal detailing, finished with the house’s single white stitch at the...</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">帖子提取产品</div>
+      <div class="case-value"><strong>Future sneaker</strong></div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">目录产品</div>
+      <div class="case-value"><a href="https://www.mrporter.com/en-us/mens/product/maison-margiela/shoes/high-top-sneakers/future-leather-sneakers/46376663162949234" target="_blank">Maison Margiela Future Leather Sneakers - Men - White Sneakers - EU 45</a> ($1190)</div>
+    </div>
+    <div class="case-row">
+      <div class="case-label">LLM 理由</div>
+      <div class="case-value llm-reason">Post promotes Maison Margiela Future sneaker; catalog is Maison Margiela Future Leather Sneakers. White colorway is explicitly mentioned and matches.</div>
+    </div>
+  </div>
+</div>
+
+<h2>七、LLM 错误案例分数分布</h2>
+<div class="card">
+  Score 2: 1 个错误<br>
+  Score 3: 7 个错误<br>
+</div>
+
+<h2>八、全部失败案例一览 (44 条)</h2>
+<p>完整的 44 条失败案例及人工审核结果，供参考。</p>
+<table>
+  <tr>
+    <th>#</th>
+    <th>类型</th>
+    <th>判定</th>
+    <th>Score</th>
+    <th>品牌</th>
+    <th>帖子提取产品</th>
+    <th>目录产品</th>
+    <th>帖子链接</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Bobbi Brown</td>
+    <td>lip pencil brownstone</td>
+    <td><a href="https://www.bobbibrowncosmetics.com/product/2343/32757/makeup/lips/lip-liner/lip-liner-pencil#/shade/Rose_%287)" target="_blank">Bobbi Brown Lip Liner Pencil, Rose (7) - 0.04 oz</a></td>
+    <td><a href="https://www.tiktok.com/@leilanigreen/video/7626463602853055757" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Makeup By Mario</td>
+    <td>Ethereal EyesTM The Original</td>
+    <td><a href="https://www.makeupbymario.com/products/ethereal-eyes-eyeshadow-palette-moonlight-copy?variant=41785633865793&country=US&currency=USD&glcountry=US" target="_blank">Ethereal Eyes Eyeshadow Palette: Moonlight</a></td>
+    <td><a href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">4</td>
+    <td>Dior</td>
+    <td>Bioderma Sensibio H2O Micellar Water</td>
+    <td><a href="https://www.ulta.com/p/forever-skin-contour-stick-pimprod2047285?sku=2629067&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200003269509" target="_blank">Dior Forever Skin Contour Stick - 03 Medium</a></td>
+    <td><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Galaxy Home Furniture</td>
+    <td>Mavigadget couch</td>
+    <td><a href="https://www.walmart.com/ip/Aviator-Modern-Style-Recliner-Sectional-Sofa-made-with-Wood-in-Gray/5704570022?wmlspartner=wlpa&selectedSellerId=1795" target="_blank">Aviator Modern Style Recliner Sectional Sofa made ...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">4</td>
+    <td>Pottery Barn</td>
+    <td>Huntington Sectional</td>
+    <td><a href="https://www.potterybarn.com/products/cayman-round-concrete-top-outdoor-coffee-table/?catalogId=84&sku=7705178&cm_ven=PLA&cm_cat=MSN&cm_pla=Outdoor%20%3E%20Coffee%20%26%20Console%20Tables" target="_blank">Cayman FSC(R) Eucalyptus Round 40" Outdoor Nesting...</a></td>
+    <td><a href="https://www.instagram.com/p/DXiBlFmEjaP/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Moto Motion</td>
+    <td>Mavigadget couch</td>
+    <td><a href="https://www.gardner-white.com/product/194256-maverick2-grey-audio-triple-power-reclining-sofa" target="_blank">Maverick2 Grey Audio Triple Power Reclining Sofa</a></td>
+    <td><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">5</td>
+    <td>Graco</td>
+    <td>Graco Pack ’n Play</td>
+    <td><a href="https://business.walmart.com/ip/Graco-Pack-n-Play-Anywhere-Dreamer-Playard-Unisex-Marlo/258274762?wmlspartner=wmbpla&selectedSellerId=0" target="_blank">Graco Pack n Play Anywhere Dreamer Infant Playard,...</a></td>
+    <td><a href="https://www.instagram.com/p/DXPc2iHFlSy/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Callaway</td>
+    <td>Quantum driver</td>
+    <td><a href="https://www.dickssportinggoods.com/p/callaway-quantum-max-driver-25calmgolfqntmmxdvnbi/25calmgolfqntmmxdvnbi" target="_blank">Callaway Quantum Max Driver, Right Hand, Men's, Ca...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=uDw5R6pT1lc" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Specialized</td>
+    <td>Tarmac SL8</td>
+    <td><a href="https://www.specialized.com/us/en/tarmac-sl8-pro-shimano-ultegra-di2/p/4221576?color=5460161-4221576&searchText=94926-1261" target="_blank">2026 Specialized Tarmac SL8 Pro - Shimano Ultegra ...</a></td>
+    <td><a href="https://www.instagram.com/p/DXUusQijMRh/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Hardell</td>
+    <td>CARTMAN 39 Piece Tool Set</td>
+    <td><a href="https://www.lowes.com/pd/HARDELL-Mini-Cordless-Rotary-Tool-with-230pcs-Accessories/5017136205" target="_blank">HARDELL Mini Cordless Rotary Tool with 230pcs Acce...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>11</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Wagner</td>
+    <td>DEKOPRO Home Tool Kit</td>
+    <td><a href="https://www.homedepot.com/p/Wagner-Flexio-3500-Electric-Handheld-HVLP-Paint-Sprayer-2419306/316886238" target="_blank">Flexio 3500 Electric Handheld HVLP Paint Sprayer</a></td>
+    <td><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Makita</td>
+    <td>Makita ImpactX</td>
+    <td><a href="https://www.homedepot.com/p/Makita-116-MPH-459-CFM-18V-LXT-Lithium-Ion-Brushless-Cordless-Leaf-Blower-Tool-Only-XBU03Z/311137108" target="_blank">116 MPH 459 CFM 18V LXT Lithium-Ion Brushless Cord...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=Sv_3siqNNJM" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>13</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Seven Springs Farm Organic</td>
+    <td>Alaska Fish Fertilizer [5-1-1] (Gallon)</td>
+    <td><a href="https://www.7springsfarm.com/products/azomite-granular-44-lb-bag?variant=39386613907661" target="_blank">Azomite Granular - 44 lb Bag</a></td>
+    <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>14</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">5</td>
+    <td>Espoma</td>
+    <td>Alaska Fish Fertilizer [5-1-1] (Gallon)</td>
+    <td><a href="https://www.lowes.com/pd/Espoma-Organic-Plant-Tone-5-3-3-All-Purpose-Natural-Fertilizer-for-Flowers-Vegetables-Trees-and-Shrubs-50-lb-Bag/5016826955" target="_blank">Espoma Organic Plant-Tone 5-3-3 All-Purpose Natura...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>15</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">5</td>
+    <td>Jacks Nutrients</td>
+    <td>Alaska Fish Fertilizer [5-1-1] (Gallon)</td>
+    <td><a href="https://hydrobuilder.com/products/jacks-nutrients-professional-20-20-20-general-purpose-fertilizer-25lb?variant=49777031872790&country=US&currency=USD&utm_medium=product_sync&utm_source=bing&utm_content=sag_organic&utm_campaign=sag_organic" target="_blank">Jack's Nutrients 20-20-20 Fertilizer, 25lb - Gener...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>16</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Hardell</td>
+    <td>CARTMAN 39 Piece Tool Set</td>
+    <td><a href="https://www.lowes.com/pd/HARDELL-Mini-Cordless-Rotary-Tool-with-230pcs-Accessories/5017136205" target="_blank">HARDELL Mini Cordless Rotary Tool with 230pcs Acce...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>17</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>Wagner</td>
+    <td>DEKOPRO Home Tool Kit</td>
+    <td><a href="https://www.homedepot.com/p/Wagner-Flexio-3500-Electric-Handheld-HVLP-Paint-Sprayer-2419306/316886238" target="_blank">Flexio 3500 Electric Handheld HVLP Paint Sprayer</a></td>
+    <td><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>18</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">5</td>
+    <td>Maison Margiela</td>
+    <td>Future sneaker</td>
+    <td><a href="https://www.mrporter.com/en-us/mens/product/maison-margiela/shoes/high-top-sneakers/future-leather-sneakers/46376663162949234" target="_blank">Maison Margiela Future Leather Sneakers - Men - Wh...</a></td>
+    <td><a href="https://www.instagram.com/p/DXWDzqCjsfq/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>19</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Charlotte Tilbury</td>
+    <td>airbrush flawless foundation - 5w</td>
+    <td><a href="https://www.charlottetilbury.com/us/product/airbrush-flawless-foundation-shade-5-cool" target="_blank">Charlotte Tilbury Airbrush Flawless Foundation - 5...</a></td>
+    <td><a href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>20</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>NATASHA DENONA</td>
+    <td>HY-GLAM Setting Powder</td>
+    <td><a href="https://www.ulta.com/p/hy-glam-foundation-pimprod2053981?sku=2644575&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200003347183" target="_blank">NATASHA DENONA HY-GLAM Foundation</a></td>
+    <td><a href="https://www.instagram.com/p/DXesB_fm2-I/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>21</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Valentino</td>
+    <td>born in roma purple melancholia fragranc</td>
+    <td><a href="https://www.ulta.com/p/uomo-born-in-roma-purple-melancholia-eau-de-toilette-pimprod2057500?sku=2653812&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200003408126" target="_blank">Valentino Uomo Born in Roma Purple Melancholia Eau...</a></td>
+    <td><a href="https://www.instagram.com/p/DV_tu99EWJ7/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>22</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Valentino</td>
+    <td>donna born in roma</td>
+    <td><a href="https://www.ulta.com/p/donna-born-in-roma-eau-de-parfum-pimprod2016295?sku=2588308&cmpid=PS_Bing&utm_medium=paid_search&utm_source=bing&CAWELAID=330000200002800236" target="_blank">Valentino Donna Born In Roma Eau de Parfum</a></td>
+    <td><a href="https://www.instagram.com/p/DV64g4RkmA5/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>23</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Pete & Pedro</td>
+    <td>icon fragrance</td>
+    <td><a href="https://www.nordstrom.com/s/icon-edp/8004412?color=None" target="_blank">Pete & Pedro ICON EDP in None at Nordstrom</a></td>
+    <td><a href="https://www.youtube.com/watch?v=p0VmAWm7WKg" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>24</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Samsung</td>
+    <td>galaxy s26 ultra</td>
+    <td><a href="https://www.samsung.com/us/smartphones/galaxy-s26-ultra/buy/galaxy-s26-ultra-256gb-at-t-sku-sm-s948uzkaatt" target="_blank">Samsung Galaxy S26 Ultra 256GB in Black (AT&T)(SM-...</a></td>
+    <td><a href="https://www.tiktok.com/@rominagafur/video/7619478304130600222" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>25</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Nothing</td>
+    <td>Nothing 4a Pro</td>
+    <td><a href="https://swiftronicsinc.com/products/nothing-phone-4a-pro-a069p-global-model-dual-sim-unlocked-5g?variant=53422608515438" target="_blank">Nothing Phone 4a Pro (A069P) Global Model Dual Sim...</a></td>
+    <td><a href="https://www.youtube.com/watch?v=iuuLBjIT4vo" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>26</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Samsung</td>
+    <td>trifold</td>
+    <td><a href="https://bludiode.com/en/phones-and-smartphones/samsung-galaxy-z-trifold-16gb512gb-crafted-black-30573/?RgExcludeLocationDetection&SubmitCurrency=2&id_currency=2" target="_blank">Samsung Galaxy Z Trifold 16GB+512GB Crafted Black ...</a></td>
+    <td><a href="https://www.tiktok.com/@carterpcs/video/7619533236309429534" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>27</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Beats</td>
+    <td>powebeats pro 2</td>
+    <td><a href="https://www.target.com/p/powerbeats-pro-2-high-performance-earbuds-hyper-purple/-/A-94577840" target="_blank">Powerbeats Pro 2 - High-Performance Earbuds - Hype...</a></td>
+    <td><a href="https://www.instagram.com/p/DV_WV00kiIL/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>28</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-ambiguous">存疑</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Apple</td>
+    <td>apple wired headphones</td>
+    <td><a href="https://www.apple.com/us/xc/product/MYQY3AM/A" target="_blank">EarPods (USB-C) - Apple</a></td>
+    <td><a href="https://www.youtube.com/watch?v=V4UG-qF7ytA" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>29</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Apple</td>
+    <td>apple airpods</td>
+    <td><a href="https://www.bestbuy.com/product/apple-airpods-4-white/JJGCQ83JQ5/sku/10190062" target="_blank">Apple - AirPods 4 - White</a></td>
+    <td><a href="https://www.tiktok.com/@khalilslife/video/7618259326397844750" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>30</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Insta360</td>
+    <td>mic air</td>
+    <td><a href="https://store.insta360.com/US/product/mic-air?c=3945&freelist=gmc" target="_blank">Mic Air Mic Air Transmitter</a></td>
+    <td><a href="https://www.tiktok.com/@rominagafur/video/7617892782648134943" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>31</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Jordan</td>
+    <td>air jordan 3 "spring is in the air"</td>
+    <td><a href="https://www.nike.com/t/air-jordan-3-retro-sail-and-jade-aura-mens-shoes-kZBhO53Z/IF4396-100" target="_blank">Jordan 3 Retro "Sail and Jade Aura" Baby/Toddler S...</a></td>
+    <td><a href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>32</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Nike</td>
+    <td>gt future "fire"</td>
+    <td><a href="https://www.goat.com/sneakers/gt-future-fire-fz5590-800?sizing=13.5" target="_blank">Nike GT Future 'Fire'</a></td>
+    <td><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>33</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-ambiguous">存疑</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Nike</td>
+    <td>kobe 9 em protro</td>
+    <td><a href="https://www.nike.com/t/kobe-ix-elite-low-em-protro-basketball-shoes-KFJiXrkW/IH1401-600" target="_blank">Nike Kobe IX Elite Low EM Protro Basketball Shoes ...</a></td>
+    <td><a href="https://www.instagram.com/p/DWFhCuyjpIU/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>34</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Nike</td>
+    <td>gt future "warning label"</td>
+    <td><a href="https://www.goat.com/sneakers/nike-gt-future-ep-all-star-warning-label-ib6679-900" target="_blank">Nike GT Future EP 'All-Star Warning Label'</a></td>
+    <td><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>35</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>ANTA</td>
+    <td>anta kai 3</td>
+    <td><a href="https://www.dickssportinggoods.com/p/anta-kai-3-432hz-basketball-shoes-25antabaskk3432htzqdy/25antabaskk3432htzqdy?sku=27944472" target="_blank">ANTA KAI 3 '432Hz' Basketball Shoes, Men's, M8/W9....</a></td>
+    <td><a href="https://www.instagram.com/p/DWAXdt1kn0E/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>36</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Nike</td>
+    <td>Nike Kobe 3 Protro Low Mambacita</td>
+    <td><a href="https://www.goat.com/sneakers/nike-kobe-3-protro-low-mamba-magic-if2497-500" target="_blank">Nike Kobe 3 Protro Low 'Mamba Magic'</a></td>
+    <td><a href="https://www.instagram.com/p/DXetvefjQ0e/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>37</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Nike</td>
+    <td>nike gt cut 1</td>
+    <td><a href="https://www.goat.com/sneakers/nike-air-zoom-gt-cut-ep-eybl-volt-bright-crimson-ih3991-700" target="_blank">Nike Air Zoom GT Cut 'EYBL - Volt Bright Crimson'</a></td>
+    <td><a href="https://www.instagram.com/p/DVqpDUKGduQ/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>38</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Timberland</td>
+    <td>timberland 6" boot</td>
+    <td><a href="https://www.dickssportinggoods.com/p/timberland-mens-6-premium-400g-waterproof-boots-16tldmcn6prmmwht4fbo/16tldmcn6prmmwht4fbo?sku=25912774" target="_blank">Timberland Men's 6' Premium 400g Waterproof Boots,...</a></td>
+    <td><a href="https://www.instagram.com/p/DV9oXhJErTb/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>39</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Salomon</td>
+    <td>xa pro 3d</td>
+    <td><a href="https://www.salomon.com/en-us/product/xa-pro-3d-v9-gore-tex-li3151/L47881700" target="_blank">Salomon - Trail Running Shoes XA PRO 3D V9 GTX - 1...</a></td>
+    <td><a href="https://www.instagram.com/p/DWI0a-smYTe/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>40</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Moncler Genius</td>
+    <td>salehe bembury x trailgrip</td>
+    <td><a href="https://www.mrporter.com/en-us/mens/product/moncler-genius/shoes/low-top-sneakers/plus-salehe-bembury-trailgrip-grain-rubber-trimmed-gore-tex-ballistic-nylon-sneakers/1647597313714652" target="_blank">Moncler Genius + Salehe Bembury Trailgrip Grain Ru...</a></td>
+    <td><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>41</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">2</td>
+    <td>Moncler</td>
+    <td>trailgrip sneaker</td>
+    <td><a href="https://www.ssense.com/en-us/men/product/moncler/black-trailgrip-lite-2-sneakers/15767781" target="_blank">Moncler Black Trailgrip Lite 2 Sneakers</a></td>
+    <td><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>42</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>Schott N.Y.C.</td>
+    <td>schott leather jacket</td>
+    <td><a href="https://www.schottnyc.com/products/118-classic-perfecto-leather-motorcycle-jacket?variant=49851184152862&country=US&currency=USD&utm_source=bing" target="_blank">118 | Cowhide Perfecto Motorcycle Jacket Black / 4...</a></td>
+    <td><a href="https://www.instagram.com/p/DV8SjTjlsg1/" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>43</td>
+    <td><span class="tag tag-fn">FN</span></td>
+    <td><span class="tag tag-correct">LLM正确</span></td>
+    <td style="text-align:center;font-weight:bold">0</td>
+    <td>in stock</td>
+    <td>eames chair</td>
+    <td><a href="https://store.hermanmiller.com/living-room-furniture-lounge-chairs-ottomans/eames-lounge-chair-and-ottoman/100077567.html?lang=en_US" target="_blank">Eames Lounge Chair and Ottoman</a></td>
+    <td><a href="https://www.youtube.com/watch?v=cA2Hkr3Iu14" target="_blank">查看帖子</a></td>
+  </tr>
+  <tr>
+    <td>44</td>
+    <td><span class="tag tag-fp">FP</span></td>
+    <td><span class="tag tag-wrong">LLM错误</span></td>
+    <td style="text-align:center;font-weight:bold">3</td>
+    <td>r.e.m. beauty</td>
+    <td>mélange kissed cheeks (& lips)</td>
+    <td><a href="https://www.target.com/p/r-e-m-beauty-purse-essentials-cheek-38-lash-set-2ct-ulta-beauty/-/A-94233467" target="_blank">r.e.m. beauty Purse Essentials Cheek & Lash Set - ...</a></td>
+    <td><a href="https://www.instagram.com/p/DWJpjwAlBdk/" target="_blank">查看帖子</a></td>
+  </tr>
+</table>
+
+<h2>九、关键结论</h2>
+<div class="card">
+<ol>
+  <li><strong>LLM 实际精准度 95.3%</strong>，远高于原始 golden set 衡量的 79.4%。差距主要来自 golden set 标注质量 (准确率仅 83.2%)。</li>
+  <li><strong>真正的 LLM 错误仅 8 条</strong> (3.7%)，其中 FN 1 条、FP 7 条。</li>
+  <li><strong>Golden Set 需修正 34 条标注</strong>，其中 24 条 VALID→INVALID，10 条 INVALID→VALID。</li>
+  <li><strong>存疑 2 条</strong>需进一步确认。</li>
+</ol>
+</div>
+
+</body>
+</html>
