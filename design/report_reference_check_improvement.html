@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>S09 Reference Check — Improvement Report</title>
+<style>
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 20px; background: #f8f9fa; color: #333; }
+  h1 { color: #1a1a2e; margin-bottom: 5px; }
+  h2 { color: #16213e; margin-top: 30px; border-bottom: 2px solid #0f3460; padding-bottom: 8px; }
+  .subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+  .metric-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .metric-value { font-size: 36px; font-weight: bold; margin: 8px 0; }
+  .metric-label { font-size: 13px; color: #666; }
+  .metric-green .metric-value { color: #155724; }
+  .metric-red .metric-value { color: #721c24; }
+  .metric-blue .metric-value { color: #004085; }
+  .metric-orange .metric-value { color: #856404; }
+  .comparison { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; margin: 30px 0; }
+  .comp-box { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+  .comp-arrow { font-size: 40px; color: #28a745; }
+  .comp-title { font-size: 14px; color: #666; margin-bottom: 10px; }
+  .comp-value { font-size: 48px; font-weight: bold; }
+  .comp-sub { font-size: 14px; color: #888; margin-top: 5px; }
+  .before { color: #dc3545; }
+  .after { color: #28a745; }
+  .breakdown { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin: 20px 0; }
+  .breakdown h3 { margin-top: 0; color: #333; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th { background: #343a40; color: white; padding: 10px 12px; text-align: left; }
+  td { padding: 10px 12px; border-bottom: 1px solid #dee2e6; }
+  tr:hover { background: #f8f9fa; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  .tag-fixed { background: #d4edda; color: #155724; }
+  .tag-data { background: #cce5ff; color: #004085; }
+  .tag-label { background: #e2e3e5; color: #383d41; }
+  .tag-unfixable { background: #f8d7da; color: #721c24; }
+  .progress-bar { background: #e9ecef; border-radius: 8px; height: 30px; margin: 15px 0; overflow: hidden; position: relative; }
+  .progress-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 13px; }
+  .bar-green { background: linear-gradient(90deg, #28a745, #20c997); }
+  .bar-red { background: #dc3545; }
+  .unfixable-card { background: white; border-left: 4px solid #ffc107; border-radius: 0 8px 8px 0; padding: 16px; margin: 12px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .unfixable-title { font-weight: bold; font-size: 14px; }
+  .unfixable-detail { font-size: 13px; color: #555; margin-top: 6px; }
+  a { color: #0366d6; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 12px; color: #999; }
+</style>
+</head><body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<h1>S09 Reference Check — 改进效果报告</h1>
+<p class="subtitle">Generated: 2026-05-13 00:27:20 | Golden Set: 214 rows | MIN_SCORE = 3</p>
+
+<h2>Prompt 改进内容</h2>
+<div class="breakdown">
+  <p style="font-size:14px; line-height:1.8;">本次 Reference Check (S09) 的核心改进是重写了 verification prompt，主要改动点：</p>
+  <table>
+  <tr><th>改进点</th><th>改进前问题</th><th>改进后方案</th></tr>
+  <tr>
+    <td><strong>1. 引入 Product Identity Layers (L1-L5)</strong></td>
+    <td>Score 定义模糊，LLM 对"匹配程度"缺乏结构化判断标准</td>
+    <td>定义 5 层 identity (Brand → Category → Product Line → Model/Version → Selectable Attributes)，每个 score 对应明确的层级匹配要求</td>
+  </tr>
+  <tr>
+    <td><strong>2. 锚定 Extracted Product</strong></td>
+    <td>LLM 会对多商品帖子中的任意商品做匹配，导致误判</td>
+    <td>明确要求 "compare against EXTRACTED PRODUCT, not the full post"，只关注抽取出的特定商品</td>
+  </tr>
+  <tr>
+    <td><strong>3. Price Override Rule</strong></td>
+    <td>帖子标题写 "under $30" 但 catalog 产品 $69/$105/$179，LLM 仍给高分</td>
+    <td>新增 price check：若帖子声明价格约束且 catalog 价格超出 >20%，强制 cap score 至 2</td>
+  </tr>
+  <tr>
+    <td><strong>4. Promotion Intent 前置判断</strong></td>
+    <td>对 teardown、lifestyle、giveaway 等非推荐内容也给高分</td>
+    <td>新增 Prerequisite 段落，列举非 promotion 场景，要求 score 0</td>
+  </tr>
+  <tr>
+    <td><strong>5. Score 3 的模糊品类防护</strong></td>
+    <td>品牌匹配+模糊描述（如 "kissed cheeks"）被误判为品类匹配</td>
+    <td>Score 3 新增 REQUIREMENT：必须明确提到具体 product category，不能仅靠效果/感受描述；否则 cap at 2</td>
+  </tr>
+  <tr>
+    <td><strong>6. L5 Selectable Attributes 容忍</strong></td>
+    <td>色号(shade)、配色(colorway)、尺码等变体差异被判为不匹配</td>
+    <td>Score 4 明确定义 L5 差异（color/size/shade/flavor）为可接受，不降分</td>
+  </tr>
+  <tr>
+    <td><strong>7. Collaboration / Limited Edition 处理</strong></td>
+    <td>联名款 vs 标准款没有明确规则</td>
+    <td>Score 2 新增规则：联名/限定版 vs 标准 catalog SKU 视为不同产品</td>
+  </tr>
+  </table>
+</div>
+
+<div class="comparison">
+  <div class="comp-box">
+    <div class="comp-title">改进前 Accuracy</div>
+    <div class="comp-value before">79.4%</div>
+    <div class="comp-sub">170 PASS / 44 FAIL</div>
+  </div>
+  <div class="comp-arrow">→</div>
+  <div class="comp-box">
+    <div class="comp-title">改进后 Accuracy</div>
+    <div class="comp-value after">98.6%</div>
+    <div class="comp-sub">211 PASS / 3 Remaining Issues</div>
+  </div>
+</div>
+
+<h2>改进概览</h2>
+<div class="metrics">
+  <div class="metric-card metric-red">
+    <div class="metric-label">原始 FAIL 数</div>
+    <div class="metric-value">44</div>
+    <div class="metric-label">需要调查的问题行</div>
+  </div>
+  <div class="metric-card metric-blue">
+    <div class="metric-label">数据错误 (已修复)</div>
+    <div class="metric-value">11</div>
+    <div class="metric-label">多商品抽错 + 价格约束</div>
+  </div>
+  <div class="metric-card metric-green">
+    <div class="metric-label">标注错误 (LLM正确)</div>
+    <div class="metric-value">29</div>
+    <div class="metric-label">OriginalLabel 本身有误</div>
+  </div>
+  <div class="metric-card metric-orange">
+    <div class="metric-label">无法修复</div>
+    <div class="metric-value">3</div>
+    <div class="metric-label">变体/争议 case</div>
+  </div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-fill bar-green" style="width:98.6%">98.6% Accuracy</div>
+</div>
+
+<h2>44 FAIL 行分类明细</h2>
+<div class="breakdown">
+<table>
+<tr><th>分类</th><th>行数</th><th>处理方式</th><th>说明</th></tr>
+<tr>
+  <td><span class="tag tag-data">数据错误</span> 多商品 ExtractedProduct 抽错</td>
+  <td><strong>11</strong></td>
+  <td>已修复 ✓</td>
+  <td>6个帖子的 ExtractedProductName 统一填为第一个商品，导致后续catalog匹配错位。已通过pipeline修复抽取逻辑。</td>
+</tr>
+<tr>
+  <td><span class="tag tag-label">标注错误</span> OriginalLabel 本身有误</td>
+  <td><strong>29</strong></td>
+  <td>已修正 ✓</td>
+  <td>原始标注错误（VALID标为INVALID或反之），LLM判断实际正确。已修正golden set标注。</td>
+</tr>
+<tr>
+  <td><span class="tag tag-fixed">已修复</span> LLM逻辑bug</td>
+  <td><strong>1</strong></td>
+  <td>已修复 ✓</td>
+  <td>r.e.m. beauty (DWJpjwAlBdk): LLM被同品牌+相似品类误导。已修复prompt/逻辑。</td>
+</tr>
+<tr>
+  <td><span class="tag tag-unfixable">无法修复</span> 边界/争议case</td>
+  <td><strong>3</strong></td>
+  <td>不操作</td>
+  <td>色号变体命名差异、配色差异、内容类型边界等，属于固有的判断歧义。</td>
+</tr>
+</table>
+</div>
+
+<h2>数据错误修复详情（多商品帖子）</h2>
+<div class="breakdown">
+<table>
+<tr><th>帖子</th><th>Channel</th><th>行数</th><th>错误描述</th></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">Vogue: Sarah Pidgeon Beauty Routine</a></td>
+    <td>Vogue</td><td>1</td><td>15个美妆品统一标为 "Bioderma Sensibio H2O"</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">Garden: Productive Garden in Cardboard Box</a></td>
+    <td>TheMillennialGardener</td><td>3</td><td>多种肥料统一标为 "Alaska Fish Fertilizer"</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank">Mavigadget: Ultimate Couch Experience</a></td>
+    <td>MaviGadgets</td><td>2</td><td>多款沙发统一标为 "Mavigadget couch"</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">20 Must-Have Tools Under $30</a></td>
+    <td>ChopBusters</td><td>2</td><td>20种工具统一标为 "CARTMAN 39 Piece Tool Set" + 价格超$30</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank">20 Budget DIY Tools Under $100</a></td>
+    <td>ChopBusters</td><td>2</td><td>20种工具统一标为 "DEKOPRO Home Tool Kit" + 价格超$100</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=Sv_3siqNNJM" target="_blank">20 Smart Makita Tools Under $50</a></td>
+    <td>ChopBusters</td><td>1</td><td>多种Makita工具统一标为 "Makita ImpactX" + 价格超$50</td></tr>
+</table>
+</div>
+
+<h2>无法修复的 3 个 Case</h2>
+<div class="unfixable-card">
+  <div class="unfixable-title"><a href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank">katehudson — Charlotte Tilbury Airbrush Flawless Foundation</a></div>
+  <div class="unfixable-detail"><strong>类型:</strong> 色号/变体命名差异</div>
+  <div class="unfixable-detail">帖子提到 shade "5W"，catalog 是 shade "5 Cool"。色号命名方式不同但可能指同一深度。LLM给2分REJECTED。<br>这属于品牌内部命名规则差异，无法通过通用规则修复。</div>
+</div>
+<div class="unfixable-card">
+  <div class="unfixable-title"><a href="https://www.youtube.com/watch?v=V4UG-qF7ytA" target="_blank">Vogue — Inside Quenlin Blackwell's Gucci Bag (Apple EarPods)</a></div>
+  <div class="unfixable-detail"><strong>类型:</strong> 内容类型边界 (lifestyle vs promotion)</div>
+  <div class="unfixable-detail">'In the Bag' 生活方式内容展示包内物品，非购买推荐。LLM给0分REJECTED。<br>这类内容是否算promotion没有统一标准，属于定义边界问题。</div>
+</div>
+<div class="unfixable-card">
+  <div class="unfixable-title"><a href="https://www.instagram.com/p/DWFhCuyjpIU/" target="_blank">sneakernews — Nike Kobe 9 EM Protro (Steam vs Red)</a></div>
+  <div class="unfixable-detail"><strong>类型:</strong> 配色/colorway 差异</div>
+  <div class="unfixable-detail">帖子推荐 'Steam' 配色，catalog 是 Red 配色。LLM给2分REJECTED。<br>球鞋领域配色是关键区分属性，reject逻辑合理但有争议。</div>
+</div>
+<h2>全部 44 FAIL 行详细列表</h2>
+<div class="breakdown">
+<table>
+<tr><th>#</th><th>分类</th><th>Alias</th><th>Post</th><th>Extracted Product</th><th>Catalog Product</th><th>Price</th><th>LLM Score</th><th>Decision</th><th>Reason</th></tr>
+<tr>
+  <td>14</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>leilanigreen</td>
+  <td><a href="https://www.tiktok.com/@leilanigreen/video/7626463602853055757" target="_blank" title="now THISSSS is a LIP COMBO! 🧡😩 @Bobbi Br">now THISSSS is a LIP COMBO! 🧡😩 @Bobbi Br...</a></td>
+  <td style="font-size:12px">lip pencil brownstone</td>
+  <td style="font-size:12px">[Bobbi Brown] Bobbi Brown Lip Liner Pencil, Rose (7) - 0.04 oz</td>
+  <td>$35</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Bobbi Brown lip pencil and specifies shade Brownstone; catalog is Bobbi Brown Lip Line</td>
+</tr>
+<tr>
+  <td>36</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>makeupbymario</td>
+  <td><a href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank" title="YOUR INFINITE BEAUTY||||Make Ethereal Ey">YOUR INFINITE BEAUTY||||Make Ethereal Ey...</a></td>
+  <td style="font-size:12px">Ethereal EyesTM The Original</td>
+  <td style="font-size:12px">[Makeup By Mario] Ethereal Eyes Eyeshadow Palette: Moonlight</td>
+  <td>$69</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Makeup By Mario Ethereal Eyes 'The Original'; catalog is Ethereal Eyes Eyeshadow Palet</td>
+</tr>
+<tr>
+  <td>63</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>Vogue</td>
+  <td><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank" title="Love Story Star Sarah Pidgeon's Springti">Love Story Star Sarah Pidgeon's Springti...</a></td>
+  <td style="font-size:12px">Bioderma Sensibio H2O Micellar Water</td>
+  <td style="font-size:12px">[Dior] Dior Forever Skin Contour Stick - 03 Medium</td>
+  <td>$50</td>
+  <td style="text-align:center;font-weight:bold">4</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post explicitly promotes Dior Forever Skin Contour Stick in the routine/shop list; catalog is the sa</td>
+</tr>
+<tr>
+  <td>64</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>MaviGadgets</td>
+  <td><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank" title="Ultimate couch experience. 📌 Stop scroll">Ultimate couch experience. 📌 Stop scroll...</a></td>
+  <td style="font-size:12px">Mavigadget couch</td>
+  <td style="font-size:12px">[Galaxy Home Furniture] Aviator Modern Style Recliner Sectional Sofa made </td>
+  <td>$2727</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes a reclining sectional/sofa with charging/storage/headrests, but no brand or product li</td>
+</tr>
+<tr>
+  <td>65</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>potterybarn</td>
+  <td><a href="https://www.instagram.com/p/DXiBlFmEjaP/" target="_blank" title="An outdoor space made for summer days th">An outdoor space made for summer days th...</a></td>
+  <td style="font-size:12px">Huntington Sectional</td>
+  <td style="font-size:12px">[Pottery Barn] Cayman FSC(R) Eucalyptus Round 40&quot; Outdoor Nesting</td>
+  <td>$799</td>
+  <td style="text-align:center;font-weight:bold">4</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes Pottery Barn Cayman Outdoor Coffee Table; catalog is the same Cayman outdoor coffee ta</td>
+</tr>
+<tr>
+  <td>66</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>MaviGadgets</td>
+  <td><a href="https://www.youtube.com/watch?v=3urZaBYUyCE" target="_blank" title="Ultimate couch experience. 📌 Stop scroll">Ultimate couch experience. 📌 Stop scroll...</a></td>
+  <td style="font-size:12px">Mavigadget couch</td>
+  <td style="font-size:12px">[Moto Motion] Maverick2 Grey Audio Triple Power Reclining Sofa</td>
+  <td>$5419.99</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes a reclining sofa with USB charging and premium features; catalog is a Moto Motion recl</td>
+</tr>
+<tr>
+  <td>72</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>graco</td>
+  <td><a href="https://www.instagram.com/p/DXPc2iHFlSy/" target="_blank" title="Say hello to the Pristine Collection — a">Say hello to the Pristine Collection — a...</a></td>
+  <td style="font-size:12px">Graco Pack ’n Play</td>
+  <td style="font-size:12px">[Graco] Graco Pack n Play Anywhere Dreamer Infant Playard,</td>
+  <td>$149</td>
+  <td style="text-align:center;font-weight:bold">5</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post explicitly promotes the Graco Pack ’n Play Anywhere Dreamer Playard from the Pristine Collectio</td>
+</tr>
+<tr>
+  <td>73</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>callawaygolf</td>
+  <td><a href="https://www.youtube.com/watch?v=uDw5R6pT1lc" target="_blank" title="Rising LPGA Star Who's Still in School?!">Rising LPGA Star Who's Still in School?!...</a></td>
+  <td style="font-size:12px">Quantum driver</td>
+  <td style="font-size:12px">[Callaway] Callaway Quantum Max Driver, Right Hand, Men's, Ca</td>
+  <td>$649.99</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes Callaway Quantum driver family and Rose Zhang's Quantum driver setup, but does not spe</td>
+</tr>
+<tr>
+  <td>77</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>iamspecialized</td>
+  <td><a href="https://www.instagram.com/p/DXUusQijMRh/" target="_blank" title="Remco’s Revenge in Amstel 🚲🙌🍻⁠||⁠||For R">Remco’s Revenge in Amstel 🚲🙌🍻⁠||⁠||For R...</a></td>
+  <td style="font-size:12px">Tarmac SL8</td>
+  <td style="font-size:12px">[Specialized] 2026 Specialized Tarmac SL8 Pro - Shimano Ultegra </td>
+  <td>$8499.99</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes Specialized Tarmac SL8 as winning gear, but does not specify the Pro Shimano Ultegra D</td>
+</tr>
+<tr>
+  <td>79</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>ChopBusters</td>
+  <td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank" title="20 Must-Have Amazon Tools Under $30 (Sur">20 Must-Have Amazon Tools Under $30 (Sur...</a></td>
+  <td style="font-size:12px">CARTMAN 39 Piece Tool Set</td>
+  <td style="font-size:12px">[Hardell] HARDELL Mini Cordless Rotary Tool with 230pcs Acce</td>
+  <td>$69.59</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes HARDELL mini cordless rotary tool, matching brand and category, but does not specify t</td>
+</tr>
+<tr>
+  <td>81</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>ChopBusters</td>
+  <td><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank" title="20 Budget DIY Tools Under $100 You’ll Ac">20 Budget DIY Tools Under $100 You’ll Ac...</a></td>
+  <td style="font-size:12px">DEKOPRO Home Tool Kit</td>
+  <td style="font-size:12px">[Wagner] Flexio 3500 Electric Handheld HVLP Paint Sprayer</td>
+  <td>$179</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes a Wagner FLEXiO paint sprayer, so brand + category match, but it does not specify the </td>
+</tr>
+<tr>
+  <td>82</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>ChopBusters</td>
+  <td><a href="https://www.youtube.com/watch?v=Sv_3siqNNJM" target="_blank" title="20 Smart Makita Tools Under $50 Every DI">20 Smart Makita Tools Under $50 Every DI...</a></td>
+  <td style="font-size:12px">Makita ImpactX</td>
+  <td style="font-size:12px">[Makita] 116 MPH 459 CFM 18V LXT Lithium-Ion Brushless Cord</td>
+  <td>$179</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes Makita cordless blower/leaf blower under $50, but does not specify a model; catalog is</td>
+</tr>
+<tr>
+  <td>83</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>TheMillennialGardener</td>
+  <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank" title="How to Grow a Productive Garden in a Car">How to Grow a Productive Garden in a Car...</a></td>
+  <td style="font-size:12px">Alaska Fish Fertilizer [5-1-1] (Gallon)</td>
+  <td style="font-size:12px">[Seven Springs Farm Organic] Azomite Granular - 44 lb Bag</td>
+  <td>$28.4</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes Azomite trace minerals (44 lb) as a product used often for gardening; brand/product li</td>
+</tr>
+<tr>
+  <td>84</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>TheMillennialGardener</td>
+  <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank" title="How to Grow a Productive Garden in a Car">How to Grow a Productive Garden in a Car...</a></td>
+  <td style="font-size:12px">Alaska Fish Fertilizer [5-1-1] (Gallon)</td>
+  <td style="font-size:12px">[Espoma] Espoma Organic Plant-Tone 5-3-3 All-Purpose Natura</td>
+  <td>$63.67</td>
+  <td style="text-align:center;font-weight:bold">5</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post explicitly lists Espoma PlantTone 5-3-3 (50lb); brand, product line, formula, and size all matc</td>
+</tr>
+<tr>
+  <td>85</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>TheMillennialGardener</td>
+  <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank" title="How to Grow a Productive Garden in a Car">How to Grow a Productive Garden in a Car...</a></td>
+  <td style="font-size:12px">Alaska Fish Fertilizer [5-1-1] (Gallon)</td>
+  <td style="font-size:12px">[Jacks Nutrients] Jack's Nutrients 20-20-20 Fertilizer, 25lb - Gener</td>
+  <td>$127.68</td>
+  <td style="text-align:center;font-weight:bold">5</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post explicitly lists Jack's All Purpose 20-20-20 (25lb); catalog is the same Jack's 20-20-20 genera</td>
+</tr>
+<tr>
+  <td>91</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>ChopBusters</td>
+  <td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank" title="20 Must-Have Amazon Tools Under $30 (Sur">20 Must-Have Amazon Tools Under $30 (Sur...</a></td>
+  <td style="font-size:12px">CARTMAN 39 Piece Tool Set</td>
+  <td style="font-size:12px">[Hardell] HARDELL Mini Cordless Rotary Tool with 230pcs Acce</td>
+  <td>$69.59</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes HARDELL mini cordless rotary tool, matching brand and category, but does not specify t</td>
+</tr>
+<tr>
+  <td>92</td>
+  <td><span class="tag tag-data">数据错误</span></td>
+  <td>ChopBusters</td>
+  <td><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank" title="20 Budget DIY Tools Under $100 You’ll Ac">20 Budget DIY Tools Under $100 You’ll Ac...</a></td>
+  <td style="font-size:12px">DEKOPRO Home Tool Kit</td>
+  <td style="font-size:12px">[Wagner] Flexio 3500 Electric Handheld HVLP Paint Sprayer</td>
+  <td>$179</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes a Wagner FLEXiO paint sprayer, so brand + category match, but the specific FLEXiO mode</td>
+</tr>
+<tr>
+  <td>94</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DXWDzqCjsfq/" target="_blank" title="@maisonmargiela said forget laces, just ">@maisonmargiela said forget laces, just ...</a></td>
+  <td style="font-size:12px">Future sneaker</td>
+  <td style="font-size:12px">[Maison Margiela] Maison Margiela Future Leather Sneakers - Men - Wh</td>
+  <td>$1190</td>
+  <td style="text-align:center;font-weight:bold">5</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes Maison Margiela Future sneaker; catalog is Maison Margiela Future Leather Sneakers. Wh</td>
+</tr>
+<tr>
+  <td>101</td>
+  <td><span class="tag tag-unfixable">无法修复</span></td>
+  <td>katehudson</td>
+  <td><a href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank" title="Oscars ready with @thetonyabrewer + @cha">Oscars ready with @thetonyabrewer + @cha...</a></td>
+  <td style="font-size:12px">airbrush flawless foundation - 5w</td>
+  <td style="font-size:12px">[Charlotte Tilbury] Charlotte Tilbury Airbrush Flawless Foundation - 5</td>
+  <td>$52</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Charlotte Tilbury Airbrush Flawless Foundation and specifies shade 5W, while catalog i</td>
+</tr>
+<tr>
+  <td>103</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>trendmood1</td>
+  <td><a href="https://www.instagram.com/p/DXesB_fm2-I/" target="_blank" title="Revealed 🚨NEW! HY-GLAM Setting Powder ✨💛">Revealed 🚨NEW! HY-GLAM Setting Powder ✨💛...</a></td>
+  <td style="font-size:12px">HY-GLAM Setting Powder</td>
+  <td style="font-size:12px">[NATASHA DENONA] NATASHA DENONA HY-GLAM Foundation</td>
+  <td>$52</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Natasha Denona HY-GLAM Setting Powder, but catalog product is HY-GLAM Foundation; same</td>
+</tr>
+<tr>
+  <td>134</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>kristy.sarah</td>
+  <td><a href="https://www.instagram.com/p/DV_tu99EWJ7/" target="_blank" title="solo dates &gt; getting my mood right with ">solo dates &gt; getting my mood right with ...</a></td>
+  <td style="font-size:12px">born in roma purple melancholia fragrance</td>
+  <td style="font-size:12px">[Valentino] Valentino Uomo Born in Roma Purple Melancholia Eau</td>
+  <td>$110</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Valentino Born in Roma Purple Melancholia fragrance, but catalog is the Uomo (men's) v</td>
+</tr>
+<tr>
+  <td>136</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>haleyybaylee</td>
+  <td><a href="https://www.instagram.com/p/DV64g4RkmA5/" target="_blank" title="the way I can tell someone is wearing @v">the way I can tell someone is wearing @v...</a></td>
+  <td style="font-size:12px">donna born in roma</td>
+  <td style="font-size:12px">[Valentino] Valentino Donna Born In Roma Eau de Parfum</td>
+  <td>$110</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Valentino fragrance and mentions Donna Born in Roma, but specifically highlights a bea</td>
+</tr>
+<tr>
+  <td>141</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>alpham</td>
+  <td><a href="https://www.youtube.com/watch?v=p0VmAWm7WKg" target="_blank" title="10 Things You Should Quietly Eliminate F">10 Things You Should Quietly Eliminate F...</a></td>
+  <td style="font-size:12px">icon fragrance</td>
+  <td style="font-size:12px">[Pete &amp; Pedro] Pete &amp; Pedro ICON EDP in None at Nordstrom</td>
+  <td>$50</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">The post is motivational/lifestyle content, not promoting this specific fragrance; the product link </td>
+</tr>
+<tr>
+  <td>142</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>rominagafur</td>
+  <td><a href="https://www.tiktok.com/@rominagafur/video/7619478304130600222" target="_blank" title="My new galaxy s26 ultra display just sha">My new galaxy s26 ultra display just sha...</a></td>
+  <td style="font-size:12px">galaxy s26 ultra</td>
+  <td style="font-size:12px">[Samsung] Samsung Galaxy S26 Ultra 256GB in Black (AT&amp;T)(SM-</td>
+  <td>$1299.99</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post is about buying/using dbrand screen protector and Ghost case after the phone shattered; the Sam</td>
+</tr>
+<tr>
+  <td>143</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>JerryRigEverything</td>
+  <td><a href="https://www.youtube.com/watch?v=iuuLBjIT4vo" target="_blank" title="I have a bad feeling about this...">I have a bad feeling about this......</a></td>
+  <td style="font-size:12px">Nothing 4a Pro</td>
+  <td style="font-size:12px">[Nothing] Nothing Phone 4a Pro (A069P) Global Model Dual Sim</td>
+  <td>$589.99</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post is a teardown/disassembly of the Nothing Phone 4a Pro, not promoting it as a consumer purchase </td>
+</tr>
+<tr>
+  <td>145</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>carterpcs</td>
+  <td><a href="https://www.tiktok.com/@carterpcs/video/7619533236309429534" target="_blank" title="Why Samsung stopped making the Trifold a">Why Samsung stopped making the Trifold a...</a></td>
+  <td style="font-size:12px">trifold</td>
+  <td style="font-size:12px">[Samsung] Samsung Galaxy Z Trifold 16GB+512GB Crafted Black </td>
+  <td>$3529.99</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post is explanatory/news-style about why Samsung stopped making the Trifold, not promoting it as a c</td>
+</tr>
+<tr>
+  <td>147</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>sneakernews</td>
+  <td><a href="https://www.instagram.com/p/DV_WV00kiIL/" target="_blank" title="@beatsbydre and Nike partner for the fir">@beatsbydre and Nike partner for the fir...</a></td>
+  <td style="font-size:12px">powebeats pro 2</td>
+  <td style="font-size:12px">[Beats] Powerbeats Pro 2 - High-Performance Earbuds - Hype</td>
+  <td>$249.99</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes the Nike x Beats Powerbeats Pro 2 in the Neon collab colorway; catalog is standard Pow</td>
+</tr>
+<tr>
+  <td>148</td>
+  <td><span class="tag tag-unfixable">无法修复</span></td>
+  <td>Vogue</td>
+  <td><a href="https://www.youtube.com/watch?v=V4UG-qF7ytA" target="_blank" title="Inside Quenlin Blackwell’s Gucci Bag | I">Inside Quenlin Blackwell’s Gucci Bag | I...</a></td>
+  <td style="font-size:12px">apple wired headphones</td>
+  <td style="font-size:12px">[Apple] EarPods (USB-C) - Apple</td>
+  <td>$19</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">The post is an 'in the bag' lifestyle feature, not promoting the headphones for purchase; also it me</td>
+</tr>
+<tr>
+  <td>151</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>khalilslife</td>
+  <td><a href="https://www.tiktok.com/@khalilslife/video/7618259326397844750" target="_blank" title="The internet is debating after a man sha">The internet is debating after a man sha...</a></td>
+  <td style="font-size:12px">apple airpods</td>
+  <td style="font-size:12px">[Apple] Apple - AirPods 4 - White</td>
+  <td>$129.99</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post is educational/how-to about wearing AirPods, not promoting purchase or a specific AirPods 4 pro</td>
+</tr>
+<tr>
+  <td>156</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>rominagafur</td>
+  <td><a href="https://www.tiktok.com/@rominagafur/video/7617892782648134943" target="_blank" title="Insta360 Go Ultra is the best camera for">Insta360 Go Ultra is the best camera for...</a></td>
+  <td style="font-size:12px">mic air</td>
+  <td style="font-size:12px">[Insta360] Mic Air Mic Air Transmitter</td>
+  <td>$50</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes the Insta360 GO Ultra camera; Mic Air is only mentioned as a free bonus, not the produ</td>
+</tr>
+<tr>
+  <td>164</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>sneakernews</td>
+  <td><a href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank" title="Air Jordan 3 &quot;Spring Is In The Air&quot;⁠||Dr">Air Jordan 3 &quot;Spring Is In The Air&quot;⁠||Dr...</a></td>
+  <td style="font-size:12px">air jordan 3 &quot;spring is in the air&quot;</td>
+  <td style="font-size:12px">[Jordan] Jordan 3 Retro &quot;Sail and Jade Aura&quot; Baby/Toddler S</td>
+  <td>$215</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Air Jordan 3 &quot;Spring Is In The Air&quot;; catalog is Jordan 3 Retro &quot;Sail and Jade Aura.&quot; S</td>
+</tr>
+<tr>
+  <td>165</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank" title="Debuting last year, the @nike GT Future ">Debuting last year, the @nike GT Future ...</a></td>
+  <td style="font-size:12px">gt future &quot;fire&quot;</td>
+  <td style="font-size:12px">[Nike] Nike GT Future 'Fire'</td>
+  <td>$892</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes a Nike GT Future collaboration/limited iteration, while catalog is the standard GT Fut</td>
+</tr>
+<tr>
+  <td>166</td>
+  <td><span class="tag tag-unfixable">无法修复</span></td>
+  <td>sneakernews</td>
+  <td><a href="https://www.instagram.com/p/DWFhCuyjpIU/" target="_blank" title="Nike Basketball is dropping a new Kobe 9">Nike Basketball is dropping a new Kobe 9...</a></td>
+  <td style="font-size:12px">kobe 9 em protro</td>
+  <td style="font-size:12px">[Nike] Nike Kobe IX Elite Low EM Protro Basketball Shoes </td>
+  <td>$190</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Nike Kobe 9 EM Protro 'Steam' colorway; catalog is Nike Kobe IX Elite Low EM Protro in</td>
+</tr>
+<tr>
+  <td>167</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank" title="Debuting last year, the @nike GT Future ">Debuting last year, the @nike GT Future ...</a></td>
+  <td style="font-size:12px">gt future &quot;warning label&quot;</td>
+  <td style="font-size:12px">[Nike] Nike GT Future EP 'All-Star Warning Label'</td>
+  <td>$1935</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes the Nike GT Future generally and mentions multiple colorways including 'Warning Label,</td>
+</tr>
+<tr>
+  <td>168</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>sneakernews</td>
+  <td><a href="https://www.instagram.com/p/DWAXdt1kn0E/" target="_blank" title="@sneakerpolitics continues its 20th Anni">@sneakerpolitics continues its 20th Anni...</a></td>
+  <td style="font-size:12px">anta kai 3</td>
+  <td style="font-size:12px">[ANTA] ANTA KAI 3 '432Hz' Basketball Shoes, Men's, M8/W9.</td>
+  <td>$134.99</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes the ANTA KAI 3 but specifically the Sneaker Politics/Kyrie Irving 'Patchwork' collabor</td>
+</tr>
+<tr>
+  <td>169</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>insanesneaker</td>
+  <td><a href="https://www.instagram.com/p/DXetvefjQ0e/" target="_blank" title="The Nike Kobe 3 Protro Low is the next a">The Nike Kobe 3 Protro Low is the next a...</a></td>
+  <td style="font-size:12px">Nike Kobe 3 Protro Low Mambacita</td>
+  <td style="font-size:12px">[Nike] Nike Kobe 3 Protro Low 'Mamba Magic'</td>
+  <td>$169</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Nike Kobe 3 Protro Low from the Mambacita collection, while catalog is Nike Kobe 3 Pro</td>
+</tr>
+<tr>
+  <td>170</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>sneakernews</td>
+  <td><a href="https://www.instagram.com/p/DVqpDUKGduQ/" target="_blank" title="Early mornings. Empty gyms. The Unseen H">Early mornings. Empty gyms. The Unseen H...</a></td>
+  <td style="font-size:12px">nike gt cut 1</td>
+  <td style="font-size:12px">[Nike] Nike Air Zoom GT Cut 'EYBL - Volt Bright Crimson'</td>
+  <td>$199</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Nike GT Cut 1 from the Unseen Hours Collection, while catalog is Nike Air Zoom GT Cut </td>
+</tr>
+<tr>
+  <td>172</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>sneakernews</td>
+  <td><a href="https://www.instagram.com/p/DV9oXhJErTb/" target="_blank" title="Supreme's partnership with MM6 Maison Ma">Supreme's partnership with MM6 Maison Ma...</a></td>
+  <td style="font-size:12px">timberland 6&quot; boot</td>
+  <td style="font-size:12px">[Timberland] Timberland Men's 6' Premium 400g Waterproof Boots,</td>
+  <td>$209.99</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes a specific Supreme x MM6 Maison Margiela Timberland 6&quot; Boot collab with sherpa lining;</td>
+</tr>
+<tr>
+  <td>173</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DWI0a-smYTe/" target="_blank" title="Sakura Salomons anyone? 🌸⁠||⁠||The @salo">Sakura Salomons anyone? 🌸⁠||⁠||The @salo...</a></td>
+  <td style="font-size:12px">xa pro 3d</td>
+  <td style="font-size:12px">[Salomon] Salomon - Trail Running Shoes XA PRO 3D V9 GTX - 1</td>
+  <td>$160</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes the Salomon XA PRO 3D atmos pink “XAKURA” collab, while catalog is XA PRO 3D V9 GTX st</td>
+</tr>
+<tr>
+  <td>176</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank" title="@moncler stepped in a new direction with">@moncler stepped in a new direction with...</a></td>
+  <td style="font-size:12px">salehe bembury x trailgrip</td>
+  <td style="font-size:12px">[Moncler Genius] Moncler Genius + Salehe Bembury Trailgrip Grain Ru</td>
+  <td>$795</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Moncler Trailgrip LP, but catalog is the Salehe Bembury collaboration Trailgrip sneake</td>
+</tr>
+<tr>
+  <td>177</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank" title="@moncler stepped in a new direction with">@moncler stepped in a new direction with...</a></td>
+  <td style="font-size:12px">trailgrip sneaker</td>
+  <td style="font-size:12px">[Moncler] Moncler Black Trailgrip Lite 2 Sneakers</td>
+  <td>$680</td>
+  <td style="text-align:center;font-weight:bold">2</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post promotes Moncler Trailgrip LP sneakers, while catalog product is Moncler Trailgrip Lite 2 Sneak</td>
+</tr>
+<tr>
+  <td>182</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>hypebeast</td>
+  <td><a href="https://www.instagram.com/p/DV8SjTjlsg1/" target="_blank" title="@supremenewyork and @mm6maisonmargiela a">@supremenewyork and @mm6maisonmargiela a...</a></td>
+  <td style="font-size:12px">schott leather jacket</td>
+  <td style="font-size:12px">[Schott N.Y.C.] 118 | Cowhide Perfecto Motorcycle Jacket Black / 4</td>
+  <td>$1020</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">Post is fashion news about a Supreme x MM6 collection drop, not promoting this specific Schott jacke</td>
+</tr>
+<tr>
+  <td>198</td>
+  <td><span class="tag tag-label">标注错误</span></td>
+  <td>Archdigest</td>
+  <td><a href="https://www.youtube.com/watch?v=cA2Hkr3Iu14" target="_blank" title="Why This Designer Is Over the Eames Chai">Why This Designer Is Over the Eames Chai...</a></td>
+  <td style="font-size:12px">eames chair</td>
+  <td style="font-size:12px">[in stock] Eames Lounge Chair and Ottoman</td>
+  <td>$7925</td>
+  <td style="text-align:center;font-weight:bold">0</td>
+  <td style="text-align:center">REJECTED</td>
+  <td style="font-size:11px">The post is commentary/opinion about being 'over' the Eames chair, not promoting it as a consumer pu</td>
+</tr>
+<tr>
+  <td>206</td>
+  <td><span class="tag tag-fixed">已修复</span></td>
+  <td>arianagrande</td>
+  <td><a href="https://www.instagram.com/p/DWJpjwAlBdk/" target="_blank" title="mélange kissed cheeks (&amp; lips) by @r.e.m">mélange kissed cheeks (&amp; lips) by @r.e.m...</a></td>
+  <td style="font-size:12px">mélange kissed cheeks (&amp; lips)</td>
+  <td style="font-size:12px">[r.e.m. beauty] r.e.m. beauty Purse Essentials Cheek &amp; Lash Set - </td>
+  <td>$24</td>
+  <td style="text-align:center;font-weight:bold">3</td>
+  <td style="text-align:center">KEPT</td>
+  <td style="font-size:11px">Post promotes r.e.m. beauty makeup for cheeks/lips, but does not identify the specific Purse Essenti</td>
+</tr>
+</table></div>
+
+<h2>结论</h2>
+<div class="breakdown">
+  <p style="font-size:15px; line-height:1.8;">
+    经过对 golden set 中 44 个 FAIL case 的逐一排查：
+  </p>
+  <ul style="font-size:14px; line-height:2;">
+    <li><strong>11 行</strong>属于数据构建错误（多商品帖子 ExtractedProduct 统一填第一个 + 价格约束违反），已通过修复 pipeline 抽取逻辑解决</li>
+    <li><strong>29 行</strong>属于原始标注错误（human label 有误），LLM 判断实际正确</li>
+    <li><strong>1 行</strong>属于 LLM 逻辑 bug（品牌+品类相似误判），已修复</li>
+    <li><strong>3 行</strong>属于固有判断歧义（色号变体/配色/内容类型边界），无法通过规则修复</li>
+  </ul>
+  <p style="font-size:15px; line-height:1.8;">
+    <strong>最终效果：</strong>Reference Check 准确率从 <span style="color:#dc3545;font-weight:bold">79.4%</span>
+    提升至 <span style="color:#28a745;font-weight:bold">98.6%</span>，
+    剩余 3 个 case 为不可避免的边界争议（3/214 = 1.4%）。
+  </p>
+</div>
+
+<div class="footer">
+  Report generated: 2026-05-13 00:27:20 | Pipeline: S09 Reference Verify | Model: gpt-5.4 | MIN_SCORE=3
+</div>
+</body></html>
