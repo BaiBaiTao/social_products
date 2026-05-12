@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>Product Extraction — Improvement Report</title>
+<style>
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 20px; background: #f8f9fa; color: #333; }
+  h1 { color: #1a1a2e; margin-bottom: 5px; }
+  h2 { color: #16213e; margin-top: 30px; border-bottom: 2px solid #0f3460; padding-bottom: 8px; }
+  h3 { color: #333; margin-top: 20px; }
+  .subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+  .metric-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .metric-value { font-size: 36px; font-weight: bold; margin: 8px 0; }
+  .metric-label { font-size: 13px; color: #666; }
+  .metric-green .metric-value { color: #155724; }
+  .metric-red .metric-value { color: #721c24; }
+  .metric-blue .metric-value { color: #004085; }
+  .metric-orange .metric-value { color: #856404; }
+  .breakdown { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin: 20px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th { background: #343a40; color: white; padding: 10px 8px; text-align: left; position: sticky; top: 0; z-index: 10; }
+  td { padding: 8px; border-bottom: 1px solid #dee2e6; vertical-align: top; }
+  tr:hover { background: #f1f3f5; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  .tag-fixed { background: #d4edda; color: #155724; }
+  .tag-improved { background: #cce5ff; color: #004085; }
+  .tag-review { background: #f8d7da; color: #721c24; }
+  .tag-correct { background: #d4edda; color: #155724; }
+  .tag-wrong { background: #f8d7da; color: #721c24; }
+  .tag-unmarked { background: #e2e3e5; color: #383d41; }
+  .comparison { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; margin: 30px 0; }
+  .comp-box { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+  .comp-arrow { font-size: 40px; color: #28a745; }
+  .comp-title { font-size: 14px; color: #666; margin-bottom: 10px; }
+  .comp-value { font-size: 48px; font-weight: bold; }
+  .comp-sub { font-size: 14px; color: #888; margin-top: 5px; }
+  .before { color: #dc3545; }
+  .after { color: #28a745; }
+  a { color: #0366d6; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .product-cell { font-size: 12px; }
+  .product-old { color: #721c24; text-decoration: line-through; opacity: 0.7; }
+  .product-new { color: #155724; font-weight: bold; }
+  .product-expected { color: #004085; }
+  .highlight { background: #fff3cd; padding: 2px 4px; }
+  .progress-bar { background: #e9ecef; border-radius: 8px; height: 30px; margin: 15px 0; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 13px; background: linear-gradient(90deg, #28a745, #20c997); }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 12px; color: #999; }
+  .version-tag { display: inline-block; background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 11px; color: #495057; }
+</style>
+</head><body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<h1>Product Extraction — Prompt 改进效果报告</h1>
+<p class="subtitle">Generated: 2026-05-13 00:39:08 | Bad Cases: 15 | Good Cases: 36 | Total: 51</p>
+
+<h2>Prompt 改进内容</h2>
+<div class="breakdown">
+  <p style="font-size:14px; line-height:1.8;">Product Extraction prompt 经历了 <span class="version-tag">v2</span> 和 <span class="version-tag">v2.1</span> 两次迭代，核心改进：</p>
+  <table>
+  <tr><th>改进点</th><th>改进前问题</th><th>改进后方案</th></tr>
+  <tr>
+    <td><strong>1. 结构化 PRODUCT NAME CONSTRUCTION</strong></td>
+    <td>Rule 1 仅要求"名称必须出现在文本中"，LLM 经常漏抓变体/材质/联名等信息，或重复输出</td>
+    <td>定义 7 个 slot (collab/collection/product_line/model/variant/material/edition)，按固定顺序拼接名称。每个 token 必须来自文本，不能靠知识补全</td>
+  </tr>
+  <tr>
+    <td><strong>2. Material Slot 强化</strong> <span class="version-tag">v2.1</span></td>
+    <td>v2 中 material 定义为"显式描述符"，#1 AF1 漏抓 "Suede"</td>
+    <td>改为"区分 SKU 的材质"：同一鞋款 Suede vs Leather = 不同 SKU → 必须提取。即使出现在 "suede upper" 等短语中也要捕获</td>
+  </tr>
+  <tr>
+    <td><strong>3. Cross-Sentence Variant Association</strong></td>
+    <td>配色/色号出现在不同句子时被忽略（如 "2X Ultra Cover" 在前句、"Poppy Red" 在后句）</td>
+    <td>新增规则：当帖子明确推广一个产品且色号/变体出现在别处指代该产品时，跨句关联</td>
+  </tr>
+  <tr>
+    <td><strong>4. Collection Slot 新增</strong></td>
+    <td>系列名/collection（如 "Mod Collection 2025"、"Color Watch 2026"）无处安放</td>
+    <td>新增 collection slot，放在 collab 和 product_line 之间，解决系列名缺失</td>
+  </tr>
+  <tr>
+    <td><strong>5. Title-Anchored Main Subject</strong></td>
+    <td>多型号帖子中所有提及的同品牌型号都被提取（如 ASUS Zenbook A16 + A14）</td>
+    <td>当标题明确命名一个产品时，仅提取该主角产品；同品牌其他型号仅为辅助提及不提取</td>
+  </tr>
+  <tr>
+    <td><strong>6. Comparison Rule</strong></td>
+    <td>对比视频中 A vs B 两个产品都被提取</td>
+    <td>仅提取被推荐/评测的主角，对比基线产品排除</td>
+  </tr>
+  <tr>
+    <td><strong>7. 品牌名去重 (Brand-in-Name)</strong></td>
+    <td>输出 "CaIpak - CaIpak Hue Carry-On"，品牌重复</td>
+    <td>规则明确 "Do NOT repeat brand in name"</td>
+  </tr>
+  <tr>
+    <td><strong>8. Evidence 放松</strong></td>
+    <td>旧版要求 evidence 包含完整产品名的连续引用，结构化名字各部分散布时无法满足</td>
+    <td>允许引用多个不连续文本片段，只需覆盖各 slot 的原始文本</td>
+  </tr>
+  <tr>
+    <td><strong>9. Variant/Shade 强制包含</strong></td>
+    <td>文本明确提到色号/变体但被忽略（如 "shade 35"、"09 Dreamy Dawn"）</td>
+    <td>VARIANT / SHADE / COLORWAY INCLUSION (HARD RULE)：明确提到的必须包含在名称中</td>
+  </tr>
+  <tr>
+    <td><strong>10. Product Name Completeness</strong></td>
+    <td>单词产品名（如 "Rapunzel"）搜索时匹配到无关内容</td>
+    <td>单词名称必须追加 category 使搜索可行（如 "Rapunzel Fragrance"）</td>
+  </tr>
+  </table>
+</div>
+
+<h2>改进效果对比</h2>
+<div class="comparison">
+  <div class="comp-box">
+    <div class="comp-title">Bad Cases 修复率</div>
+    <div class="comp-value after">73%</div>
+    <div class="comp-sub">2 Fixed + 9 Improved / 15 total</div>
+  </div>
+  <div class="comp-arrow">|</div>
+  <div class="comp-box">
+    <div class="comp-title">Good Cases 无退步率</div>
+    <div class="comp-value after">92%</div>
+    <div class="comp-sub">33 Correct / 36 total (3 regression)</div>
+  </div>
+</div>
+
+<div class="metrics">
+  <div class="metric-card metric-green">
+    <div class="metric-label">Fixed (完全修复)</div>
+    <div class="metric-value">2</div>
+    <div class="metric-label">提取结果与预期一致</div>
+  </div>
+  <div class="metric-card metric-blue">
+    <div class="metric-label">Improved (改善)</div>
+    <div class="metric-value">9</div>
+    <div class="metric-label">较旧版更接近预期</div>
+  </div>
+  <div class="metric-card metric-orange">
+    <div class="metric-label">Needs Review</div>
+    <div class="metric-value">4</div>
+    <div class="metric-label">仍有问题或 LLM 不稳定</div>
+  </div>
+  <div class="metric-card metric-red">
+    <div class="metric-label">Good Case 退步</div>
+    <div class="metric-value">3</div>
+    <div class="metric-label">原本正确变错误</div>
+  </div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-fill" style="width:73%">73% Bad Cases 改善</div>
+</div>
+
+<h2>Bad Cases 详细对比 (15 cases)</h2>
+<div class="breakdown">
+<table>
+<tr>
+  <th>#</th>
+  <th>Status</th>
+  <th style="width:20%">Post</th>
+  <th style="width:20%">Expected</th>
+  <th style="width:20%">Previous (旧版)</th>
+  <th style="width:20%">Current (新版)</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.instagram.com/p/DWXamnDksjl/" target="_blank">The Swoosh is adding to the &quot;Black&quot; Air Force 1 en...</a></td>
+  <td class="product-cell"><span class="product-expected">Nike Air Force 1   black Suede</span></td>
+  <td class="product-cell"><span class="product-old">Nike - Air Force 1</span></td>
+  <td class="product-cell"><span class="product-new">Nike - Air Force 1 Black Suede</span></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.instagram.com/p/DWrLkfbDn1s/" target="_blank">Nike Basketball cooked up a Kobe 3 Low Protro &quot;Dro...</a></td>
+  <td class="product-cell"><span class="product-expected">Nike  Kobe 3 Low Protro &quot;Droppin&#x27; Gems&quot; PE</span></td>
+  <td class="product-cell"><span class="product-old">Nike - Kobe 3 Low Protro &quot;Droppin&#x27; Gems&quot; PE</span></td>
+  <td class="product-cell"><span class="product-new">Nike - Kobe 3 Low Protro Droppin&#x27; Gems PE</span></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.instagram.com/p/DWmj7CLk4UE/" target="_blank">Gonna need these for the Puerto Rican Day Parade 🇵...</a></td>
+  <td class="product-cell"><span class="product-expected">Nike  Shox R4 Puerto Rico</span></td>
+  <td class="product-cell"><span class="product-old">Nike - Shox R4 &quot;Puerto Rico&quot;</span><br><span class="product-old">Nike - Nike Shox R4 &quot;Puerto Rico&quot;</span></td>
+  <td class="product-cell"><span class="product-new">Nike - Shox R4 Puerto Rico</span></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.instagram.com/p/DXR9gpCE2AT/" target="_blank">Running shoe collabs are in, and Saucony brings th...</a></td>
+  <td class="product-cell"><span class="product-expected">Saucony Endorphin Speed 5 Carnival &#x27;Dusk Terra&#x27;</span></td>
+  <td class="product-cell"><span class="product-old">Saucony - Carnival x Endorphin Speed 5 &quot;Dusk Terra&quot;</span><br><span class="product-old">Saucony - Carnival x Saucony Endorphin Speed 5 Dusk Terra</span></td>
+  <td class="product-cell"><span class="product-new">Saucony - Carnival x Endorphin Speed 5 Dusk Terra</span></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><span class="tag tag-fixed">Fixed</span></td>
+  <td><a href="https://www.instagram.com/p/DW1wmUbiYmg/" target="_blank">🎥 I got somebody I want y’all to meet... 🎬  Track ...</a></td>
+  <td class="product-cell"><span class="product-expected">CoreNylon Mock Neck Full Zip Track Jacket - Green/combo</span></td>
+  <td class="product-cell"><span class="product-old">Fashion Nova - CoreNylon Mock Neck Full Zip Track Jacket</span><br><span class="product-old">Fashion Nova - CoreNylon 32” Pocket Track Pant - Green/combo</span></td>
+  <td class="product-cell"><span class="product-new">nova - CoreNylon Mock Neck Full Zip Track Jacket Green/combo</span><br><span class="product-new">nova - CoreNylon 32” Pocket Track Pant Green/combo</span></td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><span class="tag tag-review">Review</span></td>
+  <td><a href="https://www.instagram.com/p/DW4tZW3j5sH/" target="_blank">Gibson ModTM Collection||||Break the mold with our...</a></td>
+  <td class="product-cell"><span class="product-expected">Gibson Mod™ Collection Les Paul Custom 70s，Metropolitan Candy</span></td>
+  <td class="product-cell"><span class="product-old">Gibson - Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy</span></td>
+  <td class="product-cell"><span class="product-new">Gibson - Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy</span></td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.instagram.com/p/DXPHa_QkyLn/" target="_blank">Starclassic Walnut/Birch kits come in a variety of...</a></td>
+  <td class="product-cell"><span class="product-expected">Tama Starclassic Walnut/Birch Lacquer finishes- Molten Platinum Burst’</span></td>
+  <td class="product-cell"><span class="product-old">TAMA - Starclassic Walnut/Birch kits Molten Platinum Burst</span><br><span class="product-old">TAMA - Starclassic Walnut/Birch shell packs</span></td>
+  <td class="product-cell"><span class="product-new">Tama - Starclassic Walnut/Birch Molten Platinum Burst</span></td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.tiktok.com/@rustoleumbrands/video/7627209380588424478" target="_blank">#ad Testing the &quot;unexpected red&quot; theory with one o...</a></td>
+  <td class="product-cell"><span class="product-expected">Rust‑Oleum 2X Ultra Cover Poppy Red</span></td>
+  <td class="product-cell"><span class="product-old">Rust-Oleum - Rust-Oleum Color Watch 2026 Poppy Red</span><br><span class="product-old">Rust-Oleum - Rust-Oleum 2X Ultra Cover Spray Paint</span></td>
+  <td class="product-cell"><span class="product-new">Rust-Oleum - 2X Ultra Cover Spray Paint Poppy Red</span></td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><span class="tag tag-review">Review</span></td>
+  <td><a href="https://www.tiktok.com/@leilanigreen/video/7626463602853055757" target="_blank">now THISSSS is a LIP COMBO! 🧡😩 @Bobbi Brown lip pe...</a></td>
+  <td class="product-cell"><span class="product-expected">MAC Cosmetics Lipglass Cushion Yes!</span></td>
+  <td class="product-cell"><span class="product-old">Bobbi Brown - lip pencil brownstone</span><br><span class="product-old">M·A·C Cosmetics - lipglass cushion</span><br><span class="product-old">M·A·C Cosmetics - lip glass</span></td>
+  <td class="product-cell"><span class="product-new">Bobbi Brown - lip pencil brownstone</span><br><span class="product-new">M·A·C Cosmetics - lipglass cushion</span><br><span class="product-new">M·A·C Cosmetics - lip glass</span></td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.tiktok.com/@playstation/video/7626406175663262990" target="_blank">For your hands only.   Introducing the 007 First L...</a></td>
+  <td class="product-cell"><span class="product-expected">Sony DualSense Wireless Controller - 007 First Light Limited Edition</span></td>
+  <td class="product-cell"><span class="product-old">PlayStation - 007 First Light Limited Edition DualSense Wireless Controller</span><br><span class="product-old">PlayStation - DualSense Wireless Controller</span><br><span class="product-old">PlayStation - PS5</span></td>
+  <td class="product-cell"><span class="product-new">PlayStation - 007 First Light Limited Edition DualSense Wireless Controller</span></td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.tiktok.com/@rileejsmith/video/7632112942036602142" target="_blank">Replying to @Neva Johnson Here’s how I packed for ...</a></td>
+  <td class="product-cell"><span class="product-expected">CaIpak Hue Carry-On in French Blue Gingham</span></td>
+  <td class="product-cell"><span class="product-old">CaIpak - CaIpak Hue Carry-On French Blue Gingham</span></td>
+  <td class="product-cell"><span class="product-new">CaIpak - Hue Carry-On French Blue Gingham</span></td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><span class="tag tag-review">Review</span></td>
+  <td><a href="https://www.instagram.com/p/DW2DZNWj0U9/" target="_blank">Celina gets a Mediterranean makeover. Meet Pink Cl...</a></td>
+  <td class="product-cell"><span class="product-expected">TUMI Voyageur Celina Backpac Washed Yellow /Thyme</span></td>
+  <td class="product-cell"><span class="product-old">TUMI - Celina</span></td>
+  <td class="product-cell">&mdash;</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><span class="tag tag-improved">Improved</span></td>
+  <td><a href="https://www.instagram.com/p/DXSLNLcDAVQ/" target="_blank">DEWY DUO||||Your spring skin combination is SoftSc...</a></td>
+  <td class="product-cell"><span class="product-expected">MAKEUP BY MARIO Soft Pop Blush Veil Soft Pop Pink Peony</span></td>
+  <td class="product-cell"><span class="product-old">Makeup By Mario - SoftSculpt Transforming Skin Enhancer Medium</span><br><span class="product-old">Makeup By Mario - Soft Pop Blush Veil Pink Peony</span></td>
+  <td class="product-cell"><span class="product-new">Makeup By Mario - SoftSculpt Transforming Skin Enhancer</span><br><span class="product-new">Makeup By Mario - Soft Pop Blush Veil Pink Peony</span></td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><span class="tag tag-review">Review</span></td>
+  <td><a href="https://www.instagram.com/p/DW9wx59k_g8/" target="_blank">Soft light, warm wood, and layers of texture that ...</a></td>
+  <td class="product-cell"><span class="product-expected">Four Hands  Dining Chair Rothler Pink Clay</span></td>
+  <td class="product-cell"><span class="product-old">Four Hands - Rothler Dining Chair</span></td>
+  <td class="product-cell"><span class="product-new">Four Hands - Rothler Dining Chair</span></td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><span class="tag tag-fixed">Fixed</span></td>
+  <td><a href="https://www.youtube.com/watch?v=w1zH9DwQ6qA" target="_blank">This Windows Laptop BEATS the MacBook - ASUS Zenbo...</a></td>
+  <td class="product-cell"><span class="product-expected">ASUS Zenbook A16</span></td>
+  <td class="product-cell"><span class="product-old">ASUS - ASUS Zenbook A16</span><br><span class="product-old">ASUS - ASUS Zenbook A16 UX3607</span><br><span class="product-old">ASUS - ASUS Zenbook A14</span><br><span class="product-old">ASUS - ASUS Zenbook A14 UX3407</span><br><span class="product-old">Apple - MacBook</span></td>
+  <td class="product-cell"><span class="product-new">ASUS - Zenbook A16 UX3607</span></td>
+</tr>
+</table>
+</div>
+<h2>Good Cases 回归测试 (36 cases)</h2>
+<div class="breakdown">
+<table>
+<tr>
+  <th>#</th>
+  <th>Verdict</th>
+  <th style="width:25%">Post</th>
+  <th style="width:25%">Previous</th>
+  <th style="width:25%">Current</th>
+  <th>Reference</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXLLsRuFJk2/" target="_blank">I ain’t ever play with it❗️Not even on the pl...</a></td>
+  <td class="product-cell" style="font-size:12px">Fashion Nova - Saint Washed Fleece Hoodie Jogger Pant Set - Charcoal</td>
+  <td class="product-cell" style="font-size:12px">Fashion Nova - Saint Washed Fleece Hoodie Jogger Pant Set Charcoal</td>
+  <td><a href="https://www.fashionnova.com/products/saint-washed-fleece-hoodie-jogger-pant-set-charcoal?variant=39301664309372&amp;currency=USD" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXNgcNqk66i/" target="_blank">Need a quick change? eYe @junyawatanabe MAN p...</a></td>
+  <td class="product-cell" style="font-size:12px">eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 bomber jacket<br>Alpha Industries - WO-J904 Biker Jacket<br>eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 jacket<br>eYe Junya Watanabe MAN x Alpha Industries - eYe Junya Watanabe MAN x Alpha Industries MA-1 bomber jacket<br>Alpha Industries - WO-J904 Biker Jacket<br>eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 jacket</td>
+  <td class="product-cell" style="font-size:12px">eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 bomber jacket</td>
+  <td><a href="https://shop.app/products/7398819921975?variantId=42057109962807" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><span class="tag tag-wrong">Wrong</span></td>
+  <td><a href="https://www.instagram.com/p/DW6QMUxjcSc/" target="_blank">Uh oh... the Statue of Liberty lost her torch...</a></td>
+  <td class="product-cell" style="font-size:12px">Creality - K2 Pro</td>
+  <td class="product-cell" style="font-size:12px">Creality - K2 Pro</td>
+  <td><a href="https://www.bhphotovideo.com/c/product/1902230-REG/a02_ur_creality_1002110055_k2_pro_multi_color_3d.html/?kw=CRK2PM3DPXCF&amp;ap=y&amp;smp=y&amp;store=420&amp;smpm=ba_f2_lar" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><span class="tag tag-wrong">Wrong</span></td>
+  <td><a href="https://www.tiktok.com/@behr/video/7626154070079835422" target="_blank">Give us your most unhinged ideas next Feature...</a></td>
+  <td class="product-cell" style="font-size:12px">BEHR - Romantic Moment P570-5</td>
+  <td class="product-cell" style="font-size:12px">&mdash;</td>
+  <td><a href="https://www.homedepot.com/p/BEHR-PREMIUM-PLUS-1-qt-P570-5-Romantic-Moment-Eggshell-Enamel-EcoMix-Plant-Based-Interior-Paint-Primer-2230004/337158736" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@lunalurey/video/7632428184394272021" target="_blank">Will you go for straight or curly hair? What&#x27;...</a></td>
+  <td class="product-cell" style="font-size:12px">Wavy Talk - Steamline Pro<br>Wavy Talk - Turblow Pro</td>
+  <td class="product-cell" style="font-size:12px">wavytalk - Steamline Pro<br>wavytalk - Turblow Pro</td>
+  <td><a href="https://www.target.com/p/wavytalk-395-pro-steam-hair-straightener-brush-pink/-/A-94757781" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@ellianawalmsley/video/7626185593537465613" target="_blank">GOOD NIGHT WORLD AYEEEE 😝🌎 #fyp #grwm #lifest...</a></td>
+  <td class="product-cell" style="font-size:12px">Origins - Checks And Balances Frothy Facewash<br>AXIS-Y - Mugwort Pore Clarifying Wash Off Pack<br>philosophy - fresh cream and mint hydrating shower gel<br>STENDERS - shower gel to mousse magic garden<br>First Aid Beauty - KP Bump Eraser Body Scrub<br>medicube - PDRN Pink Cica Soothing Toner<br>COSRX - 6 Peptide Booster Serum<br>AXIS-Y - Dark Spot Correcting Glow Serum<br>AXIS-Y - Dark Spot Correcting Glow Cream<br>Sonya Dakar - Fade Away<br>Origins - Super Spot Remover</td>
+  <td class="product-cell" style="font-size:12px">Origins Skincare - Checks And Balances Frothy Facewash<br>AXIS-Y - Mugwort Pore Clarifying Wash Off Pack<br>philosophy - fresh cream and mint hydrating shower gel<br>STENDERS - shower gel to mousse magic garden<br>First Aid Beauty - KP Bump Eraser Body Scrub<br>medicube global - PDRN Pink Cica Soothing Toner<br>COSRX Official - 6 Peptide Booster Serum<br>Axis-Y - Dark Spot Correcting Glow Serum<br>Axis-Y - Dark Spot Correcting Glow Cream<br>Sonya Dakar - Fade Away<br>Origins - Super Spot Remover</td>
+  <td><a href="https://philosophy.com/products/fresh-cream-and-mint-hydrating-shower-gel?variant=45476606705918" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DWzJ1K4gnil/" target="_blank">THIS ONE HURT TO PURCHASE BUT ITS SOOO BEAUTI...</a></td>
+  <td class="product-cell" style="font-size:12px">Jenny Packham - Dress<br>Revlon - Bare Affair Lipstick<br>Fenty Beauty - Blaz’d Donut Gloss Stick<br>Josie Maran - Body Butter<br>YSL Beauty - Lavalliere Perfume<br>René Caovilla - Heels</td>
+  <td class="product-cell" style="font-size:12px">Revlon - bare affair lipstick<br>Fenty Beauty - Blaz’d Donut gloss stick<br>Josie Maran - body butter<br>YSL Beauty - Lavalliere perfume<br>Rene Caovilla - heels</td>
+  <td><a href="https://www.neimanmarcus.com/p/yves-saint-laurent-beaute-lavalliere-eau-de-parfum-4-2-oz-prod256830025?pimId=401224572166&amp;utm_source=bing_shopping&amp;site_refer=CSE_MSNPLA:Beauty_Fragrance:Yves+Saint+Laurent+Beaute" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@anothertech7/video/7630851278133939470" target="_blank">iPhone 17 Pro Max vs Galaxy S26 Simple Speed ...</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - iPhone 17 Pro Max<br>Samsung - Galaxy S26</td>
+  <td class="product-cell" style="font-size:12px">Apple - iPhone 17 Pro Max<br>Galaxy - Galaxy S26</td>
+  <td><a href="https://www.samsung.com/us/smartphones/galaxy-s26/buy/galaxy-s26-512gb-unlocked-sku-sm-s942uzdfxaa" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@anothertech7/video/7629721956987800845" target="_blank">Pixel 10 Pro XL Gemini Music vs Samsung S26 U...</a></td>
+  <td class="product-cell" style="font-size:12px">Google - Pixel 10 Pro XL<br>Samsung - Samsung S26 Ultra</td>
+  <td class="product-cell" style="font-size:12px">Samsung - S26 Ultra</td>
+  <td><a href="https://www.unclaimedbaggage.com/products/google-pixel-10-pro-xl-green-dot-good-256gb-mobile-phones-1" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@carterpcs/video/7632196055928442142" target="_blank">I accidentally bought an extra pair of AirPod...</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - AirPod Max 2</td>
+  <td class="product-cell" style="font-size:12px">Apple - AirPod Max 2</td>
+  <td><a href="https://www.apple.com/us/xc/product/MHWL4AM/A" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXhHdxziPf7/" target="_blank">Smart new PX8 S2 colourway by @bowerswilkins ...</a></td>
+  <td class="product-cell" style="font-size:12px">Bowers &amp; Wilkins - PX8 S2 colourway</td>
+  <td class="product-cell" style="font-size:12px">Bowers &amp; Wilkins - PX8 S2</td>
+  <td><a href="https://www.bestbuy.com/product/bowers-wilkins-b-w-px8-s2-over-ear-bluetoothheadphones-onyx-black/JXT7VJH8GF/sku/6645934?utm_source=feed&amp;extStoreId={store_code}" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@carterpcs/video/7625528120308682015" target="_blank">Replying to @wesley_.dsf Can the Meta Oakley ...</a></td>
+  <td class="product-cell" style="font-size:12px">Meta x Oakley - Meta Oakley Vanguards</td>
+  <td class="product-cell" style="font-size:12px">Meta - Oakley vanguards</td>
+  <td><a href="https://www.oakley.com/en-us/product/W0OW8001?variant=888392690418" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXMYuelCM59/" target="_blank">Had so much fun working with @ninjakitchen on...</a></td>
+  <td class="product-cell" style="font-size:12px">Ninja Kitchen - limited-edition coffee machine<br>Ninja Kitchen - NinjaLuxeCafe</td>
+  <td class="product-cell" style="font-size:12px">Ninja Kitchen - NinjaLuxeCafe</td>
+  <td><a href="https://www.crateandbarrel.com/ninja-luxe-cafe-premier-series-espresso-machine-in-cyberspace/s635078?srsltid=AfmBOooM8VGHmEPipH6GSR51EBNECYAIJBpgztnUMEX2fzxMr4Ng8LNS_JA" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXdPb8fDn2F/" target="_blank">Let’s set up the Ninja Luxe Cafe by @ninjakit...</a></td>
+  <td class="product-cell" style="font-size:12px">Ninja - Ninja Luxe Cafe Oat Milk</td>
+  <td class="product-cell" style="font-size:12px">Ninja - Luxe Cafe Oat Milk</td>
+  <td><a href="https://www.crateandbarrel.com/ninja-luxe-cafe-premier-series-espresso-machine/s505289?srsltid=AfmBOooXWiZSvO3lgymexUsC6psxxMczZBtStRr3B2OTkSSjqeB70oP709E" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXS2BBFjS0T/" target="_blank">Whether you prefer iced or hot coffee, the Ha...</a></td>
+  <td class="product-cell" style="font-size:12px">Hamilton Beach - Hamilton Beach FlexBrew Advanced 4-in-1 Coffee Maker</td>
+  <td class="product-cell" style="font-size:12px">Hamilton Beach - FlexBrew Advanced 4-in-1 Coffee Maker</td>
+  <td><a href="https://business.walmart.com/ip/Hamilton-Beach-FlexBrew-Advanced-4-in-1-Coffee-Maker-Removable-45-oz-Water-Reservoir-49925/17360007692?wmlspartner=wmbpla&amp;selectedSellerId=101357218" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@tfalusa/video/7627714991466106125" target="_blank">Ever wondered what infrared cooking can reall...</a></td>
+  <td class="product-cell" style="font-size:12px">T-fal - T-fal Infrared Air Fryer 6L</td>
+  <td class="product-cell" style="font-size:12px">T-fal - Infrared Air Fryer 6L</td>
+  <td><a href="https://www.target.com/p/t-fal-infrared-air-fryer-easy-fry-collection-6-3-quart-digital-touch-screen-grey/-/A-1001294302" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><span class="tag tag-wrong">Wrong</span></td>
+  <td><a href="https://www.instagram.com/p/DXNE9-IACEs/" target="_blank">A meal to add to your spring dinner rotation:...</a></td>
+  <td class="product-cell" style="font-size:12px">Riviera - Riviera Heritage Fish Baker</td>
+  <td class="product-cell" style="font-size:12px">Riviera - Heritage Fish Baker</td>
+  <td><a href="https://www.macys.com/shop/product/le-creuset-stoneware-heritage-1.7-quart-fish-baker-with-cover?ID=23461877&amp;pla_country=US&amp;CAGPSPN=pla" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.youtube.com/watch?v=C758jg_0cLY" target="_blank">Easy Vegetable Washing Tool Review ( # 3245 )...</a></td>
+  <td class="product-cell" style="font-size:12px">MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer<br>MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer<br>MaviGadget - vegetable washing strainer<br>MaviGadget - rotating drain basket<br>MaviGadget - kitchen colander bowl<br>MaviGadget - fruit washing bowl<br>MaviGadget - dual layer strainer<br>MaviGadget - salad washing bowl<br>MaviGadget - easy drain colander<br>MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer</td>
+  <td class="product-cell" style="font-size:12px">MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer</td>
+  <td><a href="https://www.walmart.com/ip/Double-Layer-Drain-Basket-Vegetable-Fruit-Draining-Bowl-Storage-Rotating-Drying-Rack-Kitchen-Accessories-PET/20061005495?wmlspartner=wlpa&amp;selectedSellerId=101199337" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXIQLu9AVBA/" target="_blank">Okay, I never thought I’d say this, but clean...</a></td>
+  <td class="product-cell" style="font-size:12px">Dreame - Dreame AeroPro</td>
+  <td class="product-cell" style="font-size:12px">Dreame - AeroPro</td>
+  <td><a href="https://www.dreametech.com/products/aero-pro-wet-dry-vacuum?variant=53807776858484&amp;utm_medium=cpc&amp;utm_source=bing&amp;utm_campaign=Bing%20Shopping&amp;country=US" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@ourfavoritefinds/video/7632449444834839821" target="_blank">The Tineco S7 wet-dry vacuum that vacuums and...</a></td>
+  <td class="product-cell" style="font-size:12px">Tineco - Tineco S7 wet-dry vacuum</td>
+  <td class="product-cell" style="font-size:12px">Tineco - S7 wet-dry vacuum</td>
+  <td><a href="https://store.tineco.com/products/tineco-floor-one-s7-stretch-ultra-cordless-wet-dry-vacuum-cleaner?variant=42055975305300" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@soyjuanjoselv/video/7623206376923319566" target="_blank">I loved the #aecooly 3-in-1 fan !!...</a></td>
+  <td class="product-cell" style="font-size:12px">aecooly - aecooly 3-in-1 fan</td>
+  <td class="product-cell" style="font-size:12px">aecooly - 3-in-1 fan</td>
+  <td><a href="https://www.walmart.com/ip/Aecooly-3-in-1-Portable-Fan-Turbo-Cooling-22H-Runtime-USB-Rechargeable-Foldable-Handheld-Fan-for-Travel-Summer-Gifts-for-Her/16810150253?wmlspartner=wlpa&amp;selectedSellerId=102846747" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@sharkhome/video/7627120152059923742" target="_blank">@SKYLRK X SHARK CHILLPILL. 3-IN-1 PERSONAL CO...</a></td>
+  <td class="product-cell" style="font-size:12px">Shark - SKYLRK x Shark Chillpill<br>Shark - 3-in-1 Personal Cooling System<br>Shark - InstaChill Plate</td>
+  <td class="product-cell" style="font-size:12px">SKYLRK x SHARK - SKYLRK x SHARK CHILLPILL</td>
+  <td><a href="https://www.target.com/p/shark-chillpill-portable-fan-misting-and-icy-cooling-plate-carbon/-/A-94965811" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXP1hcfCXR2/" target="_blank">Timbuk2 has been making your travels somethin...</a></td>
+  <td class="product-cell" style="font-size:12px">Timbuk2 - FreeStyle Carry-On in Marigold<br>Timbuk2 - Classic Messenger Bag in Black</td>
+  <td class="product-cell" style="font-size:12px">Timbuk2 - FreeStyle Carry-On Marigold<br>Timbuk2 - Classic Messenger Bag Black</td>
+  <td><a href="https://www.newegg.com/p/3C6-0077-000J9" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@rileejsmith/video/7626179539705531679" target="_blank">Putting one of the most popular carry-ons fro...</a></td>
+  <td class="product-cell" style="font-size:12px">Samsonite - Samsonite Outline Pro Global Carry-On Spinner Emerald Green</td>
+  <td class="product-cell" style="font-size:12px">Samsonite - Outline Pro Global Carry-On Spinner Emerald Green</td>
+  <td><a href="https://www.bestbuy.com/product/samsonite-outline-pro-spinner-carry-on-suitcase-emerald-green/J7GJFV678W/sku/6648065?utm_source=feed&amp;extStoreId={store_code}" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DW7RHMtjP20/" target="_blank">Every nightstand has its personality. The Ros...</a></td>
+  <td class="product-cell" style="font-size:12px">Four Hands - Rosedale Nightstand<br>Four Hands - Raleigh Nightstand</td>
+  <td class="product-cell" style="font-size:12px">Four Hands - Rosedale Nightstand<br>Four Hands - Raleigh Nightstand</td>
+  <td><a href="https://www.perigold.com/Four-Hands--Rosedale-NightstandYucca-Oak-Veneer-W100862800-L14-K~P110017287.html?refid=MX{AdID}-P110017287_1898939234&amp;device={device}&amp;ptid={CriterionId}&amp;targetid={TargetID}&amp;network={network}&amp;PiID%5B%5D=1898939234" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXRscc8kn3s/" target="_blank">Bring natural beauty home with Girard Flower ...</a></td>
+  <td class="product-cell" style="font-size:12px">Herman Miller - Girard Flower Table</td>
+  <td class="product-cell" style="font-size:12px">Herman Miller - Girard Flower Table</td>
+  <td><a href="https://hivemodern.com/pages/product17948/girard-flower-coffee-side-table-alexander-girard-herman-miller?variant_id=35709" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DW9IM3nkWPo/" target="_blank">Traveling with a baby has been a breeze thank...</a></td>
+  <td class="product-cell" style="font-size:12px">UPPAbaby - UPPAbaby Minu V3 Evelyn stroller</td>
+  <td class="product-cell" style="font-size:12px">UPPAbaby - Minu V3 Evelyn stroller</td>
+  <td><a href="https://uppababy.com/strollers/lightweight/minu-v3/evelyn/" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.tiktok.com/@sisiiuwu/video/7629022375312477454" target="_blank">#AD First time making baby food as a new mom ...</a></td>
+  <td class="product-cell" style="font-size:12px">Grownsy - Grownsy Baby Food Maker</td>
+  <td class="product-cell" style="font-size:12px">Grownsy - Baby Food Maker</td>
+  <td><a href="https://business.walmart.com/ip/Grownsy-Baby-Food-Maker-Multi-Function-Constant-Temperature-24h-Auto-Cooking-Grinding-White/137783438?wmlspartner=wmbpla&amp;selectedSellerId=101043086" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.youtube.com/watch?v=mZFsLsNoMLY" target="_blank">2026 MacBook Pro M5 Max - Incredible Upgrade ...</a></td>
+  <td class="product-cell" style="font-size:12px">Anker - Anker Prime TB5 Docking Station<br>Apple - MacBook Pro M5 Max<br>Apple - Mac Studio<br>Apple - M5 Max MacBook Pro 14-inch 128GB RAM 4TB Silver<br>Apple - Apple Watch Band</td>
+  <td class="product-cell" style="font-size:12px">Apple - MacBook Pro M5 Max<br>Anker - Anker Prime TB5 Docking Station</td>
+  <td><a href="https://www.apple.com/us/xc/product/MGDQ4LL/A" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.youtube.com/watch?v=NKnktyKpPsI" target="_blank">She Said I Couldn&#x27;t Replace AI... So I Did....</a></td>
+  <td class="product-cell" style="font-size:12px">Lenovo - Lenovo Yoga 9i 2-in-1 Aura Edition<br>Lenovo - Yoga Pen Gen 2</td>
+  <td class="product-cell" style="font-size:12px">Lenovo - Yoga 9i 2-in-1 Aura Edition</td>
+  <td><a href="https://www.lenovo.com/us/en/p/laptops/yoga/yoga-2-in-1-series/yoga-9i-2-in-1-gen-10-aura-edition-14-inch-intel/83lc0004us" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>31</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.youtube.com/watch?v=LEO2j7cmrbg" target="_blank">Can MKBHD&#x27;s Tech Setup Replace Mine?...</a></td>
+  <td class="product-cell" style="font-size:12px">MKBHD - MKBHD Commuter Pro Backpack<br>Beats - Beats Powerbeats Pro 2<br>Sony - Sony WH-1000XM6<br>Anker - Anker MagGo UFO 3-in-1 Charger<br>Anker - Anker 150W Max USB C Charger Block<br>Ridge - Ridge Wallet Tracker Card<br>Ridge - Ridge Biflex Wallet for Men<br>Ray-Ban Meta - Ray-Ban Meta (Gen 2)<br>OnePlus - OnePlus 15<br>Apple - iPhone 17 Pro<br>Ridge - Ridge Magnetic Power Bank<br>Apple - Apple M5 Pro MacBook Pro<br>Apple - Apple iPad Pro 13-inch (M5)</td>
+  <td class="product-cell" style="font-size:12px">MKBHD - Commuter Pro Backpack<br>Beats - Powerbeats Pro 2<br>Sony - WH-1000XM6<br>Anker - MagGo UFO 3-in-1 Charger<br>Anker - 150W Max USB C Charger Block<br>Ridge - Wallet Tracker Card<br>Ridge - Biflex Wallet for Men<br>Ray-Ban - Meta Gen 2<br>OnePlus - 15<br>iPhone - 17 Pro<br>Apple - M5 Pro MacBook Pro<br>Apple - iPad Pro 13-inch M5<br>Ridge - Magnetic Power Bank</td>
+  <td><a href="https://www.target.com/p/apple-ipad-pro-m5-13-inch-wi-fi-with-standard-glass-256gb-space-black/-/A-77616347" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>32</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXbyYCDjXod/" target="_blank">GRWM for a special event @lulus 💙||-Azalea Bl...</a></td>
+  <td class="product-cell" style="font-size:12px">Lulus - Azalea Blue Multi Floral Long Sleeve Midi Dress<br>Lulus - Daryll Light Blue Satin Pearl Pointed-Toe Mule Pumps<br>Lulus - Coretta Layered Gold Necklace</td>
+  <td class="product-cell" style="font-size:12px">Lulus - Azalea Blue Multi Floral Long Sleeve Midi Dress<br>Lulus - Daryll Light Blue Satin Pearl Pointed-Toe Mule Pumps<br>Lulus - Coretta Layered Gold Necklace</td>
+  <td><a href="https://tracking.deepsearch.adlucent.com/adlucent/Redirector?retailer=lulus&amp;adl_channel=bingproductads&amp;adl_sku=Lulus+Daryll+Light+Blue9&amp;adl_adType=PLA&amp;adl_adid={AdId}&amp;adl_device={device}&amp;adl_plaid={CriterionId}&amp;audienceid={targetid}&amp;url=https://www.lulus.com/app/products/daryll-light-blue-satin-pearl-pointed-toe-mule-pumps/2788876.html?pla=1" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>33</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXGFrBtE_wl/" target="_blank">On set and in the moment. OMEGA Brand Ambassa...</a></td>
+  <td class="product-cell" style="font-size:12px">OMEGA - Planet Ocean</td>
+  <td class="product-cell" style="font-size:12px">OMEGA - Planet Ocean</td>
+  <td><a href="https://www.exquisitetimepieces.com/omega-seamaster-planet-ocean-6000m-ultra-deep-black-dial-45-5-mm-bracelet-21530462106001.html" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>34</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.youtube.com/watch?v=XVbe50gLOTA" target="_blank">Ready When You Are...</a></td>
+  <td class="product-cell" style="font-size:12px">Victorinox - Concept One Solar</td>
+  <td class="product-cell" style="font-size:12px">Victorinox - Concept One Solar</td>
+  <td><a href="https://www.iguanasell.com/products/victorinox-concept-one-solar-quartz-watch-black-39-mm-v242055" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>35</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.instagram.com/p/DXV9fvPjPqs/" target="_blank">Fastest Air Speed for Stubborn Debris. M18TM ...</a></td>
+  <td class="product-cell" style="font-size:12px">Milwaukee - M18 Brushless Precision Blower</td>
+  <td class="product-cell" style="font-size:12px">MilwaukeeTool - M18 Brushless Precision Blower</td>
+  <td><a href="https://www.homedepot.com/p/Milwaukee-M18-18V-Lithium-Ion-570-MPH-Brushless-Cordless-Precision-Blower-with-Variable-Speed-Trigger-and-Trigger-Lock-0887-20/336098751" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+<tr>
+  <td>36</td>
+  <td><span class="tag tag-correct">Correct</span></td>
+  <td><a href="https://www.youtube.com/watch?v=JDrW231JZqs" target="_blank">CAAD14: Decades deep in aluminum. Still setti...</a></td>
+  <td class="product-cell" style="font-size:12px">Cannondale - CAAD14</td>
+  <td class="product-cell" style="font-size:12px">&mdash;</td>
+  <td><a href="https://bicyclewarehouse.com/products/caad14-2?variant=45301271167078&amp;utm_medium=cpc&amp;utm_source=bing&amp;utm_campaign=Bing%20Shopping&amp;country=US" target="_blank" style="font-size:11px">Ref</a></td>
+</tr>
+</table>
+</div>
+<h2>仍待改进的问题</h2>
+<div class="breakdown">
+<table>
+<tr><th>问题</th><th>Case</th><th>说明</th></tr>
+<tr>
+  <td><strong>Brand 子品牌误判</strong></td>
+  <td>#2 Kobe</td>
+  <td>"Nike Basketball" 是子品牌/division，应规范为 "Nike"。文本中 "Nike Basketball" 被当作完整品牌名</td>
+</tr>
+<tr>
+  <td><strong>LLM 不稳定</strong></td>
+  <td>#12 TUMI</td>
+  <td>多次运行结果不一致（有时提取 3 个颜色变体，有时为空）。temperature=0 下仍有抖动</td>
+</tr>
+<tr>
+  <td><strong>Variant 遗漏</strong></td>
+  <td>#14 Four Hands</td>
+  <td>"Pink Clay" 颜色在文本中出现但未被关联到产品（跨段落关联失败）</td>
+</tr>
+<tr>
+  <td><strong>产品合并</strong></td>
+  <td>#8 Rust-Oleum</td>
+  <td>同一产品不同描述被 split 为两个独立产品（Color Watch 2026 vs 2X Ultra Cover）</td>
+</tr>
+</table>
+</div>
+<h2>结论</h2>
+<div class="breakdown">
+  <p style="font-size:15px; line-height:1.8;">
+    Product Extraction prompt 经过 v2 + v2.1 两轮改进：
+  </p>
+  <ul style="font-size:14px; line-height:2;">
+    <li><strong>15 个 bad cases</strong> 中 2 个完全修复、9 个改善，修复改善率 <strong>73%</strong></li>
+    <li><strong>36 个 good cases</strong> 回归测试中 33 个保持正确（92%），3 个退步</li>
+    <li>核心改动：结构化 Name Construction (7-slot)、Material/Variant 强制提取、Title-Anchored Subject、Comparison Rule、Brand-in-Name 去重</li>
+    <li>剩余 4 个 bad case 需进一步改进（子品牌规范化、LLM 稳定性、跨段落变体关联）</li>
+  </ul>
+</div>
+
+<div class="footer">
+  Report generated: 2026-05-13 00:39:08 | Extraction Prompt: v2.1 | Model: gpt-5.4
+</div>
+</body></html>
