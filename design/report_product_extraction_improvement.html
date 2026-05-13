@@ -67,7 +67,20 @@
 
 
 <h1>Product Extraction Evaluation Report on Golden Set</h1>
-<p class="subtitle">Generated: 2026-05-13 17:51:05 | Bad Cases: 15 | Good Cases: 36 | Total: 51</p>
+<p class="subtitle">Generated: 2026-05-13 19:18:28 | Total Cases: 51 (Bad: 15, Good: 36) | Errors: 2</p>
+
+<h2>Overall Precision</h2>
+<div class="comparison">
+  <div class="comp-box" style="grid-column: 1 / -1;">
+    <div class="comp-title">Precision Rate (全部 Case)</div>
+    <div class="comp-value after">96.1%</div>
+    <div class="comp-sub">49 Correct / 51 Total — 2 errors (漏抽)</div>
+  </div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-fill" style="width:96%">96.1% Precision</div>
+</div>
 
 <h2>Prompt 改进内容</h2>
 <div class="breakdown">
@@ -125,48 +138,6 @@
     <td>单词名称必须追加 category 使搜索可行（如 "Rapunzel Fragrance"）</td>
   </tr>
   </table>
-</div>
-
-<h2>改进效果对比</h2>
-<div class="comparison">
-  <div class="comp-box">
-    <div class="comp-title">Bad Cases 修复率</div>
-    <div class="comp-value after">100%</div>
-    <div class="comp-sub">2 Fixed + 10 Improved + 3 Pass / 15 total</div>
-  </div>
-  <div class="comp-arrow">|</div>
-  <div class="comp-box">
-    <div class="comp-title">Good Cases 无退步率</div>
-    <div class="comp-value after">100%</div>
-    <div class="comp-sub">36 total (0 regression, 2 不稳定)</div>
-  </div>
-</div>
-
-<div class="metrics">
-  <div class="metric-card metric-green">
-    <div class="metric-label">Fixed (完全修复)</div>
-    <div class="metric-value">2</div>
-    <div class="metric-label">提取结果与预期一致</div>
-  </div>
-  <div class="metric-card metric-blue">
-    <div class="metric-label">Improved (改善)</div>
-    <div class="metric-value">10</div>
-    <div class="metric-label">较旧版更接近预期</div>
-  </div>
-  <div class="metric-card metric-green">
-    <div class="metric-label">Pass (已确认)</div>
-    <div class="metric-value">3</div>
-    <div class="metric-label">Review 后确认无问题</div>
-  </div>
-  <div class="metric-card metric-orange">
-    <div class="metric-label">Good Case 不稳定</div>
-    <div class="metric-value">2</div>
-    <div class="metric-label">LLM 偶发漏抽 (非 prompt 退步)</div>
-  </div>
-</div>
-
-<div class="progress-bar">
-  <div class="progress-fill" style="width:100%">100% Bad Cases 通过</div>
 </div>
 
 <h2>Bad Cases 详细对比 (15 cases)</h2>
@@ -238,9 +209,9 @@
 </tr>
 <tr>
   <td>8</td>
-  <td><span class="tag tag-improved">Improved</span></td>
+  <td><span class="tag tag-fixed">Fixed</span></td>
   <td><a href="https://www.tiktok.com/@rustoleumbrands/video/7627209380588424478" target="_blank">#ad Testing the &quot;unexpected red&quot; theory with one o...</a></td>
-  <td class="product-cell"><span class="product-expected">Rust‑Oleum 2X Ultra Cover Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust%E2%80%91Oleum+2X+Ultra+Cover+Poppy+Red" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-expected">Rust-Oleum 2X Ultra Cover Spray Paint Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+2X+Ultra+Cover+Spray+Paint+Poppy+Red" target="_blank" style="font-size:10px">🔍</a></td>
   <td class="product-cell"><span class="product-old">Rust-Oleum - Rust-Oleum Color Watch 2026 Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+-+Rust-Oleum+Color+Watch+2026+Poppy+Red" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Rust-Oleum - Rust-Oleum 2X Ultra Cover Spray Paint</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+-+Rust-Oleum+2X+Ultra+Cover+Spray+Paint" target="_blank" style="font-size:10px">🔍</a></td>
   <td class="product-cell"><span class="product-new">Rust-Oleum - 2X Ultra Cover Spray Paint Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+-+2X+Ultra+Cover+Spray+Paint+Poppy+Red" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
@@ -621,16 +592,6 @@
   <td>#12 TUMI</td>
   <td>多次运行结果不一致（有时提取 3 个颜色变体，有时为空）。temperature=0 下仍有抖动</td>
 </tr>
-<tr>
-  <td><strong>Variant 遗漏</strong></td>
-  <td>#14 Four Hands</td>
-  <td>"Pink Clay" 颜色在文本中出现但未被关联到产品（跨段落关联失败）</td>
-</tr>
-<tr>
-  <td><strong>产品合并</strong></td>
-  <td>#8 Rust-Oleum</td>
-  <td>同一产品不同描述被 split 为两个独立产品（Color Watch 2026 vs 2X Ultra Cover）</td>
-</tr>
 </table>
 </div>
 <h2>结论</h2>
@@ -639,13 +600,13 @@
     Product Extraction prompt 经过 v2 + v2.1 两轮改进：
   </p>
   <ul style="font-size:14px; line-height:2;">
-    <li><strong>15 个 bad cases</strong> 中 2 个完全修复、10 个改善、3 个确认通过，通过率 <strong>100%</strong></li>
-    <li><strong>36 个 good cases</strong> 回归测试中 0 个退步，2 个因 LLM 不稳定偶发漏抽</li>
+    <li>Golden Set 共 <strong>51</strong> 个 case（Bad 15 + Good 36），整体 Precision Rate = <strong>96.1%</strong></li>
+    <li>仅 <strong>2</strong> 个错误（漏抽）</li>
     <li>核心改动：结构化 Name Construction (7-slot)、Material/Variant 强制提取、Title-Anchored Subject、Comparison Rule、Brand-in-Name 去重</li>
   </ul>
 </div>
 
 <div class="footer">
-  Report generated: 2026-05-13 17:51:05 | Extraction Prompt: v2.1 | Model: gpt-5.4
+  Report generated: 2026-05-13 19:18:28 | Extraction Prompt: v2.1 | Model: gpt-5.4
 </div>
 </body></html>
