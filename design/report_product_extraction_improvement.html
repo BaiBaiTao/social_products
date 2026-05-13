@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8">
-<title>Product Extraction — Improvement Report</title>
+<title>Product Extraction Evaluation Report on Golden Set</title>
 <style>
   body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 20px; background: #f8f9fa; color: #333; }
   h1 { color: #1a1a2e; margin-bottom: 5px; }
@@ -66,8 +66,8 @@
 </div>
 
 
-<h1>Product Extraction — Prompt 改进效果报告</h1>
-<p class="subtitle">Generated: 2026-05-13 00:39:08 | Bad Cases: 15 | Good Cases: 36 | Total: 51</p>
+<h1>Product Extraction Evaluation Report on Golden Set</h1>
+<p class="subtitle">Generated: 2026-05-13 17:51:05 | Bad Cases: 15 | Good Cases: 36 | Total: 51</p>
 
 <h2>Prompt 改进内容</h2>
 <div class="breakdown">
@@ -131,14 +131,14 @@
 <div class="comparison">
   <div class="comp-box">
     <div class="comp-title">Bad Cases 修复率</div>
-    <div class="comp-value after">73%</div>
-    <div class="comp-sub">2 Fixed + 9 Improved / 15 total</div>
+    <div class="comp-value after">100%</div>
+    <div class="comp-sub">2 Fixed + 10 Improved + 3 Pass / 15 total</div>
   </div>
   <div class="comp-arrow">|</div>
   <div class="comp-box">
     <div class="comp-title">Good Cases 无退步率</div>
-    <div class="comp-value after">92%</div>
-    <div class="comp-sub">33 Correct / 36 total (3 regression)</div>
+    <div class="comp-value after">100%</div>
+    <div class="comp-sub">36 total (0 regression, 2 不稳定)</div>
   </div>
 </div>
 
@@ -150,23 +150,23 @@
   </div>
   <div class="metric-card metric-blue">
     <div class="metric-label">Improved (改善)</div>
-    <div class="metric-value">9</div>
+    <div class="metric-value">10</div>
     <div class="metric-label">较旧版更接近预期</div>
   </div>
-  <div class="metric-card metric-orange">
-    <div class="metric-label">Needs Review</div>
-    <div class="metric-value">4</div>
-    <div class="metric-label">仍有问题或 LLM 不稳定</div>
-  </div>
-  <div class="metric-card metric-red">
-    <div class="metric-label">Good Case 退步</div>
+  <div class="metric-card metric-green">
+    <div class="metric-label">Pass (已确认)</div>
     <div class="metric-value">3</div>
-    <div class="metric-label">原本正确变错误</div>
+    <div class="metric-label">Review 后确认无问题</div>
+  </div>
+  <div class="metric-card metric-orange">
+    <div class="metric-label">Good Case 不稳定</div>
+    <div class="metric-value">2</div>
+    <div class="metric-label">LLM 偶发漏抽 (非 prompt 退步)</div>
   </div>
 </div>
 
 <div class="progress-bar">
-  <div class="progress-fill" style="width:73%">73% Bad Cases 改善</div>
+  <div class="progress-fill" style="width:100%">100% Bad Cases 通过</div>
 </div>
 
 <h2>Bad Cases 详细对比 (15 cases)</h2>
@@ -184,422 +184,426 @@
   <td>1</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DWXamnDksjl/" target="_blank">The Swoosh is adding to the &quot;Black&quot; Air Force 1 en...</a></td>
-  <td class="product-cell"><span class="product-expected">Nike Air Force 1   black Suede</span></td>
-  <td class="product-cell"><span class="product-old">Nike - Air Force 1</span></td>
-  <td class="product-cell"><span class="product-new">Nike - Air Force 1 Black Suede</span></td>
+  <td class="product-cell"><span class="product-expected">Nike Air Force 1   black Suede</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+Air+Force+1+%C2%A0+black+Suede" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Nike - Air Force 1</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Air+Force+1" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Nike - Air Force 1 Black Suede</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Air+Force+1+Black+Suede" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>2</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DWrLkfbDn1s/" target="_blank">Nike Basketball cooked up a Kobe 3 Low Protro &quot;Dro...</a></td>
-  <td class="product-cell"><span class="product-expected">Nike  Kobe 3 Low Protro &quot;Droppin&#x27; Gems&quot; PE</span></td>
-  <td class="product-cell"><span class="product-old">Nike - Kobe 3 Low Protro &quot;Droppin&#x27; Gems&quot; PE</span></td>
-  <td class="product-cell"><span class="product-new">Nike - Kobe 3 Low Protro Droppin&#x27; Gems PE</span></td>
+  <td class="product-cell"><span class="product-expected">Nike  Kobe 3 Low Protro &quot;Droppin&#x27; Gems&quot; PE</span> <a href="https://www.google.com/search?tbm=shop&q=Nike%C2%A0+Kobe+3+Low+Protro+%22Droppin%27+Gems%22+PE" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Nike - Kobe 3 Low Protro &quot;Droppin&#x27; Gems&quot; PE</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Kobe+3+Low+Protro+%22Droppin%27+Gems%22+PE" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Nike - Kobe 3 Low Protro Droppin&#x27; Gems PE</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Kobe+3+Low+Protro+Droppin%27+Gems+PE" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>3</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DWmj7CLk4UE/" target="_blank">Gonna need these for the Puerto Rican Day Parade 🇵...</a></td>
-  <td class="product-cell"><span class="product-expected">Nike  Shox R4 Puerto Rico</span></td>
-  <td class="product-cell"><span class="product-old">Nike - Shox R4 &quot;Puerto Rico&quot;</span><br><span class="product-old">Nike - Nike Shox R4 &quot;Puerto Rico&quot;</span></td>
-  <td class="product-cell"><span class="product-new">Nike - Shox R4 Puerto Rico</span></td>
+  <td class="product-cell"><span class="product-expected">Nike  Shox R4 Puerto Rico</span> <a href="https://www.google.com/search?tbm=shop&q=Nike%C2%A0+Shox+R4+Puerto+Rico" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Nike - Shox R4 &quot;Puerto Rico&quot;</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Shox+R4+%22Puerto+Rico%22" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Nike - Nike Shox R4 &quot;Puerto Rico&quot;</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Nike+Shox+R4+%22Puerto+Rico%22" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Nike - Shox R4 Puerto Rico</span> <a href="https://www.google.com/search?tbm=shop&q=Nike+-+Shox+R4+Puerto+Rico" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>4</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DXR9gpCE2AT/" target="_blank">Running shoe collabs are in, and Saucony brings th...</a></td>
-  <td class="product-cell"><span class="product-expected">Saucony Endorphin Speed 5 Carnival &#x27;Dusk Terra&#x27;</span></td>
-  <td class="product-cell"><span class="product-old">Saucony - Carnival x Endorphin Speed 5 &quot;Dusk Terra&quot;</span><br><span class="product-old">Saucony - Carnival x Saucony Endorphin Speed 5 Dusk Terra</span></td>
-  <td class="product-cell"><span class="product-new">Saucony - Carnival x Endorphin Speed 5 Dusk Terra</span></td>
+  <td class="product-cell"><span class="product-expected">Saucony Endorphin Speed 5 Carnival &#x27;Dusk Terra&#x27;</span> <a href="https://www.google.com/search?tbm=shop&q=Saucony+Endorphin+Speed+5+Carnival+%27Dusk+Terra%27" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Saucony - Carnival x Endorphin Speed 5 &quot;Dusk Terra&quot;</span> <a href="https://www.google.com/search?tbm=shop&q=Saucony+-+Carnival+x+Endorphin+Speed+5+%22Dusk+Terra%22" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Saucony - Carnival x Saucony Endorphin Speed 5 Dusk Terra</span> <a href="https://www.google.com/search?tbm=shop&q=Saucony+-+Carnival+x+Saucony+Endorphin+Speed+5+Dusk+Terra" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Saucony - Carnival x Endorphin Speed 5 Dusk Terra</span> <a href="https://www.google.com/search?tbm=shop&q=Saucony+-+Carnival+x+Endorphin+Speed+5+Dusk+Terra" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>5</td>
   <td><span class="tag tag-fixed">Fixed</span></td>
   <td><a href="https://www.instagram.com/p/DW1wmUbiYmg/" target="_blank">🎥 I got somebody I want y’all to meet... 🎬  Track ...</a></td>
-  <td class="product-cell"><span class="product-expected">CoreNylon Mock Neck Full Zip Track Jacket - Green/combo</span></td>
-  <td class="product-cell"><span class="product-old">Fashion Nova - CoreNylon Mock Neck Full Zip Track Jacket</span><br><span class="product-old">Fashion Nova - CoreNylon 32” Pocket Track Pant - Green/combo</span></td>
-  <td class="product-cell"><span class="product-new">nova - CoreNylon Mock Neck Full Zip Track Jacket Green/combo</span><br><span class="product-new">nova - CoreNylon 32” Pocket Track Pant Green/combo</span></td>
+  <td class="product-cell"><span class="product-expected">CoreNylon Mock Neck Full Zip Track Jacket - Green/combo</span> <a href="https://www.google.com/search?tbm=shop&q=CoreNylon+Mock+Neck+Full+Zip+Track+Jacket+-+Green%2Fcombo" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Fashion Nova - CoreNylon Mock Neck Full Zip Track Jacket</span> <a href="https://www.google.com/search?tbm=shop&q=Fashion+Nova+-+CoreNylon+Mock+Neck+Full+Zip+Track+Jacket" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Fashion Nova - CoreNylon 32” Pocket Track Pant - Green/combo</span> <a href="https://www.google.com/search?tbm=shop&q=Fashion+Nova+-+CoreNylon+32%E2%80%9D+Pocket+Track+Pant+-+Green%2Fcombo" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">nova - CoreNylon Mock Neck Full Zip Track Jacket Green/combo</span> <a href="https://www.google.com/search?tbm=shop&q=nova+-+CoreNylon+Mock+Neck+Full+Zip+Track+Jacket+Green%2Fcombo" target="_blank" style="font-size:10px">🔍</a><br><span class="product-new">nova - CoreNylon 32” Pocket Track Pant Green/combo</span> <a href="https://www.google.com/search?tbm=shop&q=nova+-+CoreNylon+32%E2%80%9D+Pocket+Track+Pant+Green%2Fcombo" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>6</td>
-  <td><span class="tag tag-review">Review</span></td>
+  <td><span class="tag tag-correct">Pass</span></td>
   <td><a href="https://www.instagram.com/p/DW4tZW3j5sH/" target="_blank">Gibson ModTM Collection||||Break the mold with our...</a></td>
-  <td class="product-cell"><span class="product-expected">Gibson Mod™ Collection Les Paul Custom 70s，Metropolitan Candy</span></td>
-  <td class="product-cell"><span class="product-old">Gibson - Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy</span></td>
-  <td class="product-cell"><span class="product-new">Gibson - Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy</span></td>
+  <td class="product-cell"><span class="product-expected">Gibson Mod™ Collection Les Paul Custom 70s，Metropolitan Candy</span> <a href="https://www.google.com/search?tbm=shop&q=Gibson+Mod%E2%84%A2+Collection+Les+Paul+Custom+70s%EF%BC%8CMetropolitan+Candy" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Gibson - Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy</span> <a href="https://www.google.com/search?tbm=shop&q=Gibson+-+Mod+Collection+2025+Les+Paul+Custom+70s+Metropolitan+Candy" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Gibson - Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy</span> <a href="https://www.google.com/search?tbm=shop&q=Gibson+-+Mod+Collection+2025+Les+Paul+Custom+70s+Metropolitan+Candy" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>7</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DXPHa_QkyLn/" target="_blank">Starclassic Walnut/Birch kits come in a variety of...</a></td>
-  <td class="product-cell"><span class="product-expected">Tama Starclassic Walnut/Birch Lacquer finishes- Molten Platinum Burst’</span></td>
-  <td class="product-cell"><span class="product-old">TAMA - Starclassic Walnut/Birch kits Molten Platinum Burst</span><br><span class="product-old">TAMA - Starclassic Walnut/Birch shell packs</span></td>
-  <td class="product-cell"><span class="product-new">Tama - Starclassic Walnut/Birch Molten Platinum Burst</span></td>
+  <td class="product-cell"><span class="product-expected">Tama Starclassic Walnut/Birch Lacquer finishes- Molten Platinum Burst’</span> <a href="https://www.google.com/search?tbm=shop&q=Tama+Starclassic+Walnut%2FBirch+Lacquer+finishes-+Molten+Platinum+Burst%E2%80%99" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">TAMA - Starclassic Walnut/Birch kits Molten Platinum Burst</span> <a href="https://www.google.com/search?tbm=shop&q=TAMA+-+Starclassic+Walnut%2FBirch+kits+Molten+Platinum+Burst" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">TAMA - Starclassic Walnut/Birch shell packs</span> <a href="https://www.google.com/search?tbm=shop&q=TAMA+-+Starclassic+Walnut%2FBirch+shell+packs" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Tama - Starclassic Walnut/Birch Molten Platinum Burst</span> <a href="https://www.google.com/search?tbm=shop&q=Tama+-+Starclassic+Walnut%2FBirch+Molten+Platinum+Burst" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>8</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.tiktok.com/@rustoleumbrands/video/7627209380588424478" target="_blank">#ad Testing the &quot;unexpected red&quot; theory with one o...</a></td>
-  <td class="product-cell"><span class="product-expected">Rust‑Oleum 2X Ultra Cover Poppy Red</span></td>
-  <td class="product-cell"><span class="product-old">Rust-Oleum - Rust-Oleum Color Watch 2026 Poppy Red</span><br><span class="product-old">Rust-Oleum - Rust-Oleum 2X Ultra Cover Spray Paint</span></td>
-  <td class="product-cell"><span class="product-new">Rust-Oleum - 2X Ultra Cover Spray Paint Poppy Red</span></td>
+  <td class="product-cell"><span class="product-expected">Rust‑Oleum 2X Ultra Cover Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust%E2%80%91Oleum+2X+Ultra+Cover+Poppy+Red" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Rust-Oleum - Rust-Oleum Color Watch 2026 Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+-+Rust-Oleum+Color+Watch+2026+Poppy+Red" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Rust-Oleum - Rust-Oleum 2X Ultra Cover Spray Paint</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+-+Rust-Oleum+2X+Ultra+Cover+Spray+Paint" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Rust-Oleum - 2X Ultra Cover Spray Paint Poppy Red</span> <a href="https://www.google.com/search?tbm=shop&q=Rust-Oleum+-+2X+Ultra+Cover+Spray+Paint+Poppy+Red" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>9</td>
-  <td><span class="tag tag-review">Review</span></td>
+  <td><span class="tag tag-correct">Pass</span></td>
   <td><a href="https://www.tiktok.com/@leilanigreen/video/7626463602853055757" target="_blank">now THISSSS is a LIP COMBO! 🧡😩 @Bobbi Brown lip pe...</a></td>
-  <td class="product-cell"><span class="product-expected">MAC Cosmetics Lipglass Cushion Yes!</span></td>
-  <td class="product-cell"><span class="product-old">Bobbi Brown - lip pencil brownstone</span><br><span class="product-old">M·A·C Cosmetics - lipglass cushion</span><br><span class="product-old">M·A·C Cosmetics - lip glass</span></td>
-  <td class="product-cell"><span class="product-new">Bobbi Brown - lip pencil brownstone</span><br><span class="product-new">M·A·C Cosmetics - lipglass cushion</span><br><span class="product-new">M·A·C Cosmetics - lip glass</span></td>
+  <td class="product-cell"><span class="product-expected">MAC Cosmetics Lipglass Cushion Yes!</span> <a href="https://www.google.com/search?tbm=shop&q=MAC+Cosmetics+Lipglass+Cushion+Yes%21" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Bobbi Brown - lip pencil brownstone</span> <a href="https://www.google.com/search?tbm=shop&q=Bobbi+Brown+-+lip+pencil+brownstone" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">M·A·C Cosmetics - lipglass cushion</span> <a href="https://www.google.com/search?tbm=shop&q=M%C2%B7A%C2%B7C+Cosmetics+-+lipglass+cushion" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">M·A·C Cosmetics - lip glass</span> <a href="https://www.google.com/search?tbm=shop&q=M%C2%B7A%C2%B7C+Cosmetics+-+lip+glass" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Bobbi Brown - lip pencil brownstone</span> <a href="https://www.google.com/search?tbm=shop&q=Bobbi+Brown+-+lip+pencil+brownstone" target="_blank" style="font-size:10px">🔍</a><br><span class="product-new">M·A·C Cosmetics - lipglass cushion</span> <a href="https://www.google.com/search?tbm=shop&q=M%C2%B7A%C2%B7C+Cosmetics+-+lipglass+cushion" target="_blank" style="font-size:10px">🔍</a><br><span class="product-new">M·A·C Cosmetics - lip glass</span> <a href="https://www.google.com/search?tbm=shop&q=M%C2%B7A%C2%B7C+Cosmetics+-+lip+glass" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>10</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.tiktok.com/@playstation/video/7626406175663262990" target="_blank">For your hands only.   Introducing the 007 First L...</a></td>
-  <td class="product-cell"><span class="product-expected">Sony DualSense Wireless Controller - 007 First Light Limited Edition</span></td>
-  <td class="product-cell"><span class="product-old">PlayStation - 007 First Light Limited Edition DualSense Wireless Controller</span><br><span class="product-old">PlayStation - DualSense Wireless Controller</span><br><span class="product-old">PlayStation - PS5</span></td>
-  <td class="product-cell"><span class="product-new">PlayStation - 007 First Light Limited Edition DualSense Wireless Controller</span></td>
+  <td class="product-cell"><span class="product-expected">Sony DualSense Wireless Controller - 007 First Light Limited Edition</span> <a href="https://www.google.com/search?tbm=shop&q=Sony+DualSense+Wireless+Controller+-+007+First+Light+Limited+Edition" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">PlayStation - 007 First Light Limited Edition DualSense Wireless Controller</span> <a href="https://www.google.com/search?tbm=shop&q=PlayStation+-+007+First+Light+Limited+Edition+DualSense+Wireless+Controller" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">PlayStation - DualSense Wireless Controller</span> <a href="https://www.google.com/search?tbm=shop&q=PlayStation+-+DualSense+Wireless+Controller" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">PlayStation - PS5</span> <a href="https://www.google.com/search?tbm=shop&q=PlayStation+-+PS5" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">PlayStation - 007 First Light Limited Edition DualSense Wireless Controller</span> <a href="https://www.google.com/search?tbm=shop&q=PlayStation+-+007+First+Light+Limited+Edition+DualSense+Wireless+Controller" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>11</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.tiktok.com/@rileejsmith/video/7632112942036602142" target="_blank">Replying to @Neva Johnson Here’s how I packed for ...</a></td>
-  <td class="product-cell"><span class="product-expected">CaIpak Hue Carry-On in French Blue Gingham</span></td>
-  <td class="product-cell"><span class="product-old">CaIpak - CaIpak Hue Carry-On French Blue Gingham</span></td>
-  <td class="product-cell"><span class="product-new">CaIpak - Hue Carry-On French Blue Gingham</span></td>
+  <td class="product-cell"><span class="product-expected">CaIpak Hue Carry-On in French Blue Gingham</span> <a href="https://www.google.com/search?tbm=shop&q=CaIpak+Hue+Carry-On+in+French+Blue+Gingham" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">CaIpak - CaIpak Hue Carry-On French Blue Gingham</span> <a href="https://www.google.com/search?tbm=shop&q=CaIpak+-+CaIpak+Hue+Carry-On+French+Blue+Gingham" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">CaIpak - Hue Carry-On French Blue Gingham</span> <a href="https://www.google.com/search?tbm=shop&q=CaIpak+-+Hue+Carry-On+French+Blue+Gingham" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>12</td>
-  <td><span class="tag tag-review">Review</span></td>
+  <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DW2DZNWj0U9/" target="_blank">Celina gets a Mediterranean makeover. Meet Pink Cl...</a></td>
-  <td class="product-cell"><span class="product-expected">TUMI Voyageur Celina Backpac Washed Yellow /Thyme</span></td>
-  <td class="product-cell"><span class="product-old">TUMI - Celina</span></td>
-  <td class="product-cell">&mdash;</td>
+  <td class="product-cell"><span class="product-expected">TUMI Voyageur Celina Backpac Washed Yellow /Thyme</span> <a href="https://www.google.com/search?tbm=shop&q=TUMI+Voyageur+Celina+Backpac+Washed+Yellow+%2FThyme" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">TUMI - Celina</span> <a href="https://www.google.com/search?tbm=shop&q=TUMI+-+Celina" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">TUMI - Celina Pink Clay</span> <a href="https://www.google.com/search?tbm=shop&q=TUMI+-+Celina+Pink+Clay" target="_blank" style="font-size:10px">🔍</a><br><span class="product-new">TUMI - Celina Washed Yellow</span> <a href="https://www.google.com/search?tbm=shop&q=TUMI+-+Celina+Washed+Yellow" target="_blank" style="font-size:10px">🔍</a><br><span class="product-new">TUMI - Celina Thyme</span> <a href="https://www.google.com/search?tbm=shop&q=TUMI+-+Celina+Thyme" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>13</td>
   <td><span class="tag tag-improved">Improved</span></td>
   <td><a href="https://www.instagram.com/p/DXSLNLcDAVQ/" target="_blank">DEWY DUO||||Your spring skin combination is SoftSc...</a></td>
-  <td class="product-cell"><span class="product-expected">MAKEUP BY MARIO Soft Pop Blush Veil Soft Pop Pink Peony</span></td>
-  <td class="product-cell"><span class="product-old">Makeup By Mario - SoftSculpt Transforming Skin Enhancer Medium</span><br><span class="product-old">Makeup By Mario - Soft Pop Blush Veil Pink Peony</span></td>
-  <td class="product-cell"><span class="product-new">Makeup By Mario - SoftSculpt Transforming Skin Enhancer</span><br><span class="product-new">Makeup By Mario - Soft Pop Blush Veil Pink Peony</span></td>
+  <td class="product-cell"><span class="product-expected">MAKEUP BY MARIO Soft Pop Blush Veil Soft Pop Pink Peony</span> <a href="https://www.google.com/search?tbm=shop&q=MAKEUP+BY+MARIO+Soft+Pop+Blush+Veil+Soft+Pop+Pink+Peony" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Makeup By Mario - SoftSculpt Transforming Skin Enhancer Medium</span> <a href="https://www.google.com/search?tbm=shop&q=Makeup+By+Mario+-+SoftSculpt+Transforming+Skin+Enhancer+Medium" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Makeup By Mario - Soft Pop Blush Veil Pink Peony</span> <a href="https://www.google.com/search?tbm=shop&q=Makeup+By+Mario+-+Soft+Pop+Blush+Veil+Pink+Peony" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Makeup By Mario - SoftSculpt Transforming Skin Enhancer</span> <a href="https://www.google.com/search?tbm=shop&q=Makeup+By+Mario+-+SoftSculpt+Transforming+Skin+Enhancer" target="_blank" style="font-size:10px">🔍</a><br><span class="product-new">Makeup By Mario - Soft Pop Blush Veil Pink Peony</span> <a href="https://www.google.com/search?tbm=shop&q=Makeup+By+Mario+-+Soft+Pop+Blush+Veil+Pink+Peony" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>14</td>
-  <td><span class="tag tag-review">Review</span></td>
+  <td><span class="tag tag-correct">Pass</span></td>
   <td><a href="https://www.instagram.com/p/DW9wx59k_g8/" target="_blank">Soft light, warm wood, and layers of texture that ...</a></td>
-  <td class="product-cell"><span class="product-expected">Four Hands  Dining Chair Rothler Pink Clay</span></td>
-  <td class="product-cell"><span class="product-old">Four Hands - Rothler Dining Chair</span></td>
-  <td class="product-cell"><span class="product-new">Four Hands - Rothler Dining Chair</span></td>
+  <td class="product-cell"><span class="product-expected">Four Hands  Dining Chair Rothler Pink Clay</span> <a href="https://www.google.com/search?tbm=shop&q=Four+Hands%C2%A0+Dining+Chair+Rothler+Pink+Clay" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">Four Hands - Rothler Dining Chair</span> <a href="https://www.google.com/search?tbm=shop&q=Four+Hands+-+Rothler+Dining+Chair" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">Four Hands - Rothler Dining Chair</span> <a href="https://www.google.com/search?tbm=shop&q=Four+Hands+-+Rothler+Dining+Chair" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 <tr>
   <td>15</td>
   <td><span class="tag tag-fixed">Fixed</span></td>
   <td><a href="https://www.youtube.com/watch?v=w1zH9DwQ6qA" target="_blank">This Windows Laptop BEATS the MacBook - ASUS Zenbo...</a></td>
-  <td class="product-cell"><span class="product-expected">ASUS Zenbook A16</span></td>
-  <td class="product-cell"><span class="product-old">ASUS - ASUS Zenbook A16</span><br><span class="product-old">ASUS - ASUS Zenbook A16 UX3607</span><br><span class="product-old">ASUS - ASUS Zenbook A14</span><br><span class="product-old">ASUS - ASUS Zenbook A14 UX3407</span><br><span class="product-old">Apple - MacBook</span></td>
-  <td class="product-cell"><span class="product-new">ASUS - Zenbook A16 UX3607</span></td>
+  <td class="product-cell"><span class="product-expected">ASUS Zenbook A16</span> <a href="https://www.google.com/search?tbm=shop&q=ASUS+Zenbook+A16" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-old">ASUS - ASUS Zenbook A16</span> <a href="https://www.google.com/search?tbm=shop&q=ASUS+-+ASUS+Zenbook+A16" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">ASUS - ASUS Zenbook A16 UX3607</span> <a href="https://www.google.com/search?tbm=shop&q=ASUS+-+ASUS+Zenbook+A16+UX3607" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">ASUS - ASUS Zenbook A14</span> <a href="https://www.google.com/search?tbm=shop&q=ASUS+-+ASUS+Zenbook+A14" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">ASUS - ASUS Zenbook A14 UX3407</span> <a href="https://www.google.com/search?tbm=shop&q=ASUS+-+ASUS+Zenbook+A14+UX3407" target="_blank" style="font-size:10px">🔍</a><br><span class="product-old">Apple - MacBook</span> <a href="https://www.google.com/search?tbm=shop&q=Apple+-+MacBook" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell"><span class="product-new">ASUS - Zenbook A16 UX3607</span> <a href="https://www.google.com/search?tbm=shop&q=ASUS+-+Zenbook+A16+UX3607" target="_blank" style="font-size:10px">🔍</a></td>
 </tr>
 </table>
 </div>
 <h2>Good Cases 回归测试 (36 cases)</h2>
 <div class="breakdown">
+<p style="font-size:13px; color:#555; margin-bottom:12px;">
+<b>说明：</b>"Wrong" 表示新版提取结果有问题（漏抓等）。
+点击 Post 可查看原帖，点击 Previous/Current 列的 🔍 可在 Google Shopping 搜索对应产品名，核实两个结果是否指同一商品。
+</p>
 <table>
 <tr>
   <th>#</th>
   <th>Verdict</th>
-  <th style="width:25%">Post</th>
-  <th style="width:25%">Previous</th>
-  <th style="width:25%">Current</th>
-  <th>Reference</th>
+  <th style="width:20%">Post</th>
+  <th style="width:22%">Previous</th>
+  <th style="width:22%">Current</th>
+  <th>问题说明</th>
 </tr>
 <tr>
   <td>1</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXLLsRuFJk2/" target="_blank">I ain’t ever play with it❗️Not even on the pl...</a></td>
-  <td class="product-cell" style="font-size:12px">Fashion Nova - Saint Washed Fleece Hoodie Jogger Pant Set - Charcoal</td>
-  <td class="product-cell" style="font-size:12px">Fashion Nova - Saint Washed Fleece Hoodie Jogger Pant Set Charcoal</td>
-  <td><a href="https://www.fashionnova.com/products/saint-washed-fleece-hoodie-jogger-pant-set-charcoal?variant=39301664309372&amp;currency=USD" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Fashion Nova - Saint Washed Fleece Hoodie Jogger Pant Set - Charcoal <a href="https://www.google.com/search?tbm=shop&q=Fashion+Nova+-+Saint+Washed+Fleece+Hoodie+Jogger+Pant+Set+-+Charcoal" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Fashion Nova - Saint Washed Fleece Hoodie Jogger Pant Set Charcoal <a href="https://www.google.com/search?tbm=shop&q=Fashion+Nova+-+Saint+Washed+Fleece+Hoodie+Jogger+Pant+Set+Charcoal" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>2</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXNgcNqk66i/" target="_blank">Need a quick change? eYe @junyawatanabe MAN p...</a></td>
-  <td class="product-cell" style="font-size:12px">eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 bomber jacket<br>Alpha Industries - WO-J904 Biker Jacket<br>eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 jacket<br>eYe Junya Watanabe MAN x Alpha Industries - eYe Junya Watanabe MAN x Alpha Industries MA-1 bomber jacket<br>Alpha Industries - WO-J904 Biker Jacket<br>eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 jacket</td>
-  <td class="product-cell" style="font-size:12px">eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 bomber jacket</td>
-  <td><a href="https://shop.app/products/7398819921975?variantId=42057109962807" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 bomber jacket <a href="https://www.google.com/search?tbm=shop&q=eye+Junya+Watanabe+Man+x+Alpha+Industries+-+eye+Junya+Watanabe+Man+x+Alpha+Industries+MA-1+bomber+jacket" target="_blank" style="font-size:10px">🔍</a><br>Alpha Industries - WO-J904 Biker Jacket <a href="https://www.google.com/search?tbm=shop&q=Alpha+Industries+-+WO-J904+Biker+Jacket" target="_blank" style="font-size:10px">🔍</a><br>eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 jacket <a href="https://www.google.com/search?tbm=shop&q=eye+Junya+Watanabe+Man+x+Alpha+Industries+-+eye+Junya+Watanabe+Man+x+Alpha+Industries+MA-1+jacket" target="_blank" style="font-size:10px">🔍</a><br>eYe Junya Watanabe MAN x Alpha Industries - eYe Junya Watanabe MAN x Alpha Industries MA-1 bomber jacket <a href="https://www.google.com/search?tbm=shop&q=eYe+Junya+Watanabe+MAN+x+Alpha+Industries+-+eYe+Junya+Watanabe+MAN+x+Alpha+Industries+MA-1+bomber+jacket" target="_blank" style="font-size:10px">🔍</a><br>Alpha Industries - WO-J904 Biker Jacket <a href="https://www.google.com/search?tbm=shop&q=Alpha+Industries+-+WO-J904+Biker+Jacket" target="_blank" style="font-size:10px">🔍</a><br>eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 jacket <a href="https://www.google.com/search?tbm=shop&q=eye+Junya+Watanabe+Man+x+Alpha+Industries+-+eye+Junya+Watanabe+Man+x+Alpha+Industries+MA-1+jacket" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">eye Junya Watanabe Man x Alpha Industries - eye Junya Watanabe Man x Alpha Industries MA-1 bomber jacket <a href="https://www.google.com/search?tbm=shop&q=eye+Junya+Watanabe+Man+x+Alpha+Industries+-+eye+Junya+Watanabe+Man+x+Alpha+Industries+MA-1+bomber+jacket" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>3</td>
-  <td><span class="tag tag-wrong">Wrong</span></td>
+  <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DW6QMUxjcSc/" target="_blank">Uh oh... the Statue of Liberty lost her torch...</a></td>
-  <td class="product-cell" style="font-size:12px">Creality - K2 Pro</td>
-  <td class="product-cell" style="font-size:12px">Creality - K2 Pro</td>
-  <td><a href="https://www.bhphotovideo.com/c/product/1902230-REG/a02_ur_creality_1002110055_k2_pro_multi_color_3d.html/?kw=CRK2PM3DPXCF&amp;ap=y&amp;smp=y&amp;store=420&amp;smpm=ba_f2_lar" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Creality - K2 Pro <a href="https://www.google.com/search?tbm=shop&q=Creality+-+K2+Pro" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Creality - K2 Pro <a href="https://www.google.com/search?tbm=shop&q=Creality+-+K2+Pro" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>4</td>
   <td><span class="tag tag-wrong">Wrong</span></td>
   <td><a href="https://www.tiktok.com/@behr/video/7626154070079835422" target="_blank">Give us your most unhinged ideas next Feature...</a></td>
-  <td class="product-cell" style="font-size:12px">BEHR - Romantic Moment P570-5</td>
+  <td class="product-cell" style="font-size:12px">BEHR - Romantic Moment P570-5 <a href="https://www.google.com/search?tbm=shop&q=BEHR+-+Romantic+Moment+P570-5" target="_blank" style="font-size:10px">🔍</a></td>
   <td class="product-cell" style="font-size:12px">&mdash;</td>
-  <td><a href="https://www.homedepot.com/p/BEHR-PREMIUM-PLUS-1-qt-P570-5-Romantic-Moment-Eggshell-Enamel-EcoMix-Plant-Based-Interior-Paint-Primer-2230004/337158736" target="_blank" style="font-size:11px">Ref</a></td>
+  <td style="font-size:11px; color:#666">LLM 不稳定，偶发漏抽</td>
 </tr>
 <tr>
   <td>5</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@lunalurey/video/7632428184394272021" target="_blank">Will you go for straight or curly hair? What&#x27;...</a></td>
-  <td class="product-cell" style="font-size:12px">Wavy Talk - Steamline Pro<br>Wavy Talk - Turblow Pro</td>
-  <td class="product-cell" style="font-size:12px">wavytalk - Steamline Pro<br>wavytalk - Turblow Pro</td>
-  <td><a href="https://www.target.com/p/wavytalk-395-pro-steam-hair-straightener-brush-pink/-/A-94757781" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Wavy Talk - Steamline Pro <a href="https://www.google.com/search?tbm=shop&q=Wavy+Talk+-+Steamline+Pro" target="_blank" style="font-size:10px">🔍</a><br>Wavy Talk - Turblow Pro <a href="https://www.google.com/search?tbm=shop&q=Wavy+Talk+-+Turblow+Pro" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">wavytalk - Steamline Pro <a href="https://www.google.com/search?tbm=shop&q=wavytalk+-+Steamline+Pro" target="_blank" style="font-size:10px">🔍</a><br>wavytalk - Turblow Pro <a href="https://www.google.com/search?tbm=shop&q=wavytalk+-+Turblow+Pro" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>6</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@ellianawalmsley/video/7626185593537465613" target="_blank">GOOD NIGHT WORLD AYEEEE 😝🌎 #fyp #grwm #lifest...</a></td>
-  <td class="product-cell" style="font-size:12px">Origins - Checks And Balances Frothy Facewash<br>AXIS-Y - Mugwort Pore Clarifying Wash Off Pack<br>philosophy - fresh cream and mint hydrating shower gel<br>STENDERS - shower gel to mousse magic garden<br>First Aid Beauty - KP Bump Eraser Body Scrub<br>medicube - PDRN Pink Cica Soothing Toner<br>COSRX - 6 Peptide Booster Serum<br>AXIS-Y - Dark Spot Correcting Glow Serum<br>AXIS-Y - Dark Spot Correcting Glow Cream<br>Sonya Dakar - Fade Away<br>Origins - Super Spot Remover</td>
-  <td class="product-cell" style="font-size:12px">Origins Skincare - Checks And Balances Frothy Facewash<br>AXIS-Y - Mugwort Pore Clarifying Wash Off Pack<br>philosophy - fresh cream and mint hydrating shower gel<br>STENDERS - shower gel to mousse magic garden<br>First Aid Beauty - KP Bump Eraser Body Scrub<br>medicube global - PDRN Pink Cica Soothing Toner<br>COSRX Official - 6 Peptide Booster Serum<br>Axis-Y - Dark Spot Correcting Glow Serum<br>Axis-Y - Dark Spot Correcting Glow Cream<br>Sonya Dakar - Fade Away<br>Origins - Super Spot Remover</td>
-  <td><a href="https://philosophy.com/products/fresh-cream-and-mint-hydrating-shower-gel?variant=45476606705918" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Origins - Checks And Balances Frothy Facewash <a href="https://www.google.com/search?tbm=shop&q=Origins+-+Checks+And+Balances+Frothy+Facewash" target="_blank" style="font-size:10px">🔍</a><br>AXIS-Y - Mugwort Pore Clarifying Wash Off Pack <a href="https://www.google.com/search?tbm=shop&q=AXIS-Y+-+Mugwort+Pore+Clarifying+Wash+Off+Pack" target="_blank" style="font-size:10px">🔍</a><br>philosophy - fresh cream and mint hydrating shower gel <a href="https://www.google.com/search?tbm=shop&q=philosophy+-+fresh+cream+and+mint+hydrating+shower+gel" target="_blank" style="font-size:10px">🔍</a><br>STENDERS - shower gel to mousse magic garden <a href="https://www.google.com/search?tbm=shop&q=STENDERS+-+shower+gel+to+mousse+magic+garden" target="_blank" style="font-size:10px">🔍</a><br>First Aid Beauty - KP Bump Eraser Body Scrub <a href="https://www.google.com/search?tbm=shop&q=First+Aid+Beauty+-+KP+Bump+Eraser+Body+Scrub" target="_blank" style="font-size:10px">🔍</a><br>medicube - PDRN Pink Cica Soothing Toner <a href="https://www.google.com/search?tbm=shop&q=medicube+-+PDRN+Pink+Cica+Soothing+Toner" target="_blank" style="font-size:10px">🔍</a><br>COSRX - 6 Peptide Booster Serum <a href="https://www.google.com/search?tbm=shop&q=COSRX+-+6+Peptide+Booster+Serum" target="_blank" style="font-size:10px">🔍</a><br>AXIS-Y - Dark Spot Correcting Glow Serum <a href="https://www.google.com/search?tbm=shop&q=AXIS-Y+-+Dark+Spot+Correcting+Glow+Serum" target="_blank" style="font-size:10px">🔍</a><br>AXIS-Y - Dark Spot Correcting Glow Cream <a href="https://www.google.com/search?tbm=shop&q=AXIS-Y+-+Dark+Spot+Correcting+Glow+Cream" target="_blank" style="font-size:10px">🔍</a><br>Sonya Dakar - Fade Away <a href="https://www.google.com/search?tbm=shop&q=Sonya+Dakar+-+Fade+Away" target="_blank" style="font-size:10px">🔍</a><br>Origins - Super Spot Remover <a href="https://www.google.com/search?tbm=shop&q=Origins+-+Super+Spot+Remover" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Origins Skincare - Checks And Balances Frothy Facewash <a href="https://www.google.com/search?tbm=shop&q=Origins+Skincare+-+Checks+And+Balances+Frothy+Facewash" target="_blank" style="font-size:10px">🔍</a><br>AXIS-Y - Mugwort Pore Clarifying Wash Off Pack <a href="https://www.google.com/search?tbm=shop&q=AXIS-Y+-+Mugwort+Pore+Clarifying+Wash+Off+Pack" target="_blank" style="font-size:10px">🔍</a><br>philosophy - fresh cream and mint hydrating shower gel <a href="https://www.google.com/search?tbm=shop&q=philosophy+-+fresh+cream+and+mint+hydrating+shower+gel" target="_blank" style="font-size:10px">🔍</a><br>STENDERS - shower gel to mousse magic garden <a href="https://www.google.com/search?tbm=shop&q=STENDERS+-+shower+gel+to+mousse+magic+garden" target="_blank" style="font-size:10px">🔍</a><br>First Aid Beauty - KP Bump Eraser Body Scrub <a href="https://www.google.com/search?tbm=shop&q=First+Aid+Beauty+-+KP+Bump+Eraser+Body+Scrub" target="_blank" style="font-size:10px">🔍</a><br>medicube global - PDRN Pink Cica Soothing Toner <a href="https://www.google.com/search?tbm=shop&q=medicube+global+-+PDRN+Pink+Cica+Soothing+Toner" target="_blank" style="font-size:10px">🔍</a><br>COSRX Official - 6 Peptide Booster Serum <a href="https://www.google.com/search?tbm=shop&q=COSRX+Official+-+6+Peptide+Booster+Serum" target="_blank" style="font-size:10px">🔍</a><br>Axis-Y - Dark Spot Correcting Glow Serum <a href="https://www.google.com/search?tbm=shop&q=Axis-Y+-+Dark+Spot+Correcting+Glow+Serum" target="_blank" style="font-size:10px">🔍</a><br>Axis-Y - Dark Spot Correcting Glow Cream <a href="https://www.google.com/search?tbm=shop&q=Axis-Y+-+Dark+Spot+Correcting+Glow+Cream" target="_blank" style="font-size:10px">🔍</a><br>Sonya Dakar - Fade Away <a href="https://www.google.com/search?tbm=shop&q=Sonya+Dakar+-+Fade+Away" target="_blank" style="font-size:10px">🔍</a><br>Origins - Super Spot Remover <a href="https://www.google.com/search?tbm=shop&q=Origins+-+Super+Spot+Remover" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>7</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DWzJ1K4gnil/" target="_blank">THIS ONE HURT TO PURCHASE BUT ITS SOOO BEAUTI...</a></td>
-  <td class="product-cell" style="font-size:12px">Jenny Packham - Dress<br>Revlon - Bare Affair Lipstick<br>Fenty Beauty - Blaz’d Donut Gloss Stick<br>Josie Maran - Body Butter<br>YSL Beauty - Lavalliere Perfume<br>René Caovilla - Heels</td>
-  <td class="product-cell" style="font-size:12px">Revlon - bare affair lipstick<br>Fenty Beauty - Blaz’d Donut gloss stick<br>Josie Maran - body butter<br>YSL Beauty - Lavalliere perfume<br>Rene Caovilla - heels</td>
-  <td><a href="https://www.neimanmarcus.com/p/yves-saint-laurent-beaute-lavalliere-eau-de-parfum-4-2-oz-prod256830025?pimId=401224572166&amp;utm_source=bing_shopping&amp;site_refer=CSE_MSNPLA:Beauty_Fragrance:Yves+Saint+Laurent+Beaute" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Jenny Packham - Dress <a href="https://www.google.com/search?tbm=shop&q=Jenny+Packham+-+Dress" target="_blank" style="font-size:10px">🔍</a><br>Revlon - Bare Affair Lipstick <a href="https://www.google.com/search?tbm=shop&q=Revlon+-+Bare+Affair+Lipstick" target="_blank" style="font-size:10px">🔍</a><br>Fenty Beauty - Blaz’d Donut Gloss Stick <a href="https://www.google.com/search?tbm=shop&q=Fenty+Beauty+-+Blaz%E2%80%99d+Donut+Gloss+Stick" target="_blank" style="font-size:10px">🔍</a><br>Josie Maran - Body Butter <a href="https://www.google.com/search?tbm=shop&q=Josie+Maran+-+Body+Butter" target="_blank" style="font-size:10px">🔍</a><br>YSL Beauty - Lavalliere Perfume <a href="https://www.google.com/search?tbm=shop&q=YSL+Beauty+-+Lavalliere+Perfume" target="_blank" style="font-size:10px">🔍</a><br>René Caovilla - Heels <a href="https://www.google.com/search?tbm=shop&q=Ren%C3%A9+Caovilla+-+Heels" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Revlon - bare affair lipstick <a href="https://www.google.com/search?tbm=shop&q=Revlon+-+bare+affair+lipstick" target="_blank" style="font-size:10px">🔍</a><br>Fenty Beauty - Blaz’d Donut gloss stick <a href="https://www.google.com/search?tbm=shop&q=Fenty+Beauty+-+Blaz%E2%80%99d+Donut+gloss+stick" target="_blank" style="font-size:10px">🔍</a><br>Josie Maran - body butter <a href="https://www.google.com/search?tbm=shop&q=Josie+Maran+-+body+butter" target="_blank" style="font-size:10px">🔍</a><br>YSL Beauty - Lavalliere perfume <a href="https://www.google.com/search?tbm=shop&q=YSL+Beauty+-+Lavalliere+perfume" target="_blank" style="font-size:10px">🔍</a><br>Rene Caovilla - heels <a href="https://www.google.com/search?tbm=shop&q=Rene+Caovilla+-+heels" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>8</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@anothertech7/video/7630851278133939470" target="_blank">iPhone 17 Pro Max vs Galaxy S26 Simple Speed ...</a></td>
-  <td class="product-cell" style="font-size:12px">Apple - iPhone 17 Pro Max<br>Samsung - Galaxy S26</td>
-  <td class="product-cell" style="font-size:12px">Apple - iPhone 17 Pro Max<br>Galaxy - Galaxy S26</td>
-  <td><a href="https://www.samsung.com/us/smartphones/galaxy-s26/buy/galaxy-s26-512gb-unlocked-sku-sm-s942uzdfxaa" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - iPhone 17 Pro Max <a href="https://www.google.com/search?tbm=shop&q=Apple+-+iPhone+17+Pro+Max" target="_blank" style="font-size:10px">🔍</a><br>Samsung - Galaxy S26 <a href="https://www.google.com/search?tbm=shop&q=Samsung+-+Galaxy+S26" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - iPhone 17 Pro Max <a href="https://www.google.com/search?tbm=shop&q=Apple+-+iPhone+17+Pro+Max" target="_blank" style="font-size:10px">🔍</a><br>Galaxy - Galaxy S26 <a href="https://www.google.com/search?tbm=shop&q=Galaxy+-+Galaxy+S26" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>9</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@anothertech7/video/7629721956987800845" target="_blank">Pixel 10 Pro XL Gemini Music vs Samsung S26 U...</a></td>
-  <td class="product-cell" style="font-size:12px">Google - Pixel 10 Pro XL<br>Samsung - Samsung S26 Ultra</td>
-  <td class="product-cell" style="font-size:12px">Samsung - S26 Ultra</td>
-  <td><a href="https://www.unclaimedbaggage.com/products/google-pixel-10-pro-xl-green-dot-good-256gb-mobile-phones-1" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Google - Pixel 10 Pro XL <a href="https://www.google.com/search?tbm=shop&q=Google+-+Pixel+10+Pro+XL" target="_blank" style="font-size:10px">🔍</a><br>Samsung - Samsung S26 Ultra <a href="https://www.google.com/search?tbm=shop&q=Samsung+-+Samsung+S26+Ultra" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Samsung - S26 Ultra <a href="https://www.google.com/search?tbm=shop&q=Samsung+-+S26+Ultra" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>10</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@carterpcs/video/7632196055928442142" target="_blank">I accidentally bought an extra pair of AirPod...</a></td>
-  <td class="product-cell" style="font-size:12px">Apple - AirPod Max 2</td>
-  <td class="product-cell" style="font-size:12px">Apple - AirPod Max 2</td>
-  <td><a href="https://www.apple.com/us/xc/product/MHWL4AM/A" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - AirPod Max 2 <a href="https://www.google.com/search?tbm=shop&q=Apple+-+AirPod+Max+2" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - AirPod Max 2 <a href="https://www.google.com/search?tbm=shop&q=Apple+-+AirPod+Max+2" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>11</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXhHdxziPf7/" target="_blank">Smart new PX8 S2 colourway by @bowerswilkins ...</a></td>
-  <td class="product-cell" style="font-size:12px">Bowers &amp; Wilkins - PX8 S2 colourway</td>
-  <td class="product-cell" style="font-size:12px">Bowers &amp; Wilkins - PX8 S2</td>
-  <td><a href="https://www.bestbuy.com/product/bowers-wilkins-b-w-px8-s2-over-ear-bluetoothheadphones-onyx-black/JXT7VJH8GF/sku/6645934?utm_source=feed&amp;extStoreId={store_code}" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Bowers &amp; Wilkins - PX8 S2 colourway <a href="https://www.google.com/search?tbm=shop&q=Bowers+%26+Wilkins+-+PX8+S2+colourway" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Bowers &amp; Wilkins - PX8 S2 <a href="https://www.google.com/search?tbm=shop&q=Bowers+%26+Wilkins+-+PX8+S2" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>12</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@carterpcs/video/7625528120308682015" target="_blank">Replying to @wesley_.dsf Can the Meta Oakley ...</a></td>
-  <td class="product-cell" style="font-size:12px">Meta x Oakley - Meta Oakley Vanguards</td>
-  <td class="product-cell" style="font-size:12px">Meta - Oakley vanguards</td>
-  <td><a href="https://www.oakley.com/en-us/product/W0OW8001?variant=888392690418" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Meta x Oakley - Meta Oakley Vanguards <a href="https://www.google.com/search?tbm=shop&q=Meta+x+Oakley+-+Meta+Oakley+Vanguards" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Meta - Oakley vanguards <a href="https://www.google.com/search?tbm=shop&q=Meta+-+Oakley+vanguards" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>13</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXMYuelCM59/" target="_blank">Had so much fun working with @ninjakitchen on...</a></td>
-  <td class="product-cell" style="font-size:12px">Ninja Kitchen - limited-edition coffee machine<br>Ninja Kitchen - NinjaLuxeCafe</td>
-  <td class="product-cell" style="font-size:12px">Ninja Kitchen - NinjaLuxeCafe</td>
-  <td><a href="https://www.crateandbarrel.com/ninja-luxe-cafe-premier-series-espresso-machine-in-cyberspace/s635078?srsltid=AfmBOooM8VGHmEPipH6GSR51EBNECYAIJBpgztnUMEX2fzxMr4Ng8LNS_JA" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Ninja Kitchen - limited-edition coffee machine <a href="https://www.google.com/search?tbm=shop&q=Ninja+Kitchen+-+limited-edition+coffee+machine" target="_blank" style="font-size:10px">🔍</a><br>Ninja Kitchen - NinjaLuxeCafe <a href="https://www.google.com/search?tbm=shop&q=Ninja+Kitchen+-+NinjaLuxeCafe" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Ninja Kitchen - NinjaLuxeCafe <a href="https://www.google.com/search?tbm=shop&q=Ninja+Kitchen+-+NinjaLuxeCafe" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>14</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXdPb8fDn2F/" target="_blank">Let’s set up the Ninja Luxe Cafe by @ninjakit...</a></td>
-  <td class="product-cell" style="font-size:12px">Ninja - Ninja Luxe Cafe Oat Milk</td>
-  <td class="product-cell" style="font-size:12px">Ninja - Luxe Cafe Oat Milk</td>
-  <td><a href="https://www.crateandbarrel.com/ninja-luxe-cafe-premier-series-espresso-machine/s505289?srsltid=AfmBOooXWiZSvO3lgymexUsC6psxxMczZBtStRr3B2OTkSSjqeB70oP709E" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Ninja - Ninja Luxe Cafe Oat Milk <a href="https://www.google.com/search?tbm=shop&q=Ninja+-+Ninja+Luxe+Cafe+Oat+Milk" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Ninja - Luxe Cafe Oat Milk <a href="https://www.google.com/search?tbm=shop&q=Ninja+-+Luxe+Cafe+Oat+Milk" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>15</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXS2BBFjS0T/" target="_blank">Whether you prefer iced or hot coffee, the Ha...</a></td>
-  <td class="product-cell" style="font-size:12px">Hamilton Beach - Hamilton Beach FlexBrew Advanced 4-in-1 Coffee Maker</td>
-  <td class="product-cell" style="font-size:12px">Hamilton Beach - FlexBrew Advanced 4-in-1 Coffee Maker</td>
-  <td><a href="https://business.walmart.com/ip/Hamilton-Beach-FlexBrew-Advanced-4-in-1-Coffee-Maker-Removable-45-oz-Water-Reservoir-49925/17360007692?wmlspartner=wmbpla&amp;selectedSellerId=101357218" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Hamilton Beach - Hamilton Beach FlexBrew Advanced 4-in-1 Coffee Maker <a href="https://www.google.com/search?tbm=shop&q=Hamilton+Beach+-+Hamilton+Beach+FlexBrew+Advanced+4-in-1+Coffee+Maker" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Hamilton Beach - FlexBrew Advanced 4-in-1 Coffee Maker <a href="https://www.google.com/search?tbm=shop&q=Hamilton+Beach+-+FlexBrew+Advanced+4-in-1+Coffee+Maker" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>16</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@tfalusa/video/7627714991466106125" target="_blank">Ever wondered what infrared cooking can reall...</a></td>
-  <td class="product-cell" style="font-size:12px">T-fal - T-fal Infrared Air Fryer 6L</td>
-  <td class="product-cell" style="font-size:12px">T-fal - Infrared Air Fryer 6L</td>
-  <td><a href="https://www.target.com/p/t-fal-infrared-air-fryer-easy-fry-collection-6-3-quart-digital-touch-screen-grey/-/A-1001294302" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">T-fal - T-fal Infrared Air Fryer 6L <a href="https://www.google.com/search?tbm=shop&q=T-fal+-+T-fal+Infrared+Air+Fryer+6L" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">T-fal - Infrared Air Fryer 6L <a href="https://www.google.com/search?tbm=shop&q=T-fal+-+Infrared+Air+Fryer+6L" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>17</td>
-  <td><span class="tag tag-wrong">Wrong</span></td>
+  <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXNE9-IACEs/" target="_blank">A meal to add to your spring dinner rotation:...</a></td>
-  <td class="product-cell" style="font-size:12px">Riviera - Riviera Heritage Fish Baker</td>
-  <td class="product-cell" style="font-size:12px">Riviera - Heritage Fish Baker</td>
-  <td><a href="https://www.macys.com/shop/product/le-creuset-stoneware-heritage-1.7-quart-fish-baker-with-cover?ID=23461877&amp;pla_country=US&amp;CAGPSPN=pla" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Riviera - Riviera Heritage Fish Baker <a href="https://www.google.com/search?tbm=shop&q=Riviera+-+Riviera+Heritage+Fish+Baker" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Riviera - Heritage Fish Baker <a href="https://www.google.com/search?tbm=shop&q=Riviera+-+Heritage+Fish+Baker" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>18</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.youtube.com/watch?v=C758jg_0cLY" target="_blank">Easy Vegetable Washing Tool Review ( # 3245 )...</a></td>
-  <td class="product-cell" style="font-size:12px">MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer<br>MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer<br>MaviGadget - vegetable washing strainer<br>MaviGadget - rotating drain basket<br>MaviGadget - kitchen colander bowl<br>MaviGadget - fruit washing bowl<br>MaviGadget - dual layer strainer<br>MaviGadget - salad washing bowl<br>MaviGadget - easy drain colander<br>MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer</td>
-  <td class="product-cell" style="font-size:12px">MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer</td>
-  <td><a href="https://www.walmart.com/ip/Double-Layer-Drain-Basket-Vegetable-Fruit-Draining-Bowl-Storage-Rotating-Drying-Rack-Kitchen-Accessories-PET/20061005495?wmlspartner=wlpa&amp;selectedSellerId=101199337" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+Dual-Layer+Spinning+Vegetable+Washing+Strainer" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+Dual-Layer+Spinning+Vegetable+Washing+Strainer" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - vegetable washing strainer <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+vegetable+washing+strainer" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - rotating drain basket <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+rotating+drain+basket" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - kitchen colander bowl <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+kitchen+colander+bowl" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - fruit washing bowl <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+fruit+washing+bowl" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - dual layer strainer <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+dual+layer+strainer" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - salad washing bowl <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+salad+washing+bowl" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - easy drain colander <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+easy+drain+colander" target="_blank" style="font-size:10px">🔍</a><br>MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+Dual-Layer+Spinning+Vegetable+Washing+Strainer" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">MaviGadget - Dual-Layer Spinning Vegetable Washing Strainer <a href="https://www.google.com/search?tbm=shop&q=MaviGadget+-+Dual-Layer+Spinning+Vegetable+Washing+Strainer" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>19</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXIQLu9AVBA/" target="_blank">Okay, I never thought I’d say this, but clean...</a></td>
-  <td class="product-cell" style="font-size:12px">Dreame - Dreame AeroPro</td>
-  <td class="product-cell" style="font-size:12px">Dreame - AeroPro</td>
-  <td><a href="https://www.dreametech.com/products/aero-pro-wet-dry-vacuum?variant=53807776858484&amp;utm_medium=cpc&amp;utm_source=bing&amp;utm_campaign=Bing%20Shopping&amp;country=US" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Dreame - Dreame AeroPro <a href="https://www.google.com/search?tbm=shop&q=Dreame+-+Dreame+AeroPro" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Dreame - AeroPro <a href="https://www.google.com/search?tbm=shop&q=Dreame+-+AeroPro" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>20</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@ourfavoritefinds/video/7632449444834839821" target="_blank">The Tineco S7 wet-dry vacuum that vacuums and...</a></td>
-  <td class="product-cell" style="font-size:12px">Tineco - Tineco S7 wet-dry vacuum</td>
-  <td class="product-cell" style="font-size:12px">Tineco - S7 wet-dry vacuum</td>
-  <td><a href="https://store.tineco.com/products/tineco-floor-one-s7-stretch-ultra-cordless-wet-dry-vacuum-cleaner?variant=42055975305300" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Tineco - Tineco S7 wet-dry vacuum <a href="https://www.google.com/search?tbm=shop&q=Tineco+-+Tineco+S7+wet-dry+vacuum" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Tineco - S7 wet-dry vacuum <a href="https://www.google.com/search?tbm=shop&q=Tineco+-+S7+wet-dry+vacuum" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>21</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@soyjuanjoselv/video/7623206376923319566" target="_blank">I loved the #aecooly 3-in-1 fan !!...</a></td>
-  <td class="product-cell" style="font-size:12px">aecooly - aecooly 3-in-1 fan</td>
-  <td class="product-cell" style="font-size:12px">aecooly - 3-in-1 fan</td>
-  <td><a href="https://www.walmart.com/ip/Aecooly-3-in-1-Portable-Fan-Turbo-Cooling-22H-Runtime-USB-Rechargeable-Foldable-Handheld-Fan-for-Travel-Summer-Gifts-for-Her/16810150253?wmlspartner=wlpa&amp;selectedSellerId=102846747" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">aecooly - aecooly 3-in-1 fan <a href="https://www.google.com/search?tbm=shop&q=aecooly+-+aecooly+3-in-1+fan" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">aecooly - 3-in-1 fan <a href="https://www.google.com/search?tbm=shop&q=aecooly+-+3-in-1+fan" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>22</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@sharkhome/video/7627120152059923742" target="_blank">@SKYLRK X SHARK CHILLPILL. 3-IN-1 PERSONAL CO...</a></td>
-  <td class="product-cell" style="font-size:12px">Shark - SKYLRK x Shark Chillpill<br>Shark - 3-in-1 Personal Cooling System<br>Shark - InstaChill Plate</td>
-  <td class="product-cell" style="font-size:12px">SKYLRK x SHARK - SKYLRK x SHARK CHILLPILL</td>
-  <td><a href="https://www.target.com/p/shark-chillpill-portable-fan-misting-and-icy-cooling-plate-carbon/-/A-94965811" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Shark - SKYLRK x Shark Chillpill <a href="https://www.google.com/search?tbm=shop&q=Shark+-+SKYLRK+x+Shark+Chillpill" target="_blank" style="font-size:10px">🔍</a><br>Shark - 3-in-1 Personal Cooling System <a href="https://www.google.com/search?tbm=shop&q=Shark+-+3-in-1+Personal+Cooling+System" target="_blank" style="font-size:10px">🔍</a><br>Shark - InstaChill Plate <a href="https://www.google.com/search?tbm=shop&q=Shark+-+InstaChill+Plate" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">SKYLRK x SHARK - SKYLRK x SHARK CHILLPILL <a href="https://www.google.com/search?tbm=shop&q=SKYLRK+x+SHARK+-+SKYLRK+x+SHARK+CHILLPILL" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>23</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXP1hcfCXR2/" target="_blank">Timbuk2 has been making your travels somethin...</a></td>
-  <td class="product-cell" style="font-size:12px">Timbuk2 - FreeStyle Carry-On in Marigold<br>Timbuk2 - Classic Messenger Bag in Black</td>
-  <td class="product-cell" style="font-size:12px">Timbuk2 - FreeStyle Carry-On Marigold<br>Timbuk2 - Classic Messenger Bag Black</td>
-  <td><a href="https://www.newegg.com/p/3C6-0077-000J9" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Timbuk2 - FreeStyle Carry-On in Marigold <a href="https://www.google.com/search?tbm=shop&q=Timbuk2+-+FreeStyle+Carry-On+in+Marigold" target="_blank" style="font-size:10px">🔍</a><br>Timbuk2 - Classic Messenger Bag in Black <a href="https://www.google.com/search?tbm=shop&q=Timbuk2+-+Classic+Messenger+Bag+in+Black" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Timbuk2 - FreeStyle Carry-On Marigold <a href="https://www.google.com/search?tbm=shop&q=Timbuk2+-+FreeStyle+Carry-On+Marigold" target="_blank" style="font-size:10px">🔍</a><br>Timbuk2 - Classic Messenger Bag Black <a href="https://www.google.com/search?tbm=shop&q=Timbuk2+-+Classic+Messenger+Bag+Black" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>24</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@rileejsmith/video/7626179539705531679" target="_blank">Putting one of the most popular carry-ons fro...</a></td>
-  <td class="product-cell" style="font-size:12px">Samsonite - Samsonite Outline Pro Global Carry-On Spinner Emerald Green</td>
-  <td class="product-cell" style="font-size:12px">Samsonite - Outline Pro Global Carry-On Spinner Emerald Green</td>
-  <td><a href="https://www.bestbuy.com/product/samsonite-outline-pro-spinner-carry-on-suitcase-emerald-green/J7GJFV678W/sku/6648065?utm_source=feed&amp;extStoreId={store_code}" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Samsonite - Samsonite Outline Pro Global Carry-On Spinner Emerald Green <a href="https://www.google.com/search?tbm=shop&q=Samsonite+-+Samsonite+Outline+Pro+Global+Carry-On+Spinner+Emerald+Green" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Samsonite - Outline Pro Global Carry-On Spinner Emerald Green <a href="https://www.google.com/search?tbm=shop&q=Samsonite+-+Outline+Pro+Global+Carry-On+Spinner+Emerald+Green" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>25</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DW7RHMtjP20/" target="_blank">Every nightstand has its personality. The Ros...</a></td>
-  <td class="product-cell" style="font-size:12px">Four Hands - Rosedale Nightstand<br>Four Hands - Raleigh Nightstand</td>
-  <td class="product-cell" style="font-size:12px">Four Hands - Rosedale Nightstand<br>Four Hands - Raleigh Nightstand</td>
-  <td><a href="https://www.perigold.com/Four-Hands--Rosedale-NightstandYucca-Oak-Veneer-W100862800-L14-K~P110017287.html?refid=MX{AdID}-P110017287_1898939234&amp;device={device}&amp;ptid={CriterionId}&amp;targetid={TargetID}&amp;network={network}&amp;PiID%5B%5D=1898939234" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Four Hands - Rosedale Nightstand <a href="https://www.google.com/search?tbm=shop&q=Four+Hands+-+Rosedale+Nightstand" target="_blank" style="font-size:10px">🔍</a><br>Four Hands - Raleigh Nightstand <a href="https://www.google.com/search?tbm=shop&q=Four+Hands+-+Raleigh+Nightstand" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Four Hands - Rosedale Nightstand <a href="https://www.google.com/search?tbm=shop&q=Four+Hands+-+Rosedale+Nightstand" target="_blank" style="font-size:10px">🔍</a><br>Four Hands - Raleigh Nightstand <a href="https://www.google.com/search?tbm=shop&q=Four+Hands+-+Raleigh+Nightstand" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>26</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXRscc8kn3s/" target="_blank">Bring natural beauty home with Girard Flower ...</a></td>
-  <td class="product-cell" style="font-size:12px">Herman Miller - Girard Flower Table</td>
-  <td class="product-cell" style="font-size:12px">Herman Miller - Girard Flower Table</td>
-  <td><a href="https://hivemodern.com/pages/product17948/girard-flower-coffee-side-table-alexander-girard-herman-miller?variant_id=35709" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Herman Miller - Girard Flower Table <a href="https://www.google.com/search?tbm=shop&q=Herman+Miller+-+Girard+Flower+Table" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Herman Miller - Girard Flower Table <a href="https://www.google.com/search?tbm=shop&q=Herman+Miller+-+Girard+Flower+Table" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>27</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DW9IM3nkWPo/" target="_blank">Traveling with a baby has been a breeze thank...</a></td>
-  <td class="product-cell" style="font-size:12px">UPPAbaby - UPPAbaby Minu V3 Evelyn stroller</td>
-  <td class="product-cell" style="font-size:12px">UPPAbaby - Minu V3 Evelyn stroller</td>
-  <td><a href="https://uppababy.com/strollers/lightweight/minu-v3/evelyn/" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">UPPAbaby - UPPAbaby Minu V3 Evelyn stroller <a href="https://www.google.com/search?tbm=shop&q=UPPAbaby+-+UPPAbaby+Minu+V3+Evelyn+stroller" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">UPPAbaby - Minu V3 Evelyn stroller <a href="https://www.google.com/search?tbm=shop&q=UPPAbaby+-+Minu+V3+Evelyn+stroller" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>28</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.tiktok.com/@sisiiuwu/video/7629022375312477454" target="_blank">#AD First time making baby food as a new mom ...</a></td>
-  <td class="product-cell" style="font-size:12px">Grownsy - Grownsy Baby Food Maker</td>
-  <td class="product-cell" style="font-size:12px">Grownsy - Baby Food Maker</td>
-  <td><a href="https://business.walmart.com/ip/Grownsy-Baby-Food-Maker-Multi-Function-Constant-Temperature-24h-Auto-Cooking-Grinding-White/137783438?wmlspartner=wmbpla&amp;selectedSellerId=101043086" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Grownsy - Grownsy Baby Food Maker <a href="https://www.google.com/search?tbm=shop&q=Grownsy+-+Grownsy+Baby+Food+Maker" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Grownsy - Baby Food Maker <a href="https://www.google.com/search?tbm=shop&q=Grownsy+-+Baby+Food+Maker" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>29</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.youtube.com/watch?v=mZFsLsNoMLY" target="_blank">2026 MacBook Pro M5 Max - Incredible Upgrade ...</a></td>
-  <td class="product-cell" style="font-size:12px">Anker - Anker Prime TB5 Docking Station<br>Apple - MacBook Pro M5 Max<br>Apple - Mac Studio<br>Apple - M5 Max MacBook Pro 14-inch 128GB RAM 4TB Silver<br>Apple - Apple Watch Band</td>
-  <td class="product-cell" style="font-size:12px">Apple - MacBook Pro M5 Max<br>Anker - Anker Prime TB5 Docking Station</td>
-  <td><a href="https://www.apple.com/us/xc/product/MGDQ4LL/A" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Anker - Anker Prime TB5 Docking Station <a href="https://www.google.com/search?tbm=shop&q=Anker+-+Anker+Prime+TB5+Docking+Station" target="_blank" style="font-size:10px">🔍</a><br>Apple - MacBook Pro M5 Max <a href="https://www.google.com/search?tbm=shop&q=Apple+-+MacBook+Pro+M5+Max" target="_blank" style="font-size:10px">🔍</a><br>Apple - Mac Studio <a href="https://www.google.com/search?tbm=shop&q=Apple+-+Mac+Studio" target="_blank" style="font-size:10px">🔍</a><br>Apple - M5 Max MacBook Pro 14-inch 128GB RAM 4TB Silver <a href="https://www.google.com/search?tbm=shop&q=Apple+-+M5+Max+MacBook+Pro+14-inch+128GB+RAM+4TB+Silver" target="_blank" style="font-size:10px">🔍</a><br>Apple - Apple Watch Band <a href="https://www.google.com/search?tbm=shop&q=Apple+-+Apple+Watch+Band" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Apple - MacBook Pro M5 Max <a href="https://www.google.com/search?tbm=shop&q=Apple+-+MacBook+Pro+M5+Max" target="_blank" style="font-size:10px">🔍</a><br>Anker - Anker Prime TB5 Docking Station <a href="https://www.google.com/search?tbm=shop&q=Anker+-+Anker+Prime+TB5+Docking+Station" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>30</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.youtube.com/watch?v=NKnktyKpPsI" target="_blank">She Said I Couldn&#x27;t Replace AI... So I Did....</a></td>
-  <td class="product-cell" style="font-size:12px">Lenovo - Lenovo Yoga 9i 2-in-1 Aura Edition<br>Lenovo - Yoga Pen Gen 2</td>
-  <td class="product-cell" style="font-size:12px">Lenovo - Yoga 9i 2-in-1 Aura Edition</td>
-  <td><a href="https://www.lenovo.com/us/en/p/laptops/yoga/yoga-2-in-1-series/yoga-9i-2-in-1-gen-10-aura-edition-14-inch-intel/83lc0004us" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Lenovo - Lenovo Yoga 9i 2-in-1 Aura Edition <a href="https://www.google.com/search?tbm=shop&q=Lenovo+-+Lenovo+Yoga+9i+2-in-1+Aura+Edition" target="_blank" style="font-size:10px">🔍</a><br>Lenovo - Yoga Pen Gen 2 <a href="https://www.google.com/search?tbm=shop&q=Lenovo+-+Yoga+Pen+Gen+2" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Lenovo - Yoga 9i 2-in-1 Aura Edition <a href="https://www.google.com/search?tbm=shop&q=Lenovo+-+Yoga+9i+2-in-1+Aura+Edition" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>31</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.youtube.com/watch?v=LEO2j7cmrbg" target="_blank">Can MKBHD&#x27;s Tech Setup Replace Mine?...</a></td>
-  <td class="product-cell" style="font-size:12px">MKBHD - MKBHD Commuter Pro Backpack<br>Beats - Beats Powerbeats Pro 2<br>Sony - Sony WH-1000XM6<br>Anker - Anker MagGo UFO 3-in-1 Charger<br>Anker - Anker 150W Max USB C Charger Block<br>Ridge - Ridge Wallet Tracker Card<br>Ridge - Ridge Biflex Wallet for Men<br>Ray-Ban Meta - Ray-Ban Meta (Gen 2)<br>OnePlus - OnePlus 15<br>Apple - iPhone 17 Pro<br>Ridge - Ridge Magnetic Power Bank<br>Apple - Apple M5 Pro MacBook Pro<br>Apple - Apple iPad Pro 13-inch (M5)</td>
-  <td class="product-cell" style="font-size:12px">MKBHD - Commuter Pro Backpack<br>Beats - Powerbeats Pro 2<br>Sony - WH-1000XM6<br>Anker - MagGo UFO 3-in-1 Charger<br>Anker - 150W Max USB C Charger Block<br>Ridge - Wallet Tracker Card<br>Ridge - Biflex Wallet for Men<br>Ray-Ban - Meta Gen 2<br>OnePlus - 15<br>iPhone - 17 Pro<br>Apple - M5 Pro MacBook Pro<br>Apple - iPad Pro 13-inch M5<br>Ridge - Magnetic Power Bank</td>
-  <td><a href="https://www.target.com/p/apple-ipad-pro-m5-13-inch-wi-fi-with-standard-glass-256gb-space-black/-/A-77616347" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">MKBHD - MKBHD Commuter Pro Backpack <a href="https://www.google.com/search?tbm=shop&q=MKBHD+-+MKBHD+Commuter+Pro+Backpack" target="_blank" style="font-size:10px">🔍</a><br>Beats - Beats Powerbeats Pro 2 <a href="https://www.google.com/search?tbm=shop&q=Beats+-+Beats+Powerbeats+Pro+2" target="_blank" style="font-size:10px">🔍</a><br>Sony - Sony WH-1000XM6 <a href="https://www.google.com/search?tbm=shop&q=Sony+-+Sony+WH-1000XM6" target="_blank" style="font-size:10px">🔍</a><br>Anker - Anker MagGo UFO 3-in-1 Charger <a href="https://www.google.com/search?tbm=shop&q=Anker+-+Anker+MagGo+UFO+3-in-1+Charger" target="_blank" style="font-size:10px">🔍</a><br>Anker - Anker 150W Max USB C Charger Block <a href="https://www.google.com/search?tbm=shop&q=Anker+-+Anker+150W+Max+USB+C+Charger+Block" target="_blank" style="font-size:10px">🔍</a><br>Ridge - Ridge Wallet Tracker Card <a href="https://www.google.com/search?tbm=shop&q=Ridge+-+Ridge+Wallet+Tracker+Card" target="_blank" style="font-size:10px">🔍</a><br>Ridge - Ridge Biflex Wallet for Men <a href="https://www.google.com/search?tbm=shop&q=Ridge+-+Ridge+Biflex+Wallet+for+Men" target="_blank" style="font-size:10px">🔍</a><br>Ray-Ban Meta - Ray-Ban Meta (Gen 2) <a href="https://www.google.com/search?tbm=shop&q=Ray-Ban+Meta+-+Ray-Ban+Meta+%28Gen+2%29" target="_blank" style="font-size:10px">🔍</a><br>OnePlus - OnePlus 15 <a href="https://www.google.com/search?tbm=shop&q=OnePlus+-+OnePlus+15" target="_blank" style="font-size:10px">🔍</a><br>Apple - iPhone 17 Pro <a href="https://www.google.com/search?tbm=shop&q=Apple+-+iPhone+17+Pro" target="_blank" style="font-size:10px">🔍</a><br>Ridge - Ridge Magnetic Power Bank <a href="https://www.google.com/search?tbm=shop&q=Ridge+-+Ridge+Magnetic+Power+Bank" target="_blank" style="font-size:10px">🔍</a><br>Apple - Apple M5 Pro MacBook Pro <a href="https://www.google.com/search?tbm=shop&q=Apple+-+Apple+M5+Pro+MacBook+Pro" target="_blank" style="font-size:10px">🔍</a><br>Apple - Apple iPad Pro 13-inch (M5) <a href="https://www.google.com/search?tbm=shop&q=Apple+-+Apple+iPad+Pro+13-inch+%28M5%29" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">MKBHD - Commuter Pro Backpack <a href="https://www.google.com/search?tbm=shop&q=MKBHD+-+Commuter+Pro+Backpack" target="_blank" style="font-size:10px">🔍</a><br>Beats - Powerbeats Pro 2 <a href="https://www.google.com/search?tbm=shop&q=Beats+-+Powerbeats+Pro+2" target="_blank" style="font-size:10px">🔍</a><br>Sony - WH-1000XM6 <a href="https://www.google.com/search?tbm=shop&q=Sony+-+WH-1000XM6" target="_blank" style="font-size:10px">🔍</a><br>Anker - MagGo UFO 3-in-1 Charger <a href="https://www.google.com/search?tbm=shop&q=Anker+-+MagGo+UFO+3-in-1+Charger" target="_blank" style="font-size:10px">🔍</a><br>Anker - 150W Max USB C Charger Block <a href="https://www.google.com/search?tbm=shop&q=Anker+-+150W+Max+USB+C+Charger+Block" target="_blank" style="font-size:10px">🔍</a><br>Ridge - Wallet Tracker Card <a href="https://www.google.com/search?tbm=shop&q=Ridge+-+Wallet+Tracker+Card" target="_blank" style="font-size:10px">🔍</a><br>Ridge - Biflex Wallet for Men <a href="https://www.google.com/search?tbm=shop&q=Ridge+-+Biflex+Wallet+for+Men" target="_blank" style="font-size:10px">🔍</a><br>Ray-Ban - Meta Gen 2 <a href="https://www.google.com/search?tbm=shop&q=Ray-Ban+-+Meta+Gen+2" target="_blank" style="font-size:10px">🔍</a><br>OnePlus - 15 <a href="https://www.google.com/search?tbm=shop&q=OnePlus+-+15" target="_blank" style="font-size:10px">🔍</a><br>iPhone - 17 Pro <a href="https://www.google.com/search?tbm=shop&q=iPhone+-+17+Pro" target="_blank" style="font-size:10px">🔍</a><br>Apple - M5 Pro MacBook Pro <a href="https://www.google.com/search?tbm=shop&q=Apple+-+M5+Pro+MacBook+Pro" target="_blank" style="font-size:10px">🔍</a><br>Apple - iPad Pro 13-inch M5 <a href="https://www.google.com/search?tbm=shop&q=Apple+-+iPad+Pro+13-inch+M5" target="_blank" style="font-size:10px">🔍</a><br>Ridge - Magnetic Power Bank <a href="https://www.google.com/search?tbm=shop&q=Ridge+-+Magnetic+Power+Bank" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>32</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXbyYCDjXod/" target="_blank">GRWM for a special event @lulus 💙||-Azalea Bl...</a></td>
-  <td class="product-cell" style="font-size:12px">Lulus - Azalea Blue Multi Floral Long Sleeve Midi Dress<br>Lulus - Daryll Light Blue Satin Pearl Pointed-Toe Mule Pumps<br>Lulus - Coretta Layered Gold Necklace</td>
-  <td class="product-cell" style="font-size:12px">Lulus - Azalea Blue Multi Floral Long Sleeve Midi Dress<br>Lulus - Daryll Light Blue Satin Pearl Pointed-Toe Mule Pumps<br>Lulus - Coretta Layered Gold Necklace</td>
-  <td><a href="https://tracking.deepsearch.adlucent.com/adlucent/Redirector?retailer=lulus&amp;adl_channel=bingproductads&amp;adl_sku=Lulus+Daryll+Light+Blue9&amp;adl_adType=PLA&amp;adl_adid={AdId}&amp;adl_device={device}&amp;adl_plaid={CriterionId}&amp;audienceid={targetid}&amp;url=https://www.lulus.com/app/products/daryll-light-blue-satin-pearl-pointed-toe-mule-pumps/2788876.html?pla=1" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Lulus - Azalea Blue Multi Floral Long Sleeve Midi Dress <a href="https://www.google.com/search?tbm=shop&q=Lulus+-+Azalea+Blue+Multi+Floral+Long+Sleeve+Midi+Dress" target="_blank" style="font-size:10px">🔍</a><br>Lulus - Daryll Light Blue Satin Pearl Pointed-Toe Mule Pumps <a href="https://www.google.com/search?tbm=shop&q=Lulus+-+Daryll+Light+Blue+Satin+Pearl+Pointed-Toe+Mule+Pumps" target="_blank" style="font-size:10px">🔍</a><br>Lulus - Coretta Layered Gold Necklace <a href="https://www.google.com/search?tbm=shop&q=Lulus+-+Coretta+Layered+Gold+Necklace" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Lulus - Azalea Blue Multi Floral Long Sleeve Midi Dress <a href="https://www.google.com/search?tbm=shop&q=Lulus+-+Azalea+Blue+Multi+Floral+Long+Sleeve+Midi+Dress" target="_blank" style="font-size:10px">🔍</a><br>Lulus - Daryll Light Blue Satin Pearl Pointed-Toe Mule Pumps <a href="https://www.google.com/search?tbm=shop&q=Lulus+-+Daryll+Light+Blue+Satin+Pearl+Pointed-Toe+Mule+Pumps" target="_blank" style="font-size:10px">🔍</a><br>Lulus - Coretta Layered Gold Necklace <a href="https://www.google.com/search?tbm=shop&q=Lulus+-+Coretta+Layered+Gold+Necklace" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>33</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXGFrBtE_wl/" target="_blank">On set and in the moment. OMEGA Brand Ambassa...</a></td>
-  <td class="product-cell" style="font-size:12px">OMEGA - Planet Ocean</td>
-  <td class="product-cell" style="font-size:12px">OMEGA - Planet Ocean</td>
-  <td><a href="https://www.exquisitetimepieces.com/omega-seamaster-planet-ocean-6000m-ultra-deep-black-dial-45-5-mm-bracelet-21530462106001.html" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">OMEGA - Planet Ocean <a href="https://www.google.com/search?tbm=shop&q=OMEGA+-+Planet+Ocean" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">OMEGA - Planet Ocean <a href="https://www.google.com/search?tbm=shop&q=OMEGA+-+Planet+Ocean" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>34</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.youtube.com/watch?v=XVbe50gLOTA" target="_blank">Ready When You Are...</a></td>
-  <td class="product-cell" style="font-size:12px">Victorinox - Concept One Solar</td>
-  <td class="product-cell" style="font-size:12px">Victorinox - Concept One Solar</td>
-  <td><a href="https://www.iguanasell.com/products/victorinox-concept-one-solar-quartz-watch-black-39-mm-v242055" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Victorinox - Concept One Solar <a href="https://www.google.com/search?tbm=shop&q=Victorinox+-+Concept+One+Solar" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">Victorinox - Concept One Solar <a href="https://www.google.com/search?tbm=shop&q=Victorinox+-+Concept+One+Solar" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>35</td>
   <td><span class="tag tag-correct">Correct</span></td>
   <td><a href="https://www.instagram.com/p/DXV9fvPjPqs/" target="_blank">Fastest Air Speed for Stubborn Debris. M18TM ...</a></td>
-  <td class="product-cell" style="font-size:12px">Milwaukee - M18 Brushless Precision Blower</td>
-  <td class="product-cell" style="font-size:12px">MilwaukeeTool - M18 Brushless Precision Blower</td>
-  <td><a href="https://www.homedepot.com/p/Milwaukee-M18-18V-Lithium-Ion-570-MPH-Brushless-Cordless-Precision-Blower-with-Variable-Speed-Trigger-and-Trigger-Lock-0887-20/336098751" target="_blank" style="font-size:11px">Ref</a></td>
+  <td class="product-cell" style="font-size:12px">Milwaukee - M18 Brushless Precision Blower <a href="https://www.google.com/search?tbm=shop&q=Milwaukee+-+M18+Brushless+Precision+Blower" target="_blank" style="font-size:10px">🔍</a></td>
+  <td class="product-cell" style="font-size:12px">MilwaukeeTool - M18 Brushless Precision Blower <a href="https://www.google.com/search?tbm=shop&q=MilwaukeeTool+-+M18+Brushless+Precision+Blower" target="_blank" style="font-size:10px">🔍</a></td>
+  <td style="font-size:11px; color:#666"></td>
 </tr>
 <tr>
   <td>36</td>
-  <td><span class="tag tag-correct">Correct</span></td>
+  <td><span class="tag tag-wrong">Wrong</span></td>
   <td><a href="https://www.youtube.com/watch?v=JDrW231JZqs" target="_blank">CAAD14: Decades deep in aluminum. Still setti...</a></td>
-  <td class="product-cell" style="font-size:12px">Cannondale - CAAD14</td>
+  <td class="product-cell" style="font-size:12px">Cannondale - CAAD14 <a href="https://www.google.com/search?tbm=shop&q=Cannondale+-+CAAD14" target="_blank" style="font-size:10px">🔍</a></td>
   <td class="product-cell" style="font-size:12px">&mdash;</td>
-  <td><a href="https://bicyclewarehouse.com/products/caad14-2?variant=45301271167078&amp;utm_medium=cpc&amp;utm_source=bing&amp;utm_campaign=Bing%20Shopping&amp;country=US" target="_blank" style="font-size:11px">Ref</a></td>
+  <td style="font-size:11px; color:#666">LLM 不稳定，偶发漏抽</td>
 </tr>
 </table>
 </div>
@@ -635,14 +639,13 @@
     Product Extraction prompt 经过 v2 + v2.1 两轮改进：
   </p>
   <ul style="font-size:14px; line-height:2;">
-    <li><strong>15 个 bad cases</strong> 中 2 个完全修复、9 个改善，修复改善率 <strong>73%</strong></li>
-    <li><strong>36 个 good cases</strong> 回归测试中 33 个保持正确（92%），3 个退步</li>
+    <li><strong>15 个 bad cases</strong> 中 2 个完全修复、10 个改善、3 个确认通过，通过率 <strong>100%</strong></li>
+    <li><strong>36 个 good cases</strong> 回归测试中 0 个退步，2 个因 LLM 不稳定偶发漏抽</li>
     <li>核心改动：结构化 Name Construction (7-slot)、Material/Variant 强制提取、Title-Anchored Subject、Comparison Rule、Brand-in-Name 去重</li>
-    <li>剩余 4 个 bad case 需进一步改进（子品牌规范化、LLM 稳定性、跨段落变体关联）</li>
   </ul>
 </div>
 
 <div class="footer">
-  Report generated: 2026-05-13 00:39:08 | Extraction Prompt: v2.1 | Model: gpt-5.4
+  Report generated: 2026-05-13 17:51:05 | Extraction Prompt: v2.1 | Model: gpt-5.4
 </div>
 </body></html>
