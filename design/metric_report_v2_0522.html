@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">
-<title>Metric Report v2 — 2026-05-22 19:04</title>
+<title>Metric Report v2 — 2026-05-22 19:09</title>
 <style>
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 20px; font-size: 13px; }
 h1 { color: #333; }
@@ -35,16 +35,6 @@ a { color: #1976d2; text-decoration: none; }
 a:hover { text-decoration: underline; }
 td.desc { max-width: 300px; word-break: break-word; }
 td.reason { max-width: 350px; word-break: break-word; }
-td.chk { text-align: center; cursor: pointer; user-select: none; min-width: 50px; }
-td.chk:hover { background: #e3f2fd; }
-td.chk input { pointer-events: none; width: 18px; height: 18px; }
-tr.checked-row { background: #e8f5e9 !important; }
-.toolbar { margin-bottom: 15px; }
-.toolbar button { padding: 6px 16px; margin-right: 8px; border: 1px solid #4a90d9; background: #4a90d9; color: white; border-radius: 4px; cursor: pointer; font-size: 13px; }
-.toolbar button:hover { background: #357abd; }
-.toolbar button.secondary { background: white; color: #4a90d9; }
-.toolbar button.secondary:hover { background: #e3f2fd; }
-.section-info { color: #666; margin-bottom: 10px; font-size: 12px; }
 .score-bar { display: flex; gap: 8px; margin: 10px 0; }
 .score-bar .bar-item { padding: 4px 12px; border-radius: 4px; font-size: 12px; }
 </style>
@@ -67,7 +57,7 @@ tr.checked-row { background: #e8f5e9 !important; }
 </div>
 
 <h1>S09 Verify — Metric Report v2</h1>
-<p style="color:#888;">Generated: 2026-05-22 19:04:16 | Dataset: 424 cases (353 valid, 71 invalid)</p>
+<p style="color:#888;">Generated: 2026-05-22 19:09:30 | Dataset: 424 cases (353 valid, 71 invalid)</p>
 
 <div class="metrics-grid">
 <div class="metric-card"><div class="value warn">79.2%</div><div class="label">Accuracy</div></div>
@@ -94,11 +84,6 @@ tr.checked-row { background: #e8f5e9 !important; }
 </div>
 
 <h2>FP Cases (12) — GT=invalid, Model≥3</h2>
-<p class="section-info">模型认为 valid 但 GT 标为 invalid。勾选 = GT 应该改成 true（模型对了）</p>
-<div class="toolbar">
-<button onclick="exportChecked('fp')">导出 FP 勾选编号</button>
-<span id="fpCount" style="margin-left:10px; font-weight:bold;">已选: 0</span>
-</div>
 <table class="results" id="fpTable">
 <tr>
 <th>#</th><th>Score</th>
@@ -106,100 +91,82 @@ tr.checked-row { background: #e8f5e9 !important; }
 <th>Ext Brand</th><th>Ext Product</th>
 <th>Cat Brand</th><th>Cat Title</th>
 <th>Post</th><th>Product</th><th>Reason</th>
-<th>改GT?</th>
 </tr>
 <tr data-idx="36" data-type="fp">
 <td>36</td><td class="score score-high">5</td>
 <td class="desc">YOUR INFINITE BEAUTY||||Make Ethereal EyesTM The Original yours and create endless looks to reflect your infinite beauty.||||Shop now at makeupbymario.com and @sephora.</td><td class="desc"></td>
 <td></td><td>Ethereal EyesTM The Original</td><td>Makeup By Mario</td><td class="desc">Ethereal Eyes Eyeshadow Palette: Moonlight</td>
 <td><a href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank">link</a></td><td><a href="https://www.makeupbymario.com/products/ethereal-eyes-eyeshadow-palette-moonlight-copy?variant=41785633865793&amp;country=US&amp;currency=USD&amp;glcountry=US" target="_blank">link</a></td><td class="reason">Post explicitly promotes Ethereal Eyes and catalog product is Makeup By Mario Ethereal Eyes Eyeshadow Palette in the named Moonlight variant.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="54" data-type="fp">
 <td>54</td><td class="score score-mid">3</td>
 <td class="desc">#hair I will never not wear my hair like this. I love it! I don’t care if it looks 80’s, I love the 80’s hehe. I love Kendra hair products and they seem to be perfect for my hair. My hair can be oily for no reason and Kendra’s oil serum doesn’t disrupt it at all.</td><td class="desc"></td>
 <td>Kendra</td><td>Kendra’s oil serum</td><td>Kenra Professional</td><td class="desc">Kenra Professional Platinum Luxe Shine Oil</td>
 <td><a href="https://www.tiktok.com/@shoelover99/video/7632006386259430669" target="_blank">link</a></td><td><a href="https://www.ulta.com/p/platinum-luxe-shine-oil-pimprod2022403?sku=2574108&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200002721168" target="_blank">link</a></td><td class="reason">Brand and category align: post mentions Kenra oil serum generally, but no specific product line is named.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="74" data-type="fp">
 <td>74</td><td class="score score-high">4</td>
 <td class="desc">An in-hand look at the GTS3 7-wood Cameron Young added to his bag last week at @themasters. 👀</td><td class="desc"></td>
 <td>Titleist</td><td>GTS3 7-wood</td><td>Titleist</td><td class="desc">Titleist GT3 Fairway Wood, Right Hand, Men's</td>
 <td><a href="https://www.instagram.com/p/DXKgLP0AICb/" target="_blank">link</a></td><td><a href="https://www.dickssportinggoods.com/p/titleist-gt3-fairway-wood-24ttlmgt3tns1kblkfwy/24ttlmgt3tns1kblkfwy" target="_blank">link</a></td><td class="reason">Brand and GT3 fairway wood line match; post specifies the 7-wood variant, while catalog product is the generic GT3 fairway wood listing.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="87" data-type="fp">
 <td>87</td><td class="score score-high">4</td>
 <td class="desc">@haileesteinfeld in the boucle that started it all. Go behind the scenes of her most unexpected look: a custom gown crafted from the plush boucle fabric of our Calden Sectional. #AshleyLuxe</td><td class="desc"></td>
 <td>Ashley Luxe</td><td>Calden Sectional</td><td>Ashley Luxe</td><td class="desc">Ashley Luxe Calden Boucle 3-Piece Modular Sectional with Chaise, Oyster</td>
 <td><a href="https://www.tiktok.com/@ashleyofficial/video/7628645838117506317" target="_blank">link</a></td><td><a href="https://www.ashleyfurniture.com/p/calden_3-piece_sectional_with_chaise/73611S5.html?store_code={store_code}" target="_blank">link</a></td><td class="reason">Post explicitly names the Calden Sectional and boucle fabric; catalog matches brand and product line, with only leaf-level configuration/color details differing.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="95" data-type="fp">
 <td>95</td><td class="score score-high">4</td>
 <td class="desc">An in-hand look at the GTS3 7-wood Cameron Young added to his bag last week at @themasters. 👀</td><td class="desc"></td>
 <td></td><td>GTS3 7-wood</td><td>Titleist</td><td class="desc">Titleist GT3 Fairway Wood, Right Hand, Men's</td>
 <td><a href="https://www.instagram.com/p/DXKgLP0AICb/" target="_blank">link</a></td><td><a href="https://www.dickssportinggoods.com/p/titleist-gt3-fairway-wood-24ttlmgt3tns1kblkfwy/24ttlmgt3tns1kblkfwy" target="_blank">link</a></td><td class="reason">Brand and product line match (Titleist GT3 fairway wood); post specifies the 7-wood variant, while catalog item is generic/right-hand men's variant.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="143" data-type="fp">
 <td>143</td><td class="score score-high">4</td>
 <td class="desc">I have a bad feeling about this...</td><td class="desc">The Nothing 4a Pro has a problem nobody can see. Get an Unlimited Everything TELLO smartphone plan for just $25 a month!  https://tello.com/?utm_source=partner&amp;utm_medium=cpc&amp;utm_campaign=jre&...</td>
 <td>Nothing</td><td>Nothing Phone 4A Pro</td><td>Nothing</td><td class="desc">Nothing Phone 4a Pro (A069P) Global Model Dual Sim Unlocked - 5G 12GB+256GB / Silver</td>
 <td><a href="https://www.youtube.com/watch?v=iuuLBjIT4vo" target="_blank">link</a></td><td><a href="https://swiftronicsinc.com/products/nothing-phone-4a-pro-a069p-global-model-dual-sim-unlocked-5g?variant=53422608515438" target="_blank">link</a></td><td class="reason">Post explicitly features the Nothing Phone 4a Pro; catalog matches brand and product line/model. Only leaf-level variant details like storage/color differ or are unspecified in the post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="145" data-type="fp">
 <td>145</td><td class="score score-mid">3</td>
 <td class="desc">Why Samsung stopped making the Trifold after 3 months.. #carterpcs #tech #samsung #trifold</td><td class="desc"></td>
 <td>Samsung</td><td>Trifold</td><td>Samsung</td><td class="desc">Samsung Galaxy Z Trifold 16GB+512GB Crafted Black + 1-Year Warranty</td>
 <td><a href="https://www.tiktok.com/@carterpcs/video/7619533236309429534" target="_blank">link</a></td><td><a href="https://bludiode.com/en/phones-and-smartphones/samsung-galaxy-z-trifold-16gb512gb-crafted-black-30573/?RgExcludeLocationDetection&amp;SubmitCurrency=2&amp;id_currency=2" target="_blank">link</a></td><td class="reason">Post is about Samsung's Trifold generally; no specific model/variant is named, and catalog is a Samsung Galaxy Z Trifold variant.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="151" data-type="fp">
 <td>151</td><td class="score score-mid">3</td>
 <td class="desc">The internet is debating after a man shared photos claiming most people have been wearing Apple AirPods the wrong way. In his post, he shows the earbuds being placed in the ear and then slightly rotated so the stem angles more toward the face, saying it creates a tighter fit and improves the sound. The discussion blew up after someone asked Grok on X if the idea was actually correct. The Al responded that Apple's instructions do suggest inserting the AirPod and gently turning it until it sits comfortably in the ear, something many people may not realize. #facts #howto #educational</td><td class="desc"></td>
 <td>Apple</td><td>Apple AirPods</td><td>Apple</td><td class="desc">Apple - AirPods 4 - White</td>
 <td><a href="https://www.tiktok.com/@khalilslife/video/7618259326397844750" target="_blank">link</a></td><td><a href="https://www.bestbuy.com/product/apple-airpods-4-white/JJGCQ83JQ5/sku/10190062" target="_blank">link</a></td><td class="reason">Brand and category align (Apple AirPods earbuds), but the post mentions AirPods generically and does not specify the AirPods 4 model.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="198" data-type="fp">
 <td>198</td><td class="score score-mid">3</td>
 <td class="desc">Why This Designer Is Over the Eames Chair</td><td class="desc">Interior designer Ross Cassidy shares a hot take at the Round Top Antiques Fair–why he’s completely over the iconic Eames chair. Is it timeless or just overdone?||||#interiordesign #homedecor #antique...</td>
 <td>Eames</td><td>Eames chair</td><td>in stock</td><td class="desc">Eames Lounge Chair and Ottoman</td>
 <td><a href="https://www.youtube.com/watch?v=cA2Hkr3Iu14" target="_blank">link</a></td><td><a href="https://store.hermanmiller.com/living-room-furniture-lounge-chairs-ottomans/eames-lounge-chair-and-ottoman/100077567.html?lang=en_US" target="_blank">link</a></td><td class="reason">Post mentions an Eames chair generically as the subject, but does not specify the Eames Lounge Chair and Ottoman product line.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="218" data-type="fp">
 <td>218</td><td class="score score-mid">3</td>
 <td class="desc">Big models. Bigger impact.</td><td class="desc"></td>
 <td></td><td></td><td>anycubic</td><td class="desc">Print Faster Than Ever with Anycubic Resin 3D Printer Photon Mono M7</td>
 <td><a href="https://www.youtube.com/watch?v=VDpMd_i3Yxc" target="_blank">link</a></td><td><a href="https://store.anycubic.com/products/photon-mono-m7" target="_blank">link</a></td><td class="reason">Brand matches and category fits (Anycubic 3D printer), but the post title/description do not name a specific product line or model.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="219" data-type="fp">
 <td>219</td><td class="score score-high">4</td>
 <td class="desc">Week 1️⃣ of GTS: All systems go.</td><td class="desc">More than 50 players immediately added new GTS2, GTS3 and GTS4 models to the bag this week across the PGA TOUR, LPGA Tour and Korn Ferry Tour. At the @tchouopen, Titleist is the field’s most played dr...</td>
 <td>Titleist</td><td>GT4</td><td>titleist</td><td class="desc">Titleist Official GT4 Driver - 9° - Left Hand</td>
 <td><a href="https://www.instagram.com/p/DWZVY81ET-2/" target="_blank">link</a></td><td><a href="https://www.titleist.com/product/gt4-driver/669C%3ACA-LH%3ACBD-90D.html" target="_blank">link</a></td><td class="reason">Post explicitly mentions Titleist GTS4 models; catalog is Titleist GT4 Driver. Brand and product line largely align, but the post references GTS4 while catalog says GT4 and adds a specific loft/hand variant not stated in the post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="225" data-type="fp">
 <td>225</td><td class="score score-mid">3</td>
 <td class="desc">Glowy summer makeup that will stay on all day! ☀️ #summermakeup #glowymakeup  @@REFYRoll on primer  @L’Oréal Paris Glotion @Charlotte Tilbury foundation stick @Fenty Skin contour stick @Laura Mercier powder @Saie bronzer @tomfordbeauty blush &amp; eye pallet @Makeup By Mario eye pallet @NYX Professional</td><td class="desc"></td>
 <td>Fenty Skin</td><td>contour stick</td><td>fenty skin</td><td class="desc">Fenty Match Stix Matte Contour Skinstick 0.25 oz Truffle 04 Makeup 840026664011</td>
 <td><a href="https://www.tiktok.com/@tabithaswatosh/video/7624533196968971550" target="_blank">link</a></td><td><a href="http://www.jomashop.com/fenty-match-stix-matte-contour-skinstick-0-25-oz-truffle-04-makeup-840026664011.html" target="_blank">link</a></td><td class="reason">Post mentions Fenty Skin contour stick, but no specific product line or shade; brand and category align.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 </table>
 
 <h2>FN Cases (76) — GT=valid, Model&lt;3</h2>
-<p class="section-info">模型认为 invalid 但 GT 标为 valid。勾选 = GT 应该改成 false（模型对了）</p>
-<div class="toolbar">
-<button onclick="exportChecked('fn')">导出 FN 勾选编号</button>
-<span id="fnCount" style="margin-left:10px; font-weight:bold;">已选: 0</span>
-</div>
 <table class="results" id="fnTable">
 <tr>
 <th>#</th><th>Score</th>
@@ -207,590 +174,462 @@ tr.checked-row { background: #e8f5e9 !important; }
 <th>Ext Brand</th><th>Ext Product</th>
 <th>Cat Brand</th><th>Cat Title</th>
 <th>Post</th><th>Product</th><th>Reason</th>
-<th>改GT?</th>
 </tr>
 <tr data-idx="14" data-type="fn">
 <td>14</td><td class="score score-mid">2</td>
 <td class="desc">now THISSSS is a LIP COMBO! 🧡😩 @Bobbi Brown lip pencil - brownstone @M·A·C Cosmetics peachstock @maccosmetics lipglass cushion- Yes! @maccosmetics lip glass</td><td class="desc"></td>
 <td>Bobbi Brown</td><td>lip pencil - brownstone</td><td>Bobbi Brown</td><td class="desc">Bobbi Brown Lip Liner Pencil, Rose (7) - 0.04 oz</td>
 <td><a href="https://www.tiktok.com/@leilanigreen/video/7626463602853055757" target="_blank">link</a></td><td><a href="https://www.bobbibrowncosmetics.com/product/2343/32757/makeup/lips/lip-liner/lip-liner-pencil#/shade/Rose_%287)" target="_blank">link</a></td><td class="reason">Brand and category match, but the post specifies Bobbi Brown lip pencil in Brownstone while the catalog product is shade Rose (7).</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="17" data-type="fn">
 <td>17</td><td class="score score-mid">2</td>
 <td class="desc">Tati Friday Night Live - Episode 74</td><td class="desc">click “more” to expand Description for Products and Links||💕 xo's Tati ||||||📌 *▸20% OFF DETAILS By TATI MAKEUP BRUSHES* ||(First Edition Still available)||https://detailsbytati.com||||*▸ PRODUCTS MEN...</td>
 <td>Catrice</td><td>Catrice Peptide Glossy Balm // Life in Rose</td><td>Www.Catricecosmetics.Com</td><td class="desc">Peptide Bliss Glossy Lip Balm</td>
 <td><a href="https://www.youtube.com/watch?v=ceSWdc_wMkM" target="_blank">link</a></td><td><a href="https://www.catricecosmetics.com/products/peptide-bliss-glossy-lip-balm?variant=48285574168827" target="_blank">link</a></td><td class="reason">Primary-intent cap applies: the balm is only listed in the description, not the main focus of the post. Also variant differs: post says Life in Rose, catalog does not confirm that shade.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="21" data-type="fn">
 <td>21</td><td class="score score-mid">2</td>
 <td class="desc">Is the NEW @Diorbeauty summer bronzer and highlighter Jeffree Star Approved?! 👀 #beautyreview #jeffreestar #diorbeauty #sephora #makeup   Shades: 032 Pink Bronze &amp; 003 Sun-Kissed glow illuminator</td><td class="desc"></td>
 <td>Diorbeauty</td><td>summer bronzer and highlighter</td><td>Dior</td><td class="desc">Dior Makeup | Dior Forever Nude Bronze Glow | Color: Gold/Pink | Size: Os</td>
 <td><a href="https://www.tiktok.com/@jeffreestar/video/7625823989708999949" target="_blank">link</a></td><td><a href="https://poshmark.com/listing/Dior-Forever-Nude-Bronze-Glow--69bf2538850012e468735882" target="_blank">link</a></td><td class="reason">Brand matches and category is close, but the post names specific Dior summer bronzer/highlighter shades while the catalog listing is a generic Dior Forever Nude Bronze Glow listing and also violates the post’s implied normal retail context with an explicit $999 price.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="24" data-type="fn">
 <td>24</td><td class="score score-mid">2</td>
 <td class="desc">Love Story Star Sarah Pidgeon's Springtime Makeup Routine | Beauty Secrets | Vogue</td><td class="desc">&quot;Love Story&quot; star Sarah Pidgeon shows us her fun springtime beauty routine. While she gets ready, Sarah, who portrays Carolyn Bessette in FX's &quot;Love Story,&quot; talks about the process...</td>
 <td>Make Up For Ever</td><td>HD Skin Perfecting Pressed Finishing Powder</td><td>Make Up For Ever</td><td class="desc">HD Skin Perfecting Pressed Finishing Powder - Mini - Pressed Powder: Ultra-blurring &amp; Smoothing - Translucent - For fair to light tan skin tones MAKE UP FOREVER</td>
 <td><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">link</a></td><td><a href="https://www.makeupforever.com/us/en/face/powder/hd-skin-perfecting-pressed-finishing-powder---mini-MI000039551.html?color=0.1&amp;size=4.5g" target="_blank">link</a></td><td class="reason">Post names Make Up For Ever HD Pressed Powder, but catalog item is HD Skin Perfecting Pressed Finishing Powder Mini, a different product line/size-specific item.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="49" data-type="fn">
 <td>49</td><td class="score score-mid">2</td>
 <td class="desc">✨ VOYEURISTIC GLOW ✨ @raincornelius wears Venus in Fleurs Luxe Quad: Voyeuristic Vixen for a radiant bronze eye with luminous shimmer and warm matte depth. Finished with Dark Star Mascara. The Sephora Savings Event is live until 4/20. 💫 Get yours now @sephora</td><td class="desc"></td>
 <td></td><td>Dark Star Mascara</td><td>PAT McGRATH LABS</td><td class="desc">PAT McGRATH LABS Dark Star Mascara in Xtreme Black at Nordstrom, Size 0.16 Oz</td>
 <td><a href="https://www.instagram.com/p/DXHjXGlp0ba/" target="_blank">link</a></td><td><a href="https://www.nordstrom.com/s/pat-mcgrath-labs-dark-star-mascara/7691713?color=XTREME+BLACK" target="_blank">link</a></td><td class="reason">Exact product is mentioned, but the post’s primary focus is the Venus in Fleurs Luxe Quad; Dark Star Mascara is only a finishing mention, so score is capped at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="53" data-type="fn">
 <td>53</td><td class="score score-mid">2</td>
 <td class="desc">Love Story Star Sarah Pidgeon's Springtime Makeup Routine | Beauty Secrets | Vogue</td><td class="desc">&quot;Love Story&quot; star Sarah Pidgeon shows us her fun springtime beauty routine. While she gets ready, Sarah, who portrays Carolyn Bessette in FX's &quot;Love Story,&quot; talks about the process...</td>
 <td>Crown Affair</td><td>The Hair Oil</td><td>Crown Affair</td><td class="desc">Crown Affair The Hair Oil 1 oz/ 30 mL</td>
 <td><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">link</a></td><td><a href="https://www.sephora.com/product/crown-affair-the-hair-oil-P480590?country_switch=us&amp;lang=en?skuId=2559169" target="_blank">link</a></td><td class="reason">Post lists Crown Affair The Oil Hair Oil only in the shopping links/description, not as the primary subject; otherwise product line aligns.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="59" data-type="fn">
 <td>59</td><td class="score score-mid">2</td>
 <td class="desc">@K18 Hair is always a part of my routine, especially now when my hair starts to look brassy - i’m loving the new TripleBright purple shampoo for bright, healthy hair 💜 available @sephorak1#k18results1#k18partner1#k18hair</td><td class="desc"></td>
 <td>K18</td><td>TripleBright purple shampoo</td><td>K18</td><td class="desc">K18 TripleBright Oxidation Defense Purple Shampoo 15 oz</td>
 <td><a href="https://www.tiktok.com/@emelywithane_/video/7632070647069379870" target="_blank">link</a></td><td><a href="https://www.target.com/p/k18-triplebright-oxidation-defense-purple-shampoo-15-oz/-/A-1011088100" target="_blank">link</a></td><td class="reason">Exact K18 TripleBright purple shampoo line matches, but post explicitly says available at Sephora while catalog offer is Target.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="60" data-type="fn">
 <td>60</td><td class="score score-mid">2</td>
 <td class="desc">Will you go for straight or curly hair? What's your fav? I would never change my curly hair, but I can live without styling it a few times a month to feel different! I straightened my hair with Steamline Pro by @wavytalkofficial and styled my curly side with Turblow Pro. Steamline Pro hydrates with steam in one pass and is one of the best hair tools I've ever tried. Def my favorite! 🔥 #wavytalkhair #wavytalkcoachella #wavytalksteamlinepro #wavytalk #spotlighthair</td><td class="desc"></td>
 <td>WavyTalk</td><td>Turblow Pro</td><td>WavyTalk</td><td class="desc">Turblow Pro</td>
 <td><a href="https://www.tiktok.com/@lunalurey/video/7632428184394272021" target="_blank">link</a></td><td><a href="https://wavytalk.com/products/turblow-pro-fast-drying-hair-dryer?variant=48666839351489" target="_blank">link</a></td><td class="reason">Brand matches and the post mentions Turblow Pro, but the primary focus is Steamline Pro; Turblow Pro is only a secondary mention, so score is capped at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="67" data-type="fn">
 <td>67</td><td class="score score-mid">2</td>
 <td class="desc">While it has been eight years since Prince Harry and Meghan Markle last visited Australia as newlyweds, the Duchess's style has not departed from her original tour uniform. From a sleeveless dress by @KarenGeeOfficial, to a monochrome pared-back moment in a suede @stagnistudio skirt and jacket, see more of Meghan's outfits from the couple's Australian tour at the link in our bio.</td><td class="desc"></td>
 <td>ST. AGNI</td><td>suede @stagnistudio skirt</td><td>ST. AGNI</td><td class="desc">ST. AGNI Suede Skirt - Women - Camel Skirts - S</td>
 <td><a href="https://www.instagram.com/p/DXMtX2FFwQT/" target="_blank">link</a></td><td><a href="https://www.net-a-porter.com/en-us/shop/product/st-agni/clothing/midi/suede-skirt/46376663162884993" target="_blank">link</a></td><td class="reason">Post mentions a ST. AGNI suede skirt as part of a broader outfit roundup, but the catalog item is not confirmed as the exact skirt and the post’s primary focus is Meghan’s overall tour style, not this specific product.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="73" data-type="fn">
 <td>73</td><td class="score score-mid">2</td>
 <td class="desc">Rising LPGA Star Who's Still in School?!</td><td class="desc">Rose Zhang is finishing up school at Stanford, while competing on the LPGA Tour. She gives great insight into her specific Quantum driver setup and the benefits of having equipment you can rely on and...</td>
 <td>Callaway</td><td>Quantum driver</td><td>Callaway</td><td class="desc">Callaway Quantum Max Driver, Right Hand, Men's, Carbon</td>
 <td><a href="https://www.youtube.com/watch?v=uDw5R6pT1lc" target="_blank">link</a></td><td><a href="https://www.dickssportinggoods.com/p/callaway-quantum-max-driver-25calmgolfqntmmxdvnbi/25calmgolfqntmmxdvnbi" target="_blank">link</a></td><td class="reason">Post focuses on Rose Zhang’s specific Quantum driver setup and the broader Quantum family, but does not identify the Quantum Max model; primary subject is the video/interview, so score is capped at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="79" data-type="fn">
 <td>79</td><td class="score score-mid">2</td>
 <td class="desc">20 Must-Have Amazon Tools Under $30 (Surprisingly Useful!)</td><td class="desc">#ToolsUnder30 #AmazonMustHaves #BestAmazonTools #AmazonFinds #BudgetTools #DIYTools #HomeImprovementTools #HandymanTools #ToolHaul #AmazonGadgets||||||||Looking for **affordable tools that actually wo...</td>
 <td></td><td></td><td>Hardell</td><td class="desc">HARDELL Mini Cordless Rotary Tool with 230pcs Accessories</td>
 <td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">link</a></td><td><a href="https://www.lowes.com/pd/HARDELL-Mini-Cordless-Rotary-Tool-with-230pcs-Accessories/5017136205" target="_blank">link</a></td><td class="reason">Post explicitly features HARDELL Mini Cordless Rotary Tool, but also states tools are under $30; this catalog item is $69.59, violating the post’s hard price constraint.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="83" data-type="fn">
 <td>83</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td></td><td>Seven Springs Farm Organic</td><td class="desc">Azomite Granular - 44 lb Bag</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://www.7springsfarm.com/products/azomite-granular-44-lb-bag?variant=39386613907661" target="_blank">link</a></td><td class="reason">Post mentions Azomite Trace Minerals (44lb) only in a product list, not as the primary subject; brand differs from the catalog listing despite similar product type/size.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="84" data-type="fn">
 <td>84</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td></td><td>Espoma</td><td class="desc">Espoma Organic Plant-Tone 5-3-3 All-Purpose Natural Fertilizer for Flowers Vegetables Trees and Shrubs - 50 lb Bag</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://www.lowes.com/pd/Espoma-Organic-Plant-Tone-5-3-3-All-Purpose-Natural-Fertilizer-for-Flowers-Vegetables-Trees-and-Shrubs-50-lb-Bag/5016826955" target="_blank">link</a></td><td class="reason">Post lists Espoma PlantTone 5-3-3 (50lb), but as an Amazon link-list item rather than the primary subject; primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="85" data-type="fn">
 <td>85</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td></td><td>Jacks Nutrients</td><td class="desc">Jack's Nutrients 20-20-20 Fertilizer, 25lb - General Purpose</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://hydrobuilder.com/products/jacks-nutrients-professional-20-20-20-general-purpose-fertilizer-25lb?variant=49777031872790&amp;country=US&amp;currency=USD&amp;utm_medium=product_sync&amp;utm_source=bing&amp;utm_content=sag_organic&amp;utm_campaign=sag_organic" target="_blank">link</a></td><td class="reason">Post’s main focus is a cardboard-box raised bed, and Jack's 20-20-20 appears only in the product list; although the 25lb general-purpose fertilizer aligns, primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="89" data-type="fn">
 <td>89</td><td class="score score-mid">2</td>
 <td class="desc">PGP Ultra &amp; I-20: Same Nozzles, More Options</td><td class="desc">PGP® Ultra and I-20 rotors are built to work together, sharing the same nozzle options to give you maximum flexibility in the field.||||That means fewer SKUs to manage, easier adjustments on site, and...</td>
 <td>Hunter</td><td>PGP® Ultra</td><td>Hunter Industries</td><td class="desc">Hunter PGP Adjustable Coverage Rotary Sprinkler, 2 Pack</td>
 <td><a href="https://www.youtube.com/watch?v=BUzuMQeoEg8" target="_blank">link</a></td><td><a href="https://business.walmart.com/ip/Hunter-PGP-ADJ-Rotor-2-Pack/2606003841?wmlspartner=wmbpla&amp;selectedSellerId=101317326" target="_blank">link</a></td><td class="reason">Brand matches and category is close (Hunter rotor sprinkler), but the post specifically highlights PGP Ultra and I-20, while the catalog product is PGP Adjustable Coverage and not the named PGP Ultra line.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="91" data-type="fn">
 <td>91</td><td class="score score-mid">2</td>
 <td class="desc">20 Must-Have Amazon Tools Under $30 (Surprisingly Useful!)</td><td class="desc">#ToolsUnder30 #AmazonMustHaves #BestAmazonTools #AmazonFinds #BudgetTools #DIYTools #HomeImprovementTools #HandymanTools #ToolHaul #AmazonGadgets||||||||Looking for **affordable tools that actually wo...</td>
 <td>HARDELL</td><td>Mini Cordless Rotary Tool</td><td>Hardell</td><td class="desc">HARDELL Mini Cordless Rotary Tool with 230pcs Accessories</td>
 <td><a href="https://www.youtube.com/watch?v=A52cSzPzjzI" target="_blank">link</a></td><td><a href="https://www.lowes.com/pd/HARDELL-Mini-Cordless-Rotary-Tool-with-230pcs-Accessories/5017136205" target="_blank">link</a></td><td class="reason">Post explicitly features HARDELL Mini Cordless Rotary Tool, but also states tools are under $30 on Amazon; this catalog item is $69.59 at Lowe's, violating price/store constraints.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="100" data-type="fn">
 <td>100</td><td class="score score-mid">2</td>
 <td class="desc">SPEND DAY 1 AT EPIC UNIVERSE WITH MEEE!! 😝🎢 @TikTok &amp; @Universal Orlando Resort thank you for hosting this amazing experience!! it was so much fun and i need to find a way to live inside nintendo world..  ••• products used: @Glow Recipe @YSEBeauty @The Ordinary @Kiehl's Since 1851 @Tower 28 Beauty @Sol de Janeiro @CYKLAR @Boy Smells  ••• #epicuniverse #themepark #grwm #universalorlando #TikTok_Partner</td><td class="desc"></td>
 <td>The Ordinary</td><td>products used</td><td>The Ordinary</td><td class="desc">The Mini Discovery Set | An introduction to The Ordinary featuring miniature sizes of our regimen essentials. | The Ordinary</td>
 <td><a href="https://www.tiktok.com/@jordansmikle/video/7617929587506433311" target="_blank">link</a></td><td><a href="https://theordinary.com/en-us/the-mini-discovery-set-100680.html?dwvar_100680_size=1%20setNA&amp;quantity=1" target="_blank">link</a></td><td class="reason">The post mentions The Ordinary only as a brand in a products-used list; no specific product is named, and it is not the primary subject of the post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="102" data-type="fn">
 <td>102</td><td class="score score-mid">2</td>
 <td class="desc">The Estee Lauder Double Wear foundation has a NEW formula!!!! And it’s better than ever!! Available @Amazon  #EsteeLauderPartner #EsteeLauder #DoubleWear #MadeForMore</td><td class="desc"></td>
 <td>Estee Lauder</td><td>Estee Lauder Double Wear foundation</td><td>Estee Lauder</td><td class="desc">Estee Lauder Double Wear Stay-in-Place Longwear Matte Foundation</td>
 <td><a href="https://www.tiktok.com/@emmycombss/video/7616822498075643167" target="_blank">link</a></td><td><a href="https://www.ulta.com/p/double-wear-stay-in-place-longwear-matte-foundation-pimprod2057355?sku=2651990&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200003407702" target="_blank">link</a></td><td class="reason">Post is about Estee Lauder Double Wear foundation, but explicitly says available at Amazon while catalog item is from Ulta; hard constraint violation on seller/store.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="127" data-type="fn">
 <td>127</td><td class="score score-mid">2</td>
 <td class="desc">all good life updates for nowww :)) you guys know i’ve been going through it for the last 4 months fr  @Rael Collagen PDRN Hydrogel Mask @Farmacy Beauty Honey Cloud Moisturizer  @loréal paris usa Faux Brow, Infallible Setting Spray @ColourPop Cosmetics Brow Boss, Matte About Hue Palette, Crème Gel Liner Wildcat  @Colorescience Sunforgettable Shield Flex &amp; Glow SPF 50  @Rare Beauty Warm Wishes Cream Bronzer Stick, Perfect Strokes Matte Liquid Liner, Warm Wishes Soft Matte Powder Bronzer, Liquid Luminizer Champagne   @Patrick Ta Beauty Soft Blur Brightening Hydrating Concealer, Eye Illusion Eyeshadow Duo In Your Dreams  @Huda Beauty Easy Bake Blurring Loose Baking &amp; Setting Powder Cherry Blossom  @HouseOfLashes Iconic @Charlotte Tilbury Unreal Blush Pretty Glow, Lip Cheat Pillow Talk  @Half Magic by Donni Davy Crystal Butter Cinnawitch  @Jadora Secret Wig Hazel Use my code AlexYou100 for 100 off your next wig :)</td><td class="desc"></td>
 <td>Charlotte Tilbury</td><td>Unreal Blush Pretty Glow</td><td>Charlotte Tilbury</td><td class="desc">Charlotte Tilbury Unreal Lip + Cheek Glow Blush Stick with Hyaluronic Acid Rosy Glow 0.31 oz/9 mL</td>
 <td><a href="https://www.tiktok.com/@alexyoumazzo/video/7628691997607382286" target="_blank">link</a></td><td><a href="https://www.sephora.com/product/unreal-blush-P516850?country_switch=us&amp;lang=en?skuId=2868016" target="_blank">link</a></td><td class="reason">Brand matches, but the post names Charlotte Tilbury Unreal Blush in shade Pretty Glow while the catalog item is Unreal Lip + Cheek Glow Blush Stick in Rosy Glow, a different product line/item.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="128" data-type="fn">
 <td>128</td><td class="score score-mid">2</td>
 <td class="desc">Blue, but make it cool💙 Products used: violettefr Yeux Paint — Bleu de Minuit chanelbeauty Denim Dream Quad Rouge Coco Flash Balm — Baby Blue urbandecaycosmetics Liquid Moondust — Rough Waves diorbeauty Candy Blush lillylashes Wild Child maccosmetics MACStack Elevated Mascara Comment SHOP and I’ll DM you all the products #makeup #beauty #eyeliner https://liketk.it/5Xlx8</td><td class="desc"></td>
 <td>diorbeauty</td><td>Candy Blush</td><td>DIOR</td><td class="desc">Dior Backstage Rosy Glow Blush Stick - Color-Reviving And Ph-Activated Blush Stick - 077 Candy</td>
 <td><a href="https://www.tiktok.com/@victorialyn/video/7627130205106146574" target="_blank">link</a></td><td><a href="https://www.dior.com/en_us/beauty/products/dior-backstage-rosy-glow-blush-stick-E000000446.html" target="_blank">link</a></td><td class="reason">Brand matches and shade name overlaps ('Candy'), but the post names Dior Candy Blush, while the catalog product is Dior Backstage Rosy Glow Blush Stick, a different product line.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="136" data-type="fn">
 <td>136</td><td class="score score-mid">2</td>
 <td class="desc">the way I can tell someone is wearing @valentino.beauty just by walking by them 🥹🫶 I’ve been wearing Donna Born in Roma for years now &amp; im so excited they’ve introduced a beautiful new scent I can add to my collection!! 💗💜  #purplehour #valentinobeautypartner #borninromapurple #fragrance #borninroma</td><td class="desc"></td>
 <td>Valentino</td><td>Donna Born in Roma</td><td>Valentino</td><td class="desc">Valentino Donna Born In Roma Eau de Parfum</td>
 <td><a href="https://www.instagram.com/p/DV64g4RkmA5/" target="_blank">link</a></td><td><a href="https://www.ulta.com/p/donna-born-in-roma-eau-de-parfum-pimprod2016295?sku=2588308&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200002800236" target="_blank">link</a></td><td class="reason">Post highlights the new Born in Roma Purple scent, while catalog is the standard Donna Born In Roma Eau de Parfum.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="140" data-type="fn">
 <td>140</td><td class="score score-mid">2</td>
 <td class="desc">Get ABS in 14 Days (Do This EXACT Plan)</td><td class="desc">*Grab REBEL or ICON &amp; Travel Sprayer for ONLY $30!* (Regular Price $63)||https://peteandpedro.com/products/the-alpha-cologne-kit||||Best Hair Product in The UNIVERSE! http://peteandpedro.com Use C...</td>
 <td>Pete &amp; Pedro</td><td>REBEL</td><td>Pete &amp; Pedro</td><td class="desc">Pete &amp; Pedro Rebel Eau de Parfum Fragrance Cologne For Men</td>
 <td><a href="https://www.youtube.com/watch?v=2ZncPGDwvN4" target="_blank">link</a></td><td><a href="https://www.ulta.com/p/rebel-eau-de-parfum-fragrance-cologne-men-mkt77001101?sku=77001807&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200003353382" target="_blank">link</a></td><td class="reason">Brand and product line (Rebel) are mentioned in the description, but the post’s explicit offer is the Alpha Cologne Kit with REBEL or ICON plus travel sprayer for $30, which this single $50 Rebel bottle does not match.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="141" data-type="fn">
 <td>141</td><td class="score score-mid">2</td>
 <td class="desc">10 Things You Should Quietly Eliminate From Your Life (Tell No One)</td><td class="desc">*Grab REBEL or ICON &amp; Travel Sprayer for ONLY $30!* (Regular Price $63)||https://peteandpedro.com/products/the-alpha-cologne-kit||||Best Hair Product in The UNIVERSE! http://peteandpedro.com Use C...</td>
 <td>Pete &amp; Pedro</td><td>ICON</td><td>Pete &amp; Pedro</td><td class="desc">Pete &amp; Pedro ICON EDP in None at Nordstrom</td>
 <td><a href="https://www.youtube.com/watch?v=p0VmAWm7WKg" target="_blank">link</a></td><td><a href="https://www.nordstrom.com/s/icon-edp/8004412?color=None" target="_blank">link</a></td><td class="reason">Post promotes Pete &amp; Pedro 'REBEL or ICON &amp; Travel Sprayer' cologne kit for $30, while catalog is ICON EDP standalone at $50; brand and product line align but explicit bundle/price offer does not.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="148" data-type="fn">
 <td>148</td><td class="score score-mid">2</td>
 <td class="desc">Inside Quenlin Blackwell’s Gucci Bag | In the Bag | Vogue</td><td class="desc">Comedian and influencer Quenlin Blackwell sits down with Vogue to show us everything inside her Gucci carryall. The internet sensation starts off with a scream, immediately pulling out an Aztec death ...</td>
 <td>Apple</td><td>Apple wired headphones</td><td>Apple</td><td class="desc">EarPods (USB-C) - Apple</td>
 <td><a href="https://www.youtube.com/watch?v=V4UG-qF7ytA" target="_blank">link</a></td><td><a href="https://www.apple.com/us/xc/product/MYQY3AM/A" target="_blank">link</a></td><td class="reason">Brand matches and headphones category is close, but the post explicitly mentions Apple wired headphones while the catalog product is the USB-C EarPods model, a specific product line/model not confirmed in the post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="152" data-type="fn">
 <td>152</td><td class="score score-mid">2</td>
 <td class="desc">How to Sleep LESS and Get MORE Energy (Science Based)</td><td class="desc">💤 Sleep better with soundcore A30 Special sleepbuds. Use EXCLUSIVE code【10OFFA30】for $10 OFF！Valid 3/09 - 3/24 only. Don't miss out!||Buy on US Official Website：https://soundcore.tech/teachingdtc ||Bu...</td>
 <td>soundcore</td><td>soundcore A30 Special sleepbuds</td><td>Soundcore</td><td class="desc">Soundcore - by Anker Sleep A30 Smart ANC Sleep Earbuds with Breescape Cooling Eye Mask - Set - White</td>
 <td><a href="https://www.youtube.com/watch?v=bEN4sxCKH64" target="_blank">link</a></td><td><a href="https://www.bestbuy.com/product/soundcore-by-anker-sleep-a30-smart-anc-sleep-earbuds-with-breescape-cooling-eye-mask-set-white/JJ858RH8HQ/sku/11441758" target="_blank">link</a></td><td class="reason">Post promotes Soundcore A30 Special sleepbuds, but catalog item is Sleep A30 earbuds with Breescape Cooling Eye Mask set, a different bundle/edition; primary subject matches brand/category but named product variant/edition does not.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="157" data-type="fn">
 <td>157</td><td class="score score-mid">2</td>
 <td class="desc">#france🇫🇷 #paris #djiosmopocket3 #CapCut</td><td class="desc"></td>
 <td>DJI</td><td>djiosmopocket3</td><td>DJI</td><td class="desc">DJI Osmo Pocket 3 Creator Combo - CP.OS.00000302.01</td>
 <td><a href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">link</a></td><td><a href="https://www.dell.com/en-us/shop/dji-osmo-pocket-3-creator-combo/apd/ad466792/camera-photo-video?tfcid=54833114" target="_blank">link</a></td><td class="reason">Post mentions DJI Osmo Pocket 3, but catalog is the specific Creator Combo bundle; bundle/edition not stated in post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="159" data-type="fn">
 <td>159</td><td class="score score-mid">2</td>
 <td class="desc">147 foot waterfall jump in Brazil! 🤯 Would you try this? Shot on @insta360 official X4 📍Rope Jump at Cachoeira da Fumaça, Brazil 🇧🇷  #waterfall #thrilling #brazil #travel #insta360</td><td class="desc"></td>
 <td>Insta360</td><td>X4</td><td>Insta360</td><td class="desc">Insta360 X4 Air Standard Bundle || Graphite Black || No microSD Card</td>
 <td><a href="https://www.tiktok.com/@alexojeda/video/7618997178626805023" target="_blank">link</a></td><td><a href="https://store.insta360.com/US/product/x4-air?c=6278&amp;freelist=gmc" target="_blank">link</a></td><td class="reason">Post explicitly names Insta360 X4, but catalog product is Insta360 X4 Air Standard Bundle, a different product line/model.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="163" data-type="fn">
 <td>163</td><td class="score score-mid">2</td>
 <td class="desc">For the upcoming LeBron 23 &quot;Masked Menace&quot; release on March 24th, Nike crafted apparel to match the theme of the colorway by creating a portrait image of @kingjames wearing his face shield. The style of the image directly references the late MF DOOM and his iconic Madvillainy album cover of 2004.⁠||||LeBron was often regarded as a “villain” during his tenure in Miami.||⁠||Head to our BIO for a closer look.</td><td class="desc"></td>
 <td>Nike</td><td>LeBron 23 &quot;Masked Menace&quot;</td><td>Nike</td><td class="desc">Nike Mens Lebron James Lebron XXIII - Basketball Shoes Wolf Grey/Black Size 8.0</td>
 <td><a href="https://www.instagram.com/p/DV9CrQJEmoc/" target="_blank">link</a></td><td><a href="https://www.champssports.com/product/~/5629001.html?SID=5080&amp;inceptor=1&amp;cm_mmc=paid%20search-_-bing-_-{ifsearch:{network}}{ifcontent:{network}{placement}}-_-PLA-_-DPA-_--_-P-_-Prospecting-_--_-{campaignid}-_--_-{adgroupid}-_-PLA-_-{productid}-_--_--_-" target="_blank">link</a></td><td class="reason">Brand and LeBron basketball shoe category match, but post is about the LeBron 23 &quot;Masked Menace&quot; release/apparel theme while catalog is LeBron XXIII in Wolf Grey/Black, a different variant than the named release.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="164" data-type="fn">
 <td>164</td><td class="score score-mid">2</td>
 <td class="desc">Air Jordan 3 &quot;Spring Is In The Air&quot;⁠||Dropping one week before Easter, this Retro channels the fun pastels of the holiday onto the timeless Air Jordan 3. Dropping in women's and full kids sizes on March 28th.⁠||⁠||Head to our BIO for a closer look.⁠||⁠||📷️ @solebox</td><td class="desc"></td>
 <td>Jordan</td><td>Air Jordan 3 &quot;Spring Is In The Air&quot;</td><td>Jordan</td><td class="desc">Jordan 3 Retro &quot;Sail and Jade Aura&quot; Baby/Toddler Shoes</td>
 <td><a href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank">link</a></td><td><a href="https://www.nike.com/t/air-jordan-3-retro-sail-and-jade-aura-mens-shoes-kZBhO53Z/IF4396-100" target="_blank">link</a></td><td class="reason">Brand and Air Jordan 3 line align, but the post names the distinct colorway/product variant &quot;Spring Is In The Air&quot; while the catalog item is &quot;Sail and Jade Aura&quot;.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="165" data-type="fn">
 <td>165</td><td class="score score-mid">2</td>
 <td class="desc">Debuting last year, the @nike GT Future was making waves when it was first seen on the feet of Wale, bringing back that feeling of Foamposite nostalgia as well as those notable sneaker fit pics by the DMV native himself.⁠||⁠||Fast-forward to today, the shoe has seen a number of colorways releasing, including coveted ones like the &quot;Warning Label&quot; for All-Star, &quot;Galaxy Aura,&quot; &quot;Fire,&quot; and more.⁠||⁠||Now, a new iteration in collaboration with the return of the Swooshman is landing and its releasing for pre-order on March 20 for $210.⁠||⁠||Photo: Nike⁠||⁠</td><td class="desc"></td>
 <td>Nike</td><td>GT Future &quot;Fire&quot;</td><td>Nike</td><td class="desc">Nike GT Future 'Fire'</td>
 <td><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">link</a></td><td><a href="https://www.goat.com/sneakers/gt-future-fire-fz5590-800?sizing=13.5" target="_blank">link</a></td><td class="reason">Post focuses on a new GT Future collaboration/Swooshman iteration, while catalog is the standard GT Future 'Fire' colorway; different product line/edition.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="166" data-type="fn">
 <td>166</td><td class="score score-mid">2</td>
 <td class="desc">Nike Basketball is dropping a new Kobe 9 EM Protro a month, steadily supplying ballers with new colorway options for hooping. Dropping this Summer is a &quot;Steam&quot; colorway that features a light pastel green against a clean white base. Are you a fan?⁠||⁠||Head to our BIO for a closer look.</td><td class="desc"></td>
 <td>Nike</td><td>Kobe 9 EM Protro</td><td>Nike</td><td class="desc">Nike Kobe IX Elite Low EM Protro Basketball Shoes in Red, Size: 10 | IH1401-600</td>
 <td><a href="https://www.instagram.com/p/DWFhCuyjpIU/" target="_blank">link</a></td><td><a href="https://www.nike.com/t/kobe-ix-elite-low-em-protro-basketball-shoes-KFJiXrkW/IH1401-600" target="_blank">link</a></td><td class="reason">Brand and Kobe 9 EM Protro line are close, but post specifies the 'Steam' colorway while catalog item is a different red variant.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="175" data-type="fn">
 <td>175</td><td class="score score-mid">2</td>
 <td class="desc">@moncler stepped in a new direction with the introduction of the Trailgrip sneaker during FW22. Since then, the technical shoe has evolved into a franchise, with everything from a boot to a 3D-printed version having released. At the same time, collaborators such as Salehe Bembury and fragment design have reworked the line.⁠||⁠||As SS26 continues, the Trailgrip shoe is lighter than ever with the introduction of the Trailgrip LP. Rooted in a minimalist design approach, it draws inspiration from scrambling, a fusion of hiking and rock climbing. Comfort, flexibility, and grip are the three pillars that inform the design. Its upper features an “M” detail while Moncler logos are located at the heel and TPU toe cap. The latter element connects seamlessly to a rugged Vibram outsole to complete the pair.⁠||⁠||The shoe is now available via select Moncler stores, as well as the brand’s website.⁠||Photo: Moncler</td><td class="desc"></td>
 <td>Moncler</td><td>Trailgrip LP</td><td>Moncler Collection</td><td class="desc">Moncler , Women, White, Size: 39</td>
 <td><a href="https://www.instagram.com/p/DWDo5meFqB1/" target="_blank">link</a></td><td><a href="https://www.moncler.com/en-us/L109B4M00130M844200239.html" target="_blank">link</a></td><td class="reason">Brand matches Moncler, but the catalog title lacks any identifiable Trailgrip LP product-line match; post specifically features the Trailgrip LP sneaker.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="179" data-type="fn">
 <td>179</td><td class="score score-mid">2</td>
 <td class="desc">@fashionnova 🖤||Run The City Sweater 3 Piece Micro Short Set 🖤</td><td class="desc"></td>
 <td>Fashion Nova</td><td>Run The City Sweater 3 Piece Micro Short Set</td><td>Fashion Nova</td><td class="desc">3 Piece Set Long Sleeve Sweater Pullover Sweater Booty Shorts Short Set in Cream, Size L For Concert Or Lounge | Fashion Nova</td>
 <td><a href="https://www.instagram.com/p/DWEsJELCO7v/" target="_blank">link</a></td><td><a href="https://www.fashionnova.com/products/avery-sweater-3-piece-short-set-cream?variant=39301838569596&amp;currency=USD" target="_blank">link</a></td><td class="reason">Brand matches and category is close (3-piece sweater short set), but the post names a different product line: Run The City Sweater 3 Piece Micro Short Set vs Avery Sweater 3 Piece Short Set.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="180" data-type="fn">
 <td>180</td><td class="score score-mid">2</td>
 <td class="desc">We caught up with @yong.lixx to talk style, speed, and @realstraykids’ historic 8th consecutive No. 1 album 🏎️💨||||Felix also reps the new @adidasy3 x @mercedesamgf1 collection, which trades the stage for the racetrack. Centered around a fierce Wolf graphic, the capsule perfectly blends Yohji Yamamoto’s avant-garde tailoring with the high-stakes energy of F1.||||The collection officially arrives on March 19 via Y-3.||Photo/Video: Hypebeast/Y-3/adidas</td><td class="desc"></td>
 <td>adidas</td><td>adidasY-3 x mercedesamgf1 collection</td><td>adidas</td><td class="desc">Y-3 MERCEDES - AMG PETRONAS FORMULA 1 TEAM DRIVER SHORT SLEEVE JERSEY</td>
 <td><a href="https://www.instagram.com/p/DV_TwKakWrB/" target="_blank">link</a></td><td><a href="https://www.adidas.com/us/y-3-mercedes---amg-petronas-formula-1-team-driver-short-sleeve-jersey/KQ9844.html" target="_blank">link</a></td><td class="reason">Post is about the adidas Y-3 x Mercedes-AMG F1 collection generally, not this specific Driver Short Sleeve Jersey; brand/collab/category align but exact product is not identified.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="184" data-type="fn">
 <td>184</td><td class="score score-mid">2</td>
 <td class="desc">@hikingpatrol and @mammut have officially unveiled their debut collaborative collection, merging Norwegian minimalism with Swiss alpine engineering 🏔️🇳🇴⁠||⁠||Guided by the &quot;Just Wander&quot; philosophy, the collection is an invitation to slow down and explore without the rush. ⁠||⁠||The pieces are defined by a neutral, earthy palette and discreet co-branding, notably moving the iconic Mammut logo to the back for a cleaner, more sophisticated silhouette. Designed for the &quot;modern explorer,&quot; the range prioritizes organic seamlines and integrated utility over loud technical aesthetics.⁠||⁠||The global launch is set for March 17 via Hiking Patrol and Mammut’s official webshops across Europe, China, Japan, and North America.⁠||Photo: Mammut/Hiking Patrol</td><td class="desc"></td>
 <td>Mammut</td><td>debut collaborative collection</td><td>Mammut</td><td class="desc">Hiking Patrol x Mammut HS Hooded Jacket</td>
 <td><a href="https://www.instagram.com/p/DV8PdumCuZn/" target="_blank">link</a></td><td><a href="https://www.mammut.com/us/en/products/1010-32670-40343/hiking-patrol-x-mammut-hs-hooded-jacket" target="_blank">link</a></td><td class="reason">Post is about the Hiking Patrol x Mammut collaborative collection in general, not this specific HS Hooded Jacket; item is part of the named collab but not the primary specific product discussed.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="186" data-type="fn">
 <td>186</td><td class="score score-mid">2</td>
 <td class="desc">My MOST-USED TRAVEL ESSENTIALS are ON SALE Right Now!</td><td class="desc">Amazon’s spring sale is on—here are the travel essentials I actually use (and love) that are finally on sale right now ✈️ ||► Link to all items here: ||https://www.amazon.com/shop/alysmalls/list/3I7WH...</td>
 <td></td><td>Packing Cubes (that open all the way)</td><td>tomtoc</td><td class="desc">tomtoc Navigator-T13 Accessory Pouch (2.4L)</td>
 <td><a href="https://www.youtube.com/watch?v=mwuHwAkhLJg" target="_blank">link</a></td><td><a href="https://www.bhphotovideo.com/c/product/1827936-REG/tomtoc_t13m1d1_navigator_t13_accessory_pouch_2_4l.html?ap=y&amp;smp=y" target="_blank">link</a></td><td class="reason">Post mentions a tomtoc tech pouch, but does not confirm the Navigator-T13 model; also the linked item is on Amazon while this catalog item is from B&amp;H, violating the explicit seller/platform context.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="194" data-type="fn">
 <td>194</td><td class="score score-mid">2</td>
 <td class="desc">✨ Getting ready with @Wayfair for the Spring + Summer Entertaining season! 🌸 #WayfairPartner #Ad So many beautiful pieces - like this rattan drink holder and scalloped placemats you won’t want to miss! #Wayfair #Outdoor #WishYouWereHere||||🔗 follow + comment SHOP for links to be sent to your messages 💕||||Follow my LTK @Kinsey_Walsh on the @shop.LTK app to view this post and get my exclusive app-only content!||||@shop.ltk||https://liketk.it/61RZP</td><td class="desc"></td>
 <td>Wayfair</td><td>scalloped placemats</td><td>Birch Lane™</td><td class="desc">Eco Scallop Border Placemat (Set of 4) (Set of 4) (Set of 4) Color: Beige</td>
 <td><a href="https://www.instagram.com/p/DWO8fPWDbEN/" target="_blank">link</a></td><td><a href="https://www.birchlane.com/Birch-Lane%E2%84%A2--Eco-Scallop-Border-Placemat-Set-of-4--X225395304-L7327-K~B110750632.html?refid=MX{AdID}-B110750632_1166727219&amp;device={device}&amp;ptid={CriterionId}&amp;targetid={TargetID}&amp;network={network}&amp;PiID%5B%5D=1166727219" target="_blank">link</a></td><td class="reason">Post highlights Wayfair scalloped placemats generally; catalog is Birch Lane Eco Scallop Border Placemat, a specific product line not named, and Wayfair is the primary brand mentioned.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="197" data-type="fn">
 <td>197</td><td class="score score-mid">2</td>
 <td class="desc">✅ 5in1 Multifunctional Easy Slicer Grater - The product is tagged in the video.</td><td class="desc">Open your kitchen drawer right now and count how many random slicers, graters, peelers, and cutting gadgets are in there taking up space and doing one job each. This 5-in-1 slicer grater replaces all ...</td>
 <td></td><td>5in1 Multifunctional Easy Slicer Grater</td><td>Generic</td><td class="desc">5-in-1 Slicer with 5 Blades - Adjustable Vegetable Chopper for Slicing, Grating &amp; Julienne, Stainless Steel Kitchen Slicer with Hand Guard &amp; Non-Slip</td>
 <td><a href="https://www.youtube.com/watch?v=TetdCxY6f74" target="_blank">link</a></td><td><a href="https://www.walmart.com/ip/5-in-1-Slicer-5-Blades-Adjustable-Vegetable-Chopper-Slicing-Grating-Julienne-Stainless-Steel-Kitchen-Hand-Guard-Non-Slip-Handle-Green-C/19085553492?wmlspartner=wlpa&amp;selectedSellerId=103050297" target="_blank">link</a></td><td class="reason">Primary subject is Mavigadget-tagged 5-in-1 slicer/grater, but catalog item is a Generic Walmart listing; product type is close yet brand/store do not align.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="199" data-type="fn">
 <td>199</td><td class="score score-mid">2</td>
 <td class="desc">Better in pairs. 🤎 Soft symmetry, warm wood tones, and layered neutrals create a space that feels both balanced and beautifully at ease.⁠||⁠||The Richard Bed offers a fresh take on heritage style, with a headboard and footboard wrapped in natural paper cord that brings quiet texture to the room. Finial capped spindle legs in deep brown parawood add just the right amount of contrast and structure.⁠||⁠||Designed alongside Amber Lewis and Four Hands, this piece invites you to rethink tradition — one beautifully styled room at a time.⁠||⁠||Style: @seablushstudios and @hosthousecarmel⁠||Photo: @maddyykiely⁠||⁠||Pictured: ⁠||Richard Bed⁠||Levi Dining Chair⁠||Schmidt Accent Table⁠||⁠||#fourhandsfurniture #interiordesign #bedroom #bed #furnituredesign</td><td class="desc"></td>
 <td></td><td>Levi Dining Chair</td><td>Four Hands</td><td class="desc">Four Hands Levi Dining Chair in Brown</td>
 <td><a href="https://www.instagram.com/p/DWW2BNSEvFa/" target="_blank">link</a></td><td><a href="https://www.lumens.com/levi-dining-chair-by-four-hands-4HA2483510.html?utm_source=bing&amp;utm_medium=PLA" target="_blank">link</a></td><td class="reason">Post primarily focuses on the Richard Bed; Levi Dining Chair is only listed as a pictured item, so primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="200" data-type="fn">
 <td>200</td><td class="score score-mid">2</td>
 <td class="desc">Wireless Smart Side Table 📌</td><td class="desc">📌 This smart side table has built-in wireless charging, Bluetooth speakers, and USB ports all hidden inside a clean modern design. Just set your phone on top and it starts charging — no cables, no clu...</td>
 <td></td><td>smart side table</td><td>DEVERA</td><td class="desc">Sunset Orange Smart Bedside Table with Wireless Charging</td>
 <td><a href="https://www.youtube.com/watch?v=icNbg0NERtY" target="_blank">link</a></td><td><a href="https://www.bedbathandbeyond.com/c/bedroom-furniture/nightstands?t=24405&amp;featuredproduct=43263331&amp;featuredoption=90809926&amp;ci_sku=46352435-000-000&amp;cnc=US" target="_blank">link</a></td><td class="reason">Category aligns (smart bedside/side table with wireless charging), but the post does not indicate DEVERA and appears to feature a generic Mavigadget item, so brand mismatch.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="235" data-type="fn">
 <td>235</td><td class="score score-mid">2</td>
 <td class="desc">A meal to add to your spring dinner rotation: Oven Braised Fish with Tarragon, Leeks and White Wine from Chef James London of @chubbyfishchs. 🐟 The fish is gently brined and layered with leeks, garlic, Castelvetrano olives and fresh tarragon, then cooked in the Riviera Heritage Fish Baker until perf</td><td class="desc"></td>
 <td>Riviera</td><td>Riviera Heritage Fish Baker</td><td>riviera</td><td class="desc">Le Creuset Stoneware Heritage 1.7-Quart Fish Baker with Cover - Riviera</td>
 <td><a href="https://www.instagram.com/p/DXNE9-IACEs/" target="_blank">link</a></td><td><a href="https://www.macys.com/shop/product/le-creuset-stoneware-heritage-1.7-quart-fish-baker-with-cover?ID=23461877&amp;pla_country=US&amp;CAGPSPN=pla" target="_blank">link</a></td><td class="reason">Post focuses on a recipe and mentions a Riviera Heritage Fish Baker; catalog is Le Creuset Heritage Fish Baker in Riviera color, so brand/product naming does not fully align and item is not the primary subject.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="251" data-type="fn">
 <td>251</td><td class="score score-mid">2</td>
 <td class="desc">DEWY DUO||||Your spring skin combination is SoftSculpt Transforming Skin Enhancer® and Soft Pop Blush Veil. ||||Maggie wears shades 'Medium' &amp; 'Pink Peony'.||||#MakeupByMario</td><td class="desc">Soft Pop Blush Veil</td>
 <td>Makeup By Mario</td><td>Soft Pop Blush Veil</td><td></td><td class="desc">MAKEUP BY MARIO Soft Pop Plumping Cream Blush Veil Strawberry Sunset .17 oz / 5 g</td>
 <td><a href="https://www.instagram.com/p/DXSLNLcDAVQ/" target="_blank">link</a></td><td><a href="https://www.sephora.com/product/soft-pop-plumping-blush-veil-P506130?country_switch=us&amp;lang=en?skuId=2783231" target="_blank">link</a></td><td class="reason">Post names Soft Pop Blush Veil, but catalog product is Soft Pop Plumping Cream Blush Veil, a different product line; brand aligns.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="255" data-type="fn">
 <td>255</td><td class="score score-mid">2</td>
 <td class="desc">Okay I’m back on the purple shampoo train and yes, there will be a quiz later 🧪 thanks to @K18 Hair and their new TripleBright purple shampoo!! 👏👏  Consider this your at home experiment to prevent against future brass: pair with the molecular hair mask and watch the results react…hair damage will be reversed and give you salon fresh blonde at home ‍😊💜  Now available at @sephora ! #k18partner #k18results</td><td class="desc"></td>
 <td>K18 Hair</td><td>molecular hair mask</td><td></td><td class="desc">K18 Biomimetic Hairscience Leave-In Molecular Repair Hair Mask 1.7 oz/50 mL</td>
 <td><a href="https://www.tiktok.com/@lindseyteaches/video/7626902292549111070" target="_blank">link</a></td><td><a href="https://www.sephora.com/product/leave-in-molecular-repair-mask-P479846?country_switch=us&amp;lang=en?skuId=2547248" target="_blank">link</a></td><td class="reason">Post primarily features K18 TripleBright purple shampoo; the molecular hair mask is only mentioned as a pairing item, so primary-intent caps score at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="258" data-type="fn">
 <td>258</td><td class="score score-mid">2</td>
 <td class="desc">Top NEW Costco Finds You Need To BUY Now!</td><td class="desc">Join Thrive Market &amp; get 30% off your 1st order &amp; a FREE gift: http://thrivemarket.com/Bobby #thrivemarketpartner||||April was so big at Costco, I found 10 MORE items that I needed to share. S...</td>
 <td></td><td></td><td></td><td class="desc">Acure Ultra Hydrating Shampoo - 8 fl oz</td>
 <td><a href="https://www.youtube.com/watch?v=oWNp1vg-4a4" target="_blank">link</a></td><td><a href="https://www.target.com/p/-/A-81037308" target="_blank">link</a></td><td class="reason">Exact product is only mentioned in the description list of Thrive Market favorites, not the primary subject of the Costco post; primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="263" data-type="fn">
 <td>263</td><td class="score score-mid">2</td>
 <td class="desc">When @lancomeofficial Absolue Longevity MD box shows up at your door...you don’t ask questions #LancomePartner</td><td class="desc">@lancomeofficial Absolue Longevity MD box</td>
 <td>lancomeofficial</td><td>Absolue Longevity MD box</td><td></td><td class="desc">Lancome Absolue Longevity MD Anticipate Face Cream for Early Age 1.7 oz/50 ml</td>
 <td><a href="https://www.instagram.com/p/DXHlEcXEb3s/" target="_blank">link</a></td><td><a href="https://www.sephora.com/product/la-abs-long-ant-cream-P522416?country_switch=us&amp;lang=en?skuId=2981389" target="_blank">link</a></td><td class="reason">Post mentions Lancome Absolue Longevity MD box generally, but does not indicate this specific Anticipate Face Cream item; box likely contains multiple products.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="264" data-type="fn">
 <td>264</td><td class="score score-mid">2</td>
 <td class="desc">Love Story Star Sarah Pidgeon's Springtime Makeup Routine | Beauty Secrets | Vogue</td><td class="desc">&quot;Love Story&quot; star Sarah Pidgeon shows us her fun springtime beauty routine. While she gets ready, Sarah, who portrays Carolyn Bessette in FX's &quot;Love Story,&quot; talks about the process...</td>
 <td></td><td>Hydrating Floral Essence</td><td></td><td class="desc">Hydrating Floral Essence</td>
 <td><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">link</a></td><td><a href="https://tataharperskincare.com/products/hydrating-floral-essence?variant=44885475885340" target="_blank">link</a></td><td class="reason">Post lists Tata Harper Hydrating Floral Essence only in the shopping links/equipment list, not as the primary subject; exact item but primary-intent rule caps score at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="267" data-type="fn">
 <td>267</td><td class="score score-mid">2</td>
 <td class="desc">Top NEW Costco Finds You Need To BUY Now!</td><td class="desc">Join Thrive Market &amp; get 30% off your 1st order &amp; a FREE gift: http://thrivemarket.com/Bobby #thrivemarketpartner||||April was so big at Costco, I found 10 MORE items that I needed to share. S...</td>
 <td>Dr. Bronner's</td><td>Dr. Bronner's Peppermint Organic Lip Balm</td><td></td><td class="desc">Dr. Bronner's Peppermint - Organic Lip Balms - .15 oz</td>
 <td><a href="https://www.youtube.com/watch?v=oWNp1vg-4a4" target="_blank">link</a></td><td><a href="https://www.drbronner.com/products/peppermint-organic-lip-balms?variant=36027946893476&amp;srsltid=AfmBOopcG6pIdetor69AP8cxTBs-Tg_ARgZ5P2nDSqzFK0fOUfecfbTgsN0" target="_blank">link</a></td><td class="reason">Post mentions Dr. Bronner's lip balm generically in a favorites list, but catalog is the specific Peppermint variant; also not a primary subject of the post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="285" data-type="fn">
 <td>285</td><td class="score score-mid">2</td>
 <td class="desc">Can MKBHD's Tech Setup Replace Mine?</td><td class="desc">New series! I steal a creator's daily tech, live with it for 7 days, and keep anything that's better than mine. MKBHD went first. Will I think his tech gear is better than mine? Let's find out. ||||Te...</td>
 <td></td><td></td><td></td><td class="desc">OnePlus - 15 512GB (Unlocked) - Sand Storm</td>
 <td><a href="https://www.youtube.com/watch?v=LEO2j7cmrbg" target="_blank">link</a></td><td><a href="https://www.bestbuy.com/product/oneplus-15-512gb-unlocked-sand-storm/CZYJWF7L6L/sku/6664038?utm_source=feed&amp;extStoreId={store_code}" target="_blank">link</a></td><td class="reason">Post lists OnePlus 15, but only in the description link list/equipment list rather than as the primary subject; exact model aligns but primary-intent rule caps score at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="291" data-type="fn">
 <td>291</td><td class="score score-mid">2</td>
 <td class="desc">Can MKBHD's Tech Setup Replace Mine?</td><td class="desc">New series! I steal a creator's daily tech, live with it for 7 days, and keep anything that's better than mine. MKBHD went first. Will I think his tech gear is better than mine? Let's find out. ||||Te...</td>
 <td>Beats</td><td>Beats Powerbeats Pro 2</td><td></td><td class="desc">Powerbeats Pro 2 - High-Performance Earbuds - Jet Black - Apple</td>
 <td><a href="https://www.youtube.com/watch?v=LEO2j7cmrbg" target="_blank">link</a></td><td><a href="https://www.apple.com/us/xc/product/MX723LL/A" target="_blank">link</a></td><td class="reason">Post’s main focus is MKBHD’s overall tech setup/EDC, not the earbuds specifically; although the linked product matches Powerbeats Pro 2, primary-intent rule caps it at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="294" data-type="fn">
 <td>294</td><td class="score score-mid">2</td>
 <td class="desc">I Tested Every Flagship Earbuds Combo So You Don't Have To</td><td class="desc">Apple AirPods Pro 3, Samsung Galaxy Buds 4 Pro, and Google Pixel Buds Pro 2 all promise the best experience when paired with their phone, but which combo actually delivers? I put the iPhone 17 Pro, Ga...</td>
 <td>Samsung</td><td>Samsung Galaxy Buds 4 Pro</td><td></td><td class="desc">Samsung Galaxy Buds4 Pro</td>
 <td><a href="https://www.youtube.com/watch?v=p-dMIh3udoo" target="_blank">link</a></td><td><a href="https://www.samsung.com/us/audio-sound/galaxy-buds4-pro/buy/galaxy-buds4-pro-pink-gold-sku-sm-r640nzdaxar" target="_blank">link</a></td><td class="reason">Product is mentioned in the video description, but the post’s primary focus is comparing multiple flagship earbuds/phone combos, not specifically this Samsung product; primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="301" data-type="fn">
 <td>301</td><td class="score score-mid">2</td>
 <td class="desc">Brass or stainless? Have both with the KitchenAid® Smart Slide-in Range.</td><td class="desc">KitchenAid® Smart Slide-in Range</td>
 <td>KitchenAid</td><td>KitchenAid® Smart Slide-in Range</td><td></td><td class="desc">30 in. 5 Element Slide-In Electric Range in PrintShield Stainless Finish wih Convection Cooking Modes</td>
 <td><a href="https://www.instagram.com/p/DW4zNAvjsCT/" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/KitchenAid-30-in-5-Element-Slide-In-Electric-Range-in-PrintShield-Stainless-Finish-wih-Convection-Cooking-Modes-KSES330SPS/336485919" target="_blank">link</a></td><td class="reason">Post specifies KitchenAid Smart Slide-in Range, but catalog item is a KitchenAid slide-in electric range without Smart line indicated; brand/category match but product line is unclear/different.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="312" data-type="fn">
 <td>312</td><td class="score score-mid">2</td>
 <td class="desc">Give those odds and ends in your fridge a second life with this cozy clean-out-the-fridge veggie strata—an easy, no-waste bake that turns leftover bread and vegetables into something worth gathering around. 🍳🍞🥬||||Ingredients||3 cups stale bread, cubed or torn||Veggies (aim for 11⁄2–2 cups total)||Any mix of: Spinach/kale, peppers, mushrooms, onions, tomatoes, zucchini, broccoli, or leftover cooked vegetables. ||||Custard||4 large eggs||11⁄4 cups milk (or milk/cream blend)||3⁄4 tsp salt||1⁄4–1⁄2 tsp pepper||Optional: garlic powder, dried herbs, or seasoning odds and ends||||Instructions||Preheat your oven to 350°F (180°C).||Lightly grease your Tupperware VoilaTM Glass Baking Dish.||Sauté raw veggies until soft (skip if already cooked).||Inside the baking dish, layer bread first, veggies next, and cheese over the top.||In a medium bowl, whisk eggs, milk, and spices together to make the custard.||Pour custard evenly over the dish. Press lightly to help absorption. Let sit for 10 minutes.||Bake uncovered for 35–45 minutes. Center should be set and top lightly golden.||Rest for 10 minutes before serving.||||#TupperwareBrand #VoilaGlass #TupperwareRecipe #Strata</td><td class="desc"></td>
 <td>Tupperware</td><td>Tupperware VoilaTM Glass Baking Dish</td><td></td><td class="desc">Tupperware Voila Glass Round Bakeware | Airtight Food Storage Dish</td>
 <td><a href="https://www.instagram.com/p/DW9K0MLAe_V/" target="_blank">link</a></td><td><a href="https://www.tupperware.com/products/tupperware-voila-glass-round?variant=44742093865132" target="_blank">link</a></td><td class="reason">Post features Tupperware Voila Glass Baking Dish, but catalog item is the distinct Voila Glass Round Bakeware product line/shape, not the named baking dish.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="321" data-type="fn">
 <td>321</td><td class="score score-mid">2</td>
 <td class="desc">Finding the perfect cleaning match can be hard. But we've narrowed down some irresistible options to take home. 😉||||Who would you swipe right on? ||||#Roborock #CleanMatch #Saros20 #QrevoCurv2Flow #F25Ultra #F25ACEPro</td><td class="desc">#F25ACEPro</td>
 <td>Roborock</td><td>F25ACEPro</td><td></td><td class="desc">Roborock F25 ACE Wet and Dry Vacuum Cleaner F25 ACE</td>
 <td><a href="https://www.instagram.com/p/DXewPRAmMyd/" target="_blank">link</a></td><td><a href="https://us.roborock.com/products/roborock-f25-ace-and-f25-alt-wet-and-dry-vacuum-cleaner?variant=41943514054774" target="_blank">link</a></td><td class="reason">Post explicitly names F25 ACE Pro, while catalog product is F25 ACE; same brand/category but different product tier/model.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="334" data-type="fn">
 <td>334</td><td class="score score-mid">2</td>
 <td class="desc">The designers at Studio 7.5 love designing furniture, or as they prefer to call it, “equipment,” as in the tools people need for the work that they do. They find designing office chairs in particular to be most rewarding and have worked with Herman Miller on award-winning seating.||||Founded in 1992 by Burkhard Schmitz and Carola Zwick, Studio 7.5 approaches the complexity of design problems through collaboration and repeated testing of ideas in full-scale models until the most elegant answer emerges. The designers do all their prototyping in-house, sometimes building 30 or more fully functional prototypes before even sharing the concept with Herman Miller.||||That approach defined Mirra when it launched in 2003 as a highly individualized work chair built for agile work. It balances immediate comfort and personalized ergonomics in one design. A decade later, Studio 7.5 revisited it with fresh eyes, redesigning Mirra 2 from the ground up, making it lighter, more sustainable, and more refined—without losing its athletic character. Mirra 2 was updated again in 2024 with a nylon base and spine that’s 100% recycled material, further reducing its carbon footprint.||||In 2018, the designers wondered if they could make a chair that provided immediate comfort without any adjustments. They knew the ideal chair would provide a smooth feeling of natural balance. “You should have a chair that allows you to change postures as easily as possible,” team member Roland Zwick says. “You can only do that with a chair that is correctly adjusted, so we wanted to build a chair that does that part for you.” The result was Cosm, which responds instantly, using a revolutionary self-adjusting tilt and a single suspension textile so the technology all but disappears.||||“We define not only how the chair looks but how it performs,” Carola says. “Our goal is to enable people to assume roles similar to that of a craftsperson in their shop, surrounded by what he or she needs to be most productive.” ||||Learn more at the link in our bio.</td><td class="desc"></td>
 <td>Herman Miller</td><td>Cosm</td><td></td><td class="desc">Cosm High Back Chair</td>
 <td><a href="https://www.instagram.com/p/DWy8F-HlT5O/" target="_blank">link</a></td><td><a href="https://store.hermanmiller.com/office-chairs-ergonomic-chairs/cosm-high-back-chair/100114989.html?lang=en_US" target="_blank">link</a></td><td class="reason">Post discusses Studio 7.5 and multiple Herman Miller chair lines (Mirra, Mirra 2, Cosm); Cosm is mentioned but not the primary subject, and the catalog item specifies High Back variant not named in post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="336" data-type="fn">
 <td>336</td><td class="score score-mid">2</td>
 <td class="desc">With dipped-in-color hues and an airy silhouette, Eames Wire Chair brings a bold pop to any spring setting. Visit our link in bio to find modern furniture made for outdoor living.||||Photo by Alpha Smoot||||The Herman Miller x HAY collection is available in the Americas, Asia, Australia, and Africa from Herman Miller | Non-Herman Miller x HAY collection @EamesOffice furniture designs are available from @Vitra in Europe and the Middle East.</td><td class="desc"></td>
 <td>Herman Miller x HAY</td><td>Eames Wire Chair</td><td></td><td class="desc">Eames Wire Chair, with Seat Pad</td>
 <td><a href="https://www.instagram.com/p/DW9otJZDmZZ/" target="_blank">link</a></td><td><a href="https://store.hermanmiller.com/dining-furniture-chairs-stools/eames-wire-chair-with-seat-pad/100069939.html?lang=en_US" target="_blank">link</a></td><td class="reason">Post highlights the Herman Miller x HAY Eames Wire Chair collection, while catalog item is the standard Eames Wire Chair with Seat Pad; collab vs standard is a distinct product line.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="341" data-type="fn">
 <td>341</td><td class="score score-mid">2</td>
 <td class="desc">Kith's seasonal partnership with adidas Originals continues as they officially announce the SS26 drop. Four BW Army options done in quintessential Kith styling are dropping on Monday, April 20th (drawings open now). Two styles of the adidas Japan are also included.⁠||⁠||Head to our BIO for a closer look.</td><td class="desc"></td>
 <td>adidas Originals</td><td>BW Army</td><td></td><td class="desc">Adidas - Men's BW Army Trainers - (Core Black)</td>
 <td><a href="https://www.instagram.com/p/DXPR1OVj8Vv/" target="_blank">link</a></td><td><a href="https://shop-us.doverstreetmarket.com/products/adidas-bw-army-coreblk-hq9232-ss26?variant=41398915858694" target="_blank">link</a></td><td class="reason">Post specifically features Kith x adidas Originals SS26 BW Army collaboration; catalog is standard adidas BW Army Core Black, not the Kith collaboration edition.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="367" data-type="fn">
 <td>367</td><td class="score score-mid">2</td>
 <td class="desc">Celebrating the Back-To-Back Season Opener Champ in style! We’re GIVING AWAY replica clubs that helped @rorymcilroy secure his 6th career major. ||||In this major prize pack, one winner will receive a set of RORS Proto Irons, a torched Spider Tour X, a Season Opener bag, and 6 dozen TP5 RORS golf balls! All you have to do to enter is:||||- Follow @taylormadegolf ||- Like this post||- Tag 3 friends and use #RorySweepstakes ||||We’ll pick one winner on April 21st. Good luck! #TeamTaylorMade||-—||TaylorMade® Rory McIlroy Season Opener Victory Sweepstakes. NO PURCHASE NECESSARY. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. Void where prohibited. Enter between 10:00 a.m. PT on 4/15/26 and 11:59 p.m. PT on 4/19/26. Open only to legal US/DC residents, age 18+. Limit one entry per person. Odds of winning depend on number of eligible entries received. See Official Rules at the link in bio for odds, eligibility, prizes, and complete terms and conditions.</td><td class="desc"></td>
 <td></td><td>Spider Tour X</td><td></td><td class="desc">TaylorMade Spider Tour X Black #3 Putter, Right Hand, Men's</td>
 <td><a href="https://www.instagram.com/p/DXKE53diEPw/" target="_blank">link</a></td><td><a href="https://www.dickssportinggoods.com/p/taylormade-spider-tour-x-black-3-putter-24tymmspdrtrxblckptra/24tymmspdrtrxblckptra" target="_blank">link</a></td><td class="reason">Brand matches and post mentions a Spider Tour X putter, but the post specifies a torched Rory sweepstakes edition while the catalog item is the standard black Spider Tour X #3.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="369" data-type="fn">
 <td>369</td><td class="score score-mid">2</td>
 <td class="desc">Celebrate the strength behind the title of Mom with our limited-edition SUPERMOM Golf Balls 🏆 For the women who do it all and make it look effortless, leading with confidence on the course and beyond. 🙌</td><td class="desc">SUPERMOM Golf Balls</td>
 <td></td><td>SUPERMOM Golf Balls</td><td></td><td class="desc">Callaway 2026 Supersoft Super Mom Golf Balls, Men's, White</td>
 <td><a href="https://www.instagram.com/p/DXWxi9RDla2/" target="_blank">link</a></td><td><a href="https://www.dickssportinggoods.com/p/callaway-2026-supersoft-super-mom-golf-balls-26calugolffryuhbip9z4/26calugolffryuhbip9z4?sku=28609103" target="_blank">link</a></td><td class="reason">Brand and themed variant align, but post names limited-edition SUPERMOM Golf Balls without the Supersoft line; catalog specifies Supersoft, so exact product line cannot be confirmed.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="375" data-type="fn">
 <td>375</td><td class="score score-mid">2</td>
 <td class="desc">Embrace the darkness. ⚫️ Our Shadowfall Collection brings an all-black finish to the Qi4D family, fairways, and P·790 irons. Explore the new collection on the TaylorMade website. #taylormade #golf #golftiktok</td><td class="desc">Qi4D family</td>
 <td></td><td>Qi4D family</td><td></td><td class="desc">TaylorMade Qi4D MAX Driver, Right Hand, Men's, Aluminum</td>
 <td><a href="https://www.tiktok.com/@taylormadegolf/video/7629429331961416973" target="_blank">link</a></td><td><a href="https://www.dickssportinggoods.com/p/taylormade-qi4d-max-driver-25taymgolfq4dmxdvrzrs/25taymgolfq4dmxdvrzrs" target="_blank">link</a></td><td class="reason">Post focuses on the Shadowfall Collection/Qi4D family, but catalog item is the standard Qi4D MAX Driver and not the named Shadowfall edition.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="383" data-type="fn">
 <td>383</td><td class="score score-mid">2</td>
 <td class="desc">RØDE 1MIC: Bombay the Artist - Tum Mere Ho (Live at Island City Studios, Mumbai)</td><td class="desc">Bombay The Artist - Tum Mere Ho. Recorded live at Island City Studios, Mumbai, India, with 1 mic: the RØDE NT1 5th Generation Studio Microphone.|| ||Bombay The Artist :||Instagram :  https://www.insta...</td>
 <td>RØDE</td><td>Interview PRO</td><td></td><td class="desc">RODE Interview Pro</td>
 <td><a href="https://www.youtube.com/watch?v=INmI6sZuDO0" target="_blank">link</a></td><td><a href="https://www.guitarcenter.com/RODE/Interview-Pro-1500000431541.gc?template=0y7n73MAL4Km" target="_blank">link</a></td><td class="reason">Mentioned only in the description link list; the post’s primary subject is the NT1 5th Generation microphone.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="392" data-type="fn">
 <td>392</td><td class="score score-mid">2</td>
 <td class="desc">20 New Amazon Tools You’ll Wish You Bought Sooner (2026)</td><td class="desc">#AmazonTools #NewTools #BestTools #AmazonFinds #MustHaveTools #CoolTools #PowerTools #DIYTools #WoodworkingTools #GarageTools #HomeImprovement #TrendingNow #ToolReview #AmazonGadgets #2026tools||||## ...</td>
 <td></td><td></td><td></td><td class="desc">Eastwood Tubing Notcher</td>
 <td><a href="https://www.youtube.com/watch?v=f8vArVppqzQ" target="_blank">link</a></td><td><a href="https://www.tractorsupply.com/tsc/product/eastwood-tubing-notcher-2357824" target="_blank">link</a></td><td class="reason">Product is explicitly mentioned in the timestamp list, but the post is a roundup of 20 tools rather than primarily about this item, so primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="393" data-type="fn">
 <td>393</td><td class="score score-mid">2</td>
 <td class="desc">20 New Amazon Tools You’ll Wish You Bought Sooner (2026)</td><td class="desc">#AmazonTools #NewTools #BestTools #AmazonFinds #MustHaveTools #CoolTools #PowerTools #DIYTools #WoodworkingTools #GarageTools #HomeImprovement #TrendingNow #ToolReview #AmazonGadgets #2026tools||||## ...</td>
 <td></td><td></td><td></td><td class="desc">STANLEY FatMax 6 in. High Carbon Steel Multi Hand Saw 10 and 24 TPI 3 pc</td>
 <td><a href="https://www.youtube.com/watch?v=f8vArVppqzQ" target="_blank">link</a></td><td><a href="https://www.acehardware.com/p/2109098?x429=true" target="_blank">link</a></td><td class="reason">Post features STANLEY FATMAX Multi-Material Saw, but catalog item is a different FATMAX hand saw set/product line.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="395" data-type="fn">
 <td>395</td><td class="score score-mid">2</td>
 <td class="desc">20 Budget DIY Tools Under $100 You’ll Actually Use | Amazon Must-Haves</td><td class="desc">#BestToolsUnder100 #AmazonTools #CoolGadgets #DIYTools #ToolReview #WorkshopGear #BudgetTools #HomeImprovementTools #GarageTools #TechUnder100 #CoolAmazonFinds||||20 DIY Tools Under $100 (Amazon Finds...</td>
 <td>DEKOPRO</td><td>DEKOPRO Home Tool Kit</td><td></td><td class="desc">Digital Angle Gauge, Mini Angle Finder Protractor with Bubble Level, V-Groove Magnetic Base, Backlight LCD Bevel Gauge Inclinometer 0-360Fast Measurem</td>
 <td><a href="https://www.youtube.com/watch?v=0wF3R1D4efw" target="_blank">link</a></td><td><a href="https://www.walmart.com/ip/Digital-Angle-Gauge-Mini-Finder-Protractor-Bubble-Level-V-Groove-Magnetic-Base-Backlight-LCD-Bevel-Gauge-Inclinometer-0-360-Fast-Measurement/5145567690?wmlspartner=wlpa&amp;selectedSellerId=101084152" target="_blank">link</a></td><td class="reason">Post specifically names Huepar Digital Angle Gauge; catalog item is a generic digital angle gauge with no Huepar brand, so product line/brand do not match.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="396" data-type="fn">
 <td>396</td><td class="score score-mid">2</td>
 <td class="desc">20 Affordable DIY Tools from Amazon Worth Buying</td><td class="desc">Discover 20 insanely cool tools worth checking out in 2026, all within a $1000 budget. From powerful gear to smart gadgets, this lineup is built for performance, efficiency, and serious innovation.|||...</td>
 <td></td><td></td><td></td><td class="desc">Delko Hybrid Banjo Drywall TaperDefault Title</td>
 <td><a href="https://www.youtube.com/watch?v=J8kJ__dsvoY" target="_blank">link</a></td><td><a href="https://timothystoolbox.com/products/delko-hybrid-banjo-drywall-taper?variant=39752160608314&amp;country=US&amp;currency=USD&amp;utm_medium=product_sync&amp;utm_source=bing&amp;utm_content=sag_organic&amp;utm_campaign=sag_organic&amp;srsltid=AfmBOoqlsoCXuWw88u7RpsOko2Uu2wrUZUfHlEPvWJBqqaT5kkODjo_sauU" target="_blank">link</a></td><td class="reason">Post features DELKO TOOLS drywall banjos generally, but catalog item is a specific Delko Hybrid Banjo Drywall Taper and the post does not confirm that exact model; also it is one item in a multi-product roundup, not the sole focus.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="397" data-type="fn">
 <td>397</td><td class="score score-mid">2</td>
 <td class="desc">20 Smart Makita Tools Under $50 Every DIYer Needs</td><td class="desc">#woodworking #MakitaTools #DIY #PowerTools #AmazonFinds #ToolDeals #BudgetTools #ToolReview #DIYTools #Makita||||Looking for powerful Makita tools that are affordable and worth buying? In this video, ...</td>
 <td>Makita</td><td>Makita tools</td><td></td><td class="desc">IMPACT XPS Socket Set SAE with Standard SA (10-Piece)</td>
 <td><a href="https://www.youtube.com/watch?v=Sv_3siqNNJM" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/Makita-IMPACT-XPS-Socket-Set-SAE-with-Standard-SA-10-Piece-E-01672/311427428" target="_blank">link</a></td><td class="reason">Post mentions Makita Impact XPS generally, but the catalog item is a specific Impact XPS socket set and the post does not clearly identify this exact product.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="400" data-type="fn">
 <td>400</td><td class="score score-mid">2</td>
 <td class="desc">this awkward living room layout made me want to SCREAM | modern &amp; minimalist style</td><td class="desc">Thank you to Revival Rugs for sponsoring today's video! Exciting news—Revival is now officially shipping to Canada! Head to the link to get 20% off your order, only available through our exclusive lin...</td>
 <td></td><td>Berry Brown</td><td></td><td class="desc">1 qt. #PPU24-02 Berry Brown Flat Low Odor Interior Paint &amp; Primer</td>
 <td><a href="https://www.youtube.com/watch?v=A2A7XLowcOk" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/BEHR-PREMIUM-PLUS-1-qt-PPU24-02-Berry-Brown-Flat-Low-Odor-Interior-Paint-Primer-130004/310870030" target="_blank">link</a></td><td class="reason">Post mentions Behr color 'Berry Brown' only as a paint reference; catalog is a specific BEHR Premium Plus interior paint product/finish/size, and paint is not the primary sponsored subject.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="401" data-type="fn">
 <td>401</td><td class="score score-mid">2</td>
 <td class="desc">20 New Amazon Tools You’ll Wish You Bought Sooner (2026)</td><td class="desc">#AmazonTools #NewTools #BestTools #AmazonFinds #MustHaveTools #CoolTools #PowerTools #DIYTools #WoodworkingTools #GarageTools #HomeImprovement #TrendingNow #ToolReview #AmazonGadgets #2026tools||||## ...</td>
 <td>Stak Rack</td><td>Painting Tool</td><td></td><td class="desc">Stak Rack 5 in 1 Painting Tool 12 Pack - SR4005</td>
 <td><a href="https://www.youtube.com/watch?v=f8vArVppqzQ" target="_blank">link</a></td><td><a href="https://www.acmetools.com/stak-rack-5-in-1-painting-tool-12pk-sr4005/866048000200.html" target="_blank">link</a></td><td class="reason">Post features Stak Rack as one item in a multi-product roundup, so it is not the primary subject; product line appears to match but score is capped at 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="404" data-type="fn">
 <td>404</td><td class="score score-mid">2</td>
 <td class="desc">Planning your spring painting projects? Swipe through to start your journey with inspiration featuring some of our most popular colors and our most popular paint: Regal® Select Interior, which delivers the ideal combination of durability and Benjamin Moore premium results, so you know you'll have beautiful color that lasts throughout the year (and beyond)!||||P.S. From April 15-28, save 20%* on up to three gallons of Aura® and Regal® Select Interior. Shop online with code COLOR20 or at your locally owned participating Benjamin Moore store. See site for terms. #BenjaminMoore #Paint #Home||.||Image 1: (WAINSCOTING) Gentle Gray 1626, Advance®, Satin (UPPER WALL) Steam AF-15, Regal® Select, Eggshell ||Image 2: (WALLS) Hale Navy HC-154, Regal® Select, Matte||Image 3: (WALLS) Crisp Linen CSP-305 Regal® Select, Matte||Image 4: (WALLS) Silver Song 1557 Regal® Select, Matte||Image 5: (WALLS) Crisp Linen CSP-305 Regal® Select, Eggshell||Image 6: (WALLS) Glass Slipper 1632 Regal® Select, Matte||Image 7: (WALLS) Crisp Linen CSP-305 Regal® Select, Matte</td><td class="desc"></td>
 <td>Benjamin Moore</td><td>Regal® Select</td><td></td><td class="desc">Regal Select Waterborne Interior Paint - Matte Quart Steam AF-15</td>
 <td><a href="https://www.instagram.com/p/DXKw0wkFo91/" target="_blank">link</a></td><td><a href="https://www.benjaminmoore.com/en-us/product/regal-select-waterborne-interior-paint-matte-1-quart-steam-af-15/N548/ZWB100000002130189" target="_blank">link</a></td><td class="reason">Post’s Steam AF-15 example is Regal Select Eggshell, while catalog is Regal Select Matte; finish differs and post also promotes gallons, not quart.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="407" data-type="fn">
 <td>407</td><td class="score score-mid">2</td>
 <td class="desc">15 TOOLS That Will Make Your Life 100x EASIER!</td><td class="desc">#DIYTools #ToolReview #HomeImprovement #MustHaveTools #WoodworkingTools #PowerTools #HandymanTips #GarageSetup #ToolboxEssentials #DIYProjects||||Looking for the **best DIY tools for home projects, wo...</td>
 <td></td><td></td><td></td><td class="desc">Turf Builder EdgeGuard Mini Push Broadcast Spreader Holds up to 5,000 sq. ft. for Seed, Fertilizer, Salt, Ice Melt</td>
 <td><a href="https://www.youtube.com/watch?v=SxWjCBI4Ang" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/Scotts-Turf-Builder-EdgeGuard-Mini-Push-Broadcast-Spreader-Holds-up-to-5-000-sq-ft-for-Seed-Fertilizer-Salt-Ice-Melt-76121-3/100664982" target="_blank">link</a></td><td class="reason">Post names Scotts Broadcast Spreader generically, but catalog is a specific Scotts Turf Builder EdgeGuard Mini model not confirmed in the post.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="408" data-type="fn">
 <td>408</td><td class="score score-mid">2</td>
 <td class="desc">Gardening In GROW BAGS Is So EASY It's Like Cheating!</td><td class="desc">Whether you have a big yard, a small yard or no yard, you should be using fabric grow bags to grow food! Grow bags are affordable, well draining, mobile and can fit practically anywhere. This video is...</td>
 <td></td><td>grow bags</td><td></td><td class="desc">3 lbs. Organic Blood Meal Dry Fertilizer 12-0-0</td>
 <td><a href="https://www.youtube.com/watch?v=Bl5yWkUqm-w" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/TRUE-ORGANIC-3-lbs-Organic-Blood-Meal-Dry-Fertilizer-12-0-0-R0008/326081418" target="_blank">link</a></td><td class="reason">Post’s main focus is grow bags, and True Organic Blood Meal (3 lbs) appears only in the product list; primary-intent cap applies. Product line and size align, but it is not the primary subject.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="410" data-type="fn">
 <td>410</td><td class="score score-mid">2</td>
 <td class="desc">2 SECRET FERTILIZERS For RECORD BREAKING Tomato Harvests!</td><td class="desc">In this video, I share 2 secret fertilizers most gardeners have never heard of that will help you achieve record breaking tomato harvests! These organic fertilizers aren't just for tomatoes: your pepp...</td>
 <td></td><td>bone meal</td><td></td><td class="desc">Espoma Bone-meal Organic Granules Bulbs, Flowers, Vegetables Bone Meal 8 lb</td>
 <td><a href="https://www.youtube.com/watch?v=UeSwFY7skDc" target="_blank">link</a></td><td><a href="https://www.acehardware.com/p/7054076?x429=true" target="_blank">link</a></td><td class="reason">Post features Espoma Bone Meal (8lb) only in a product list; main focus is crab/lobster shell meal and AZOMITE, so primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="411" data-type="fn">
 <td>411</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td>all purpose plant food</td><td></td><td class="desc">8 lbs. Organic All Purpose Plant Food Dry Fertilizer 5-4-5</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/TRUE-ORGANIC-8-lbs-Organic-All-Purpose-Plant-Food-Dry-Fertilizer-5-4-5-R0003/323677641" target="_blank">link</a></td><td class="reason">Post mentions True Organic All Purpose Fertilizer 5-4-5, but the product is only in an affiliate product list and not the primary subject; primary-intent cap applies.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="412" data-type="fn">
 <td>412</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td>Plant Tone fertilizer</td><td></td><td class="desc">27 lb. Organic All Purpose Plant Tone Fertilizer</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/Espoma-27-lb-Organic-All-Purpose-Plant-Tone-Fertilizer-100540066/312050067" target="_blank">link</a></td><td class="reason">Post mentions Espoma PlantTone specifically in 36 lb and 50 lb sizes; catalog is same product line but 27 lb violates the explicit size mentioned.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="413" data-type="fn">
 <td>413</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td>liquid fish emulsion plant food fertilizer concentrate</td><td></td><td class="desc">128 oz. (1 gal.) Organic Gardening Liquid Fish Emulsion Plant Food Fertilizer Concentrate 5-1-1</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://www.homedepot.com/p/Alaska-128-oz-1-gal-Organic-Gardening-Liquid-Fish-Emulsion-Plant-Food-Fertilizer-Concentrate-5-1-1-100099249/100211859" target="_blank">link</a></td><td class="reason">Post’s main focus is a cardboard-box raised bed, and this fertilizer appears only in the product list; also seller constraint differs since post links Amazon.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="414" data-type="fn">
 <td>414</td><td class="score score-mid">2</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td><td class="desc">Do you want to start a garden or increase the size of your garden, but you're unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a card...</td>
 <td></td><td></td><td></td><td class="desc">Jack's Professional 10-30-20 Blossom Booster Water-Soluble Fertilizer with Micronutrients for Increasing Blooms in Plants Grown in Continuous Liquid F</td>
 <td><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">link</a></td><td><a href="https://www.esbenshades.com/jack-s-professional-10-30-20-blossom-booster-water-soluble-fertilizer-with-micronutrients-for-increasing-blooms-in-plants-grown-in-continuous-liquid-feed-programs-25lbs/shop-all/671341771609/?sku=671341771609&amp;utm_source=bing&amp;utm_medium=cpc&amp;utm_campaign=PLA&amp;scid=scbplp&amp;sc_intid=" target="_blank">link</a></td><td class="reason">Post’s main focus is a cardboard-box raised bed, and this fertilizer appears only in the product list; although it matches Jack's Blossom Booster 10-30-20 25lb, primary-intent cap limits score to 2.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 <tr data-idx="417" data-type="fn">
 <td>417</td><td class="score score-mid">2</td>
 <td class="desc">The votes are in 🗳️ and your March favorites did not disappoint.⁠||||Think bold silhouettes, timeless textures, and pieces that turn a house into a moment.⁠||⁠||Swipe through the winners and tell us—did your pick make the cut? 👀⁠||⁠||Pictured: ⁠||Viora Chair⁠||Nella Coffee Table⁠||Halston Chair⁠||Or</td><td class="desc">Mitchell Bed</td>
 <td></td><td>Mitchell Bed</td><td></td><td class="desc">Mitchell Upholstered Bed Size: King Color: Surrey Camel</td>
 <td><a href="https://www.instagram.com/p/DWmGwZolTBW/" target="_blank">link</a></td><td><a href="https://www.perigold.com/Four-Hands--Norwood-Upholstered-Low-Profile-Platform-Bed-FHNF1325-L12-K~P002101225.html?refid=MX{AdID}-P002101225_1255254894_1255254896&amp;device={device}&amp;ptid={CriterionId}&amp;targetid={TargetID}&amp;network={network}&amp;PiID%5B%5D=1255254894&amp;PiID%5B%5D=1255254896" target="_blank">link</a></td><td class="reason">Post names Mitchell Bed, but catalog product is Norwood Upholstered Low Profile Platform Bed; same general bed category, different product line.</td>
-<td class="chk" onclick="toggleChk(this)"><input type="checkbox"></td>
 </tr>
 </table>
-
-<script>
-function toggleChk(td) {
-    var cb = td.querySelector('input[type=checkbox]');
-    cb.checked = !cb.checked;
-    var tr = td.closest('tr');
-    tr.classList.toggle('checked-row', cb.checked);
-    updateCounts();
-    saveLocal();
-}
-function updateCounts() {
-    document.getElementById('fpCount').textContent = '已选: ' +
-        document.querySelectorAll('#fpTable input:checked').length;
-    document.getElementById('fnCount').textContent = '已选: ' +
-        document.querySelectorAll('#fnTable input:checked').length;
-}
-function exportChecked(type) {
-    var table = type === 'fp' ? 'fpTable' : 'fnTable';
-    var action = type === 'fp' ? 'false→true' : 'true→false';
-    var ids = [];
-    document.querySelectorAll('#' + table + ' tr[data-idx]').forEach(function(tr) {
-        if (tr.querySelector('input:checked')) ids.push(tr.getAttribute('data-idx'));
-    });
-    if (!ids.length) { alert('没有勾选'); return; }
-    prompt(type.toUpperCase() + ' 需改GT (' + action + ') 的编号:', ids.join(','));
-}
-function saveLocal() {
-    var data = {};
-    document.querySelectorAll('tr[data-idx]').forEach(function(tr) {
-        var idx = tr.getAttribute('data-idx');
-        var type = tr.getAttribute('data-type');
-        var checked = tr.querySelector('input:checked') !== null;
-        if (checked) data[type + '_' + idx] = true;
-    });
-    localStorage.setItem('metric_report_v2', JSON.stringify(data));
-}
-function restoreLocal() {
-    try {
-        var data = JSON.parse(localStorage.getItem('metric_report_v2') || '{}');
-        document.querySelectorAll('tr[data-idx]').forEach(function(tr) {
-            var key = tr.getAttribute('data-type') + '_' + tr.getAttribute('data-idx');
-            if (data[key]) {
-                tr.querySelector('input').checked = true;
-                tr.classList.add('checked-row');
-            }
-        });
-        updateCounts();
-    } catch(e) {}
-}
-restoreLocal();
-</script>
 </body></html>
