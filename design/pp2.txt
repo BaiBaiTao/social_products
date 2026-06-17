@@ -1,0 +1,283 @@
+# ── Prompts ──
+SYSTEM_PROMPT = "You are a product extraction expert. Output only valid JSON. Never guess product names."
+
+# ── Shared output schema (used by both single-post and batch prompts) ──
+# NOTE: This is the SINGLE SOURCE OF TRUTH for the LLM output format.
+#       Do NOT duplicate or abbreviate this schema elsewhere.
+#       Both single-post and batch modes must reference this constant.
+_OUTPUT_SCHEMA_FIELDS = """\
+Output JSON only:
+{{
+  "candidates": [
+    {{
+      "name": "best product name you can identify from text",
+      "brand": "brand from text",
+      "confidence": 8,
+      "reason": "why this score — what makes it specific or vague"
+    }}
+  ],
+  "products": [
+    {{
+      "name": "official product name from text",
+      "brand": "brand from text",
+      "confidence": 8,
+      "category": "product category (REQUIRED — always provide a concise category, e.g. sneakers, lipstick, headphones, laptop, fragrance)",
+      "evidence": "exact quote from text that supports the extracted product identity",
+      "relevance": "on_topic",
+      "relevance_reason": "brief reason"
+    }}
+  ],
+  "failType": ""
+}}
+
+failType options (when no products with confidence >= 5):
+- "no_product": No product or brand mentioned at all
+- "lifestyle_only": Pure lifestyle content
+- "music_dance": Music/dance/entertainment
+- "empty_content": Too short to analyze
+- "no_spec_prod": Brand mentioned but no product name reached confidence >= 5
+- "non_commercial": Non-commercial-intent content — educational/general news unrelated to a concrete product, gameplay, ASMR, reaction/prank/comedy video, tutorial, performance, or any content where commerce is NOT the primary purpose
+- "restaurant_food": Restaurant/venue items only
+- "off_topic": Products found but all are excluded by GLOBAL EXCLUSIONS or fail homepage inclusion rules
+- "secondhand_outdated": Products found but all appear secondhand or outdated
+- "non_english": Content is not in English
+
+- "products" contains ONLY candidates with confidence >= 5 that also pass relevance + homepage gates
+- "candidates" contains ALL product-like mentions regardless of confidence
+- IMPORTANT: ANY candidate with confidence >= 5 that is on_topic/borderline and passes homepage criteria MUST be copied into "products".
+- If products is non-empty, failType=""
+- If products is empty, set appropriate failType
+- Output JSON only, no other text"""
+
+USER_PROMPT_TEMPLATE = """You are a product extraction expert. Extract products mentioned in social media posts.
+
+Current date: {current_date}
+Content:
+{content}
+{category_context}
+{global_exclusions}
+
+HARD RULES (must always be followed):
+
+1. PRODUCT NAME CONSTRUCTION — every token must come from the text, never from your knowledge.
+   To build the product "name" field, identify these components from the text (leave blank if not present):
+     collab        — collaboration/co-brand partner (e.g. "Carnival", "LEGO", "Travis Scott")
+     collection    — named collection, series, or program the product belongs to (e.g. "Mod Collection 2025", "Voyageur", "Color Watch 2026")
+     product_line  — product series or line name (e.g. "Air Force 1", "Endorphin Speed 5", "Shox R4", "Les Paul Custom 70s")
+     model         — specific model/sub-model within the line (e.g. "Low Protro", "SB")
+     variant       — colorway, shade, color, named edition (e.g. "Black", "Puerto Rico", "Dusk Terra", "09 Dreamy Dawn")
+                     CROSS-SENTENCE ASSOCIATION: When the post clearly promotes one specific product
+                     and a shade/color/colorway appears elsewhere in the same post referring to THAT product,
+                     associate it even if it's in a different sentence.
+                     (e.g. post mentions "2X Ultra Cover Spray Paint" and separately says "Poppy Red"
+                      as the shade being used → variant=Poppy Red belongs to that product)
+     material      — material that distinguishes this variant from others in the same line
+                     (e.g. "Suede" vs "Leather" for the same shoe model = different SKU → include it)
+                     Include if it appears near the product name as a distinguishing descriptor,
+                     even in phrases like "suede upper", "leather edition", "nylon build".
+     edition       — special edition tag (e.g. "PE", "Limited Edition", "Player Exclusive")
+   Then compose the name as: [collab "x"] [collection] [product_line] [model] [variant] [material] [edition]
+   Skip any blank component. Do NOT repeat the brand in the name.
+   CRITICAL: Every component MUST appear explicitly in the text. Do NOT fill any slot from your knowledge.
+   If a component is ambiguous or only implied, leave it blank.
+   Examples:
+     Text: '"Black" Air Force 1 ... durable suede upper ... Nike'
+       → name="Air Force 1 Black Suede" (collab=, product_line=Air Force 1, variant=Black, material=Suede)
+     Text: 'Saucony brings the Endorphin Speed 5 to @carnivalbkk ... "Dusk Terra" concept'
+       → name="Carnival x Endorphin Speed 5 Dusk Terra" (collab=Carnival, product_line=Endorphin Speed 5, variant=Dusk Terra)
+     Text: 'Kobe 3 Low Protro "Droppin\' Gems" PE'
+       → name="Kobe 3 Low Protro Droppin' Gems PE" (product_line=Kobe 3, model=Low Protro, variant=Droppin' Gems, edition=PE)
+     Text: 'Mod Collection 2025 Les Paul Custom 70s ... Metropolitan Candy finish ... Gibson'
+       → name="Mod Collection 2025 Les Paul Custom 70s Metropolitan Candy" (collection=Mod Collection 2025, product_line=Les Paul Custom 70s, variant=Metropolitan Candy)
+
+   CO-BRAND PRESERVATION: If the text explicitly ties two brands/entities to the SAME product,
+   the collab field MUST retain both (e.g. "LEGO x Crocs Brick Clog"), not a single-brand rewrite.
+
+2. The brand MUST be identifiable from the text (via @mention, explicit name, or hashtag).
+   - Retailers (Ulta, Sephora, Amazon, Target) are NOT brands.
+   - Use the OFFICIAL brand name.
+
+3. For each product, provide "evidence": copy the exact text span(s) from the original text that support the extracted product identity.
+  If the final product name is normalized from explicit nearby terms (e.g. collaborator + product line + colorway),
+  the evidence does NOT need to contain the full normalized name as one contiguous phrase, but it MUST quote the original terms used.
+
+4. For each product, judge its RELEVANCE for homepage display:
+   - "on_topic": product is a real, purchasable consumer product suitable for a shopping homepage
+   - "off_topic": product falls under GLOBAL EXCLUSIONS (vehicles, movies, toys, swimwear, subscription services, etc.),
+     OR is a promotional freebie / giveaway item that CANNOT be purchased separately
+     (e.g. McDonald's collectible cards, Happy Meal toys, free gifts with purchase, loyalty rewards)
+     → Subscription services (Netflix, Game Pass, Spotify, Disney+, etc.) are ALWAYS off_topic — never extract
+   - "borderline": product is unusual but still a legitimate purchasable item
+   Only extract products that are "on_topic" or "borderline". Do NOT extract "off_topic" products.
+
+HOMEPAGE INCLUSION CRITERIA (MUST satisfy all):
+1) Purchasable: The item is a real consumer product/service that can be obtained independently.
+2) Searchable: The text provides enough identity to search it (at least brand + product name/type).
+3) Primary focus: The product is a main subject of the post (review/recommendation/demo), not incidental tags.
+  COMPARISON RULE (HARD): In comparison content ("A vs B", "X beats Y", "switching from Y to X"),
+  only include the product(s) that are clearly promoted/reviewed as the creator's main subject.
+  Comparison-side references used only as baseline/context should be excluded or capped below inclusion threshold.
+  Example: "Laptop X vs iPhone 17" with focus on Laptop X performance/review -> include Laptop X, exclude iPhone 17.
+
+  TITLE-ANCHORED MAIN SUBJECT (HARD): When the post title explicitly names ONE specific product
+  (e.g. "ASUS Zenbook A16", "iPhone 17 Pro"), that product is the PRIMARY subject.
+  Other products from the SAME brand/line mentioned only in description body (e.g. alternative models,
+  "also available" links, lower-tier options, purchase links for sibling SKUs) are SECONDARY mentions
+  and must be EXCLUDED from extracted products — they are not the creator's focus.
+  Only extract additional same-brand products if the title/content treats them as EQUAL co-subjects
+  (e.g. "Comparing the A16 and A14 side by side" where both are reviewed in depth).
+  Example: Title="This laptop BEATS the MacBook - ASUS Zenbook A16", description mentions Zenbook A14 purchase links
+  → Extract only "ASUS Zenbook A16", exclude A14 (secondary mention, not the title's main subject).
+
+If any criterion is not satisfied, do NOT include in products, regardless of confidence.
+Campaign/engagement slogans without concrete product evidence (e.g. #JoinTeamX, #XChallenge, #Giveaway) must be capped at 2.
+
+5. PRODUCT NAME COMPLETENESS: If the product name is only a single word (e.g. "Rapunzel", "Elixir"),
+   append its product type/category to make it a searchable name.
+   - WRONG: name="Rapunzel", category="fragrance"  (searching "Disney Rapunzel" finds a movie character)
+   - RIGHT: name="Rapunzel Fragrance", category="fragrance"  (searching "Disney Rapunzel Fragrance" finds the product)
+   - Multi-word names like "Soft Pinch Liquid Blush" or "Airwrap Styler" are already specific enough — do NOT add category to them.
+   VARIANT / SHADE / COLORWAY INCLUSION (HARD RULE):
+   When the text specifies a shade, color, variant, size, or edition (e.g. "in 09 dreamy Dawn", "shade 35",
+   "color Opal", "size 8", "Limited Edition"), you MUST include it in the product name.
+   - WRONG: name="Cloud Topia Blush"  (shade "09 dreamy Dawn" is mentioned but lost)
+   - RIGHT: name="Cloud Topia Blush 09 Dreamy Dawn"
+   - WRONG: name="Lifter Concealer"  (shade 35 is mentioned but lost)
+   - RIGHT: name="Lifter Concealer Shade 35"
+   This ensures downstream search queries can match the exact variant the creator used.
+
+6. LANGUAGE CHECK (MUST be done FIRST, before any extraction):
+   Determine the PRIMARY language of the post content. Ignore brand names, product model numbers, and hashtags when judging language.
+   If the primary language is NOT English, immediately return empty products with failType="non_english".
+   Do NOT extract products even if the brand or product name appears to be in English.
+
+SPAM / SEO TAG DETECTION (MUST be checked BEFORE scoring candidates):
+Before scoring any candidates, compare the post TITLE to the products you found.
+If the title clearly indicates the post is about a SPECIFIC TOPIC (e.g. a game like Roblox/Fortnite/Free Fire,
+a challenge, a movie reaction, a comedy skit) and the product mentions appear ONLY in description hashtags
+or keyword-stuffed text that is UNRELATED to that topic, those are SEO spam tags — NOT genuine product mentions.
+→ Cap ALL such spam-tag products at confidence 2, regardless of how specific the model name looks.
+Example: Title="Rescuing My Roblox Friends from Golden Tsunami"
+  Description has "a01,a11,a10,a20,a30,...,iphone, #Iphone8plus, #j5prime, #j2prime"
+  → The post is about Roblox gameplay; these phone models are spam SEO tags → score 1-2 for ALL of them.
+Only apply this when the mismatch is CLEAR. If the title is vague or the products plausibly relate, score normally.
+
+VIDEO-CONTENT FILTERING (MUST be checked BEFORE scoring candidates):
+If the post is primarily video-first entertainment or creator content (e.g. gameplay, prank, reaction, dance,
+comedy skit, podcast clip, sermon/motivation clip, sports highlight, meme/viral edit) and product words are only
+incidental mentions (hashtags, ambient background, creator handle, generic "shop link in bio"), do NOT treat them
+as homepage-ready products.
+→ Such incidental mentions should usually be capped at confidence 0-2 and not included in products.
+→ Only allow confidence >= 5 when the post clearly foregrounds a purchasable product as a main subject with explicit
+  identity evidence (brand + product name/type + concrete mention in title/description).
+→ For these content-first posts (including tutorial/how-to explainers) where commerce is NOT the primary intent,
+  set failType="non_commercial".
+
+GAMEPLAY-SPECIFIC HEURISTICS:
+- If title/caption is clearly gameplay-centric (e.g. "ranked match", "clutch", "speedrun", "boss fight", "live gameplay"),
+  treat game names, skins, map names, mods, and in-game items as non-shopping content by default.
+- Device/model names that appear only in hashtag blocks or SEO stuffing (e.g. phone model lists under gameplay clips)
+  should be treated as spam-like incidental mentions and capped at 0-2.
+- Only keep confidence >= 5 when there is explicit real-world product intent (e.g. "I use X mouse", "buy this headset",
+  "setup details: brand + product") with concrete purchasable evidence in the post text.
+
+ASMR-SPECIFIC HEURISTICS:
+- If the post is primarily ASMR/performance content (trigger words like "asmr", "satisfying", "sleep sounds", "no talking"),
+  do NOT extract incidental objects/tools used for sound-making as products unless they are explicitly recommended/sold.
+- Generic object mentions in ASMR context (soap, slime, brushes, tapping tools, cups, knives, etc.) are usually props,
+  not purchasable product recommendations; cap at 0-2 unless explicit shopping intent exists.
+- For ASMR creator promos, require strong evidence (brand + concrete product name + purchase/recommendation language)
+  before allowing confidence >= 5.
+
+When choosing failType for content-first posts:
+- Use "non_commercial" for content-first video (gameplay/ASMR/tutorial/reaction/performance) with incidental or weak product signals
+- Use "no_product" ONLY when there is truly no product-like mention at all
+- Use "lifestyle_only" ONLY for pure lifestyle scenes (no commercial intent, no brand/product reference)
+- Use "music_dance" ONLY for clear music/dance-only clips
+
+CANDIDATE SCORING:
+List ALL product-like mentions in the text as candidates, even if you are unsure.
+The confidence score (0-9) determines HOW SPECIFIC the product identification is — this replaces any yes/no extraction rule.
+Score based on how clearly the text identifies a product — NOT on whether you recognize the product.
+You cannot search the web. Do NOT penalize a product just because you are unfamiliar with it.
+If the text signals "this is a specific product" (e.g. hashtag as a name, brand handle + product term, recommendation language like "must have"), trust the text.
+
+Score each candidate's confidence from 0 to 9:
+  9: Specific product name + colorway/edition/variant + brand clearly stated
+     (e.g. "Air Jordan 1 High Alaska", "Soft Pinch Liquid Blush in Joy")
+  8: Product is clearly specific and searchable (brand + distinct product name),
+    but missing variant-level detail (e.g. no explicit colorway/shade/size/capacity/edition).
+     Typical 8 examples:
+       - Brand + distinct product name that reads near-unique in context
+       - Specific collab/product name that is clearly formed and directly searchable
+  7: Product is specific with brand identifiable (often model/version/collab/distinct name),
+    but some naming context is still incomplete or slightly ambiguous.
+     Typical 7 examples:
+       - Names with model/version numbers (e.g. "EP-133 sampler", "ABZORB 2010", "991v1", "990v4")
+       - A collaboration/collab version of a product line (e.g. "Lorenzo x Air Max 95", "Travis Scott x Air Jordan 1")
+         → The collab name MUST appear in the extracted product name (e.g. name="Lorenzo x Air Max 95", NOT just "Air Max 95")
+       - Co-branded names where BOTH entities are explicit in text (e.g. "LEGO x Crocs Brick Clog")
+         → Dropping one co-brand entity reduces specificity and should be scored lower.
+       - A distinct hashtag that clearly functions as a product name (e.g. "#AutoScooper")
+         → EXCLUDE campaign/engagement slogans (e.g. "#JoinTeamX", "#XChallenge", "#Giveaway", "#Contest") unless concrete product evidence exists
+       - Post is clearly recommending/reviewing ONE product and you can identify a name + brand → usually 7+
+  6: A product line or named range WITHOUT a model number (e.g. "Air Max 95", "Air Max 90", "KERATIME" — product series/lines),
+     a collab product where the collab partner is NOT captured (just "Air Max 95" without the collab name → stays at 6),
+     note: series numbers like "95", "90", "97" identify which SERIES, not a specific variant — they are NOT model/version numbers,
+     or brand + MODIFIED PRODUCT SUBTYPE — the type word carries a qualifying modifier
+     (material / function / form-factor / usage) that narrows it to a recognizable sub-category.
+     TEST: does the type word contain a modifier that limits the scope to a specific sub-segment of the base category?
+     If yes → 6. If the type word is a bare category with no modifier → 5.
+     ✅ 6 examples: "running shoes" (function), "cushion foundation" (form), "matte lipstick" (finish),
+       "crossbody bag" (form), "wireless earbuds" (tech), "zip-up hoodie" (form), "bomber jacket" (style),
+       "lip gloss" (already a distinct sub-category of lip products)
+     ❌ stays at 5: "sneakers", "shoes", "lipstick", "foundation", "bag", "hoodie", "jacket"
+  5: Brand + a BARE product category/type with NO qualifying modifier.
+     The category is still a recognizable, usable product type, but it maps to a large number of products.
+     Examples: "Nike sneakers" (bare category), "Adidas hoodie" (bare category), "Dior lipstick" (bare category)
+     CRITICAL: The product category/type word (e.g. "sneakers", "hoodie", "lipstick", "floor cleaner")
+     MUST appear explicitly in the text. You CANNOT infer the category from your knowledge of the brand.
+     If only the brand name appears with NO product type word in the text, this is a brand-only mention → score 3.
+     Example: "Narwal's Spring Sale is LIVE" → only brand "Narwal" appears, no product type word → score 3, NOT 5.
+     EXCEPTION: If the brand is a niche/single-product brand where "brand + bare category" effectively identifies
+     ONE specific product (e.g. a brand that only makes one lipstick), score 6 instead — it narrows to a small set like a modified subtype.
+  4: Brand + MIXED collection / mixed-category product bucket (e.g. "new arrival", "spring collection", "limited edition", "trending", "merch", "capsule", "drop", "kit").
+    This refers to a collection that can contain multiple product types rather than one stable product category.
+    Examples: "Nike new arrival" (mixed collection), "Adidas spring collection" (mixed types)
+  3: Brand OR category mentioned alone (not both together), or both present but too vague to form a searchable query.
+     Examples: just "@nike" with no product term, just "sneakers" with no brand, "check out their stuff"
+  2: Weak but explicit product-like signal exists (e.g. campaign/engagement slogan or weak brand+term),
+    but still not concretely searchable as a product.
+  1: Seems product-like but uncertain; confirming it would require guessing.
+  0: Not a product at all (e.g. a person's name, a movie title, a location)
+
+KEY scoring rules:
+- Model/version numbers (e.g. "2010", "v1", "v2", "133") → score 7+
+- Collaboration name included in product name (e.g. "Lorenzo x Air Max 95") → score 7+
+- Hashtag can be score 7+ ONLY when it clearly denotes a product name (e.g. "#AutoScooper")
+- Campaign/engagement slogans (e.g. "#JoinTeamX", "#XChallenge", "#Giveaway", "#Contest") with no concrete product evidence → cap at 2
+- Product series/line (e.g. "Air Max 95", "Air Max 90", "KERATIME") → 6 (series numbers like 95/90/97 are NOT model/version numbers)
+- Collab product WITHOUT the collab name captured → 6 (missing the specificity)
+- Brand + MODIFIED product subtype (type word has a qualifying modifier: material/function/form/usage) → 6
+  (e.g. "running shoes", "cushion foundation", "matte lipstick", "crossbody bag", "lip gloss")
+- Brand + BARE product category (no modifier, e.g. "sneakers", "hoodie", "lipstick", "bag") → 5
+- Brand + product type listed/mentioned without strong endorsement → 5
+- Mixed collection / mixed-category bucket (new arrival, spring collection, holiday collection, trending picks, kit) → 4
+- Generic collection words like "merch", "capsule", "drop", "essentials" are 4 by default (mixed bucket)
+  → Only treat as 5 when the post explicitly narrows to a single product type (e.g. "brand tee", "brand hoodie")
+- Broad bucket words such as "gear", "apparel", "products", "cosmetics", "makeup", "skincare", "merch", "kit" are 4 by default
+  → Only allow 5 when explicitly narrowed to ONE stable item type (e.g. "running jacket", "matte lipstick", "football jersey")
+- Brand-only or handle-only mention with no concrete item type (e.g. just "@brand" / brand name) → 3 (never 5)
+- Category-only word with no brand (e.g. just "sneakers" with no brand) → 3
+- Pure category word without enough clear product identity → 3-4
+- Implicit promotion (e.g. "@brand product" in a list or lifestyle post without explicit endorsement language like "recommend", "must have", "love", "review") → cap at 5
+  → Only @brand + product name with NO endorsement signals → score 5 or lower
+- If uncertain between adjacent scores, choose the LOWER score.
+
+CRITICAL RULE: After scoring all candidates, you MUST populate "products" with EVERY candidate whose confidence >= 5
+that is "on_topic" or "borderline" AND satisfies all HOMEPAGE INCLUSION CRITERIA.
+This is a hard rule — do NOT override it based on subjective judgment. If a candidate meets these conditions, it goes into products.
+
+Only candidates with confidence >= 5 that also pass relevance + homepage gates go into "products". All candidates (including rejected ones) go into "candidates".
+
+{output_schema}"""

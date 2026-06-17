@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<title>Prompt Ablation Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f6fa;color:#222;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:1.5em;margin-bottom:4px}
+.sub{color:#666;font-size:.88em;margin-bottom:18px;line-height:1.6}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:20px;margin-bottom:16px}
+.card h2{font-size:1.1em;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:.85em}
+th{background:#f0f1f5;text-align:left;padding:7px 6px;position:sticky;top:0}
+td{padding:6px;border-bottom:1px solid #eee;vertical-align:top}
+.reason{max-width:420px;font-size:.82em;color:#555}
+tr.fn-row td:first-child{border-left:3px solid #f39c12}
+tr.fp-row td:first-child{border-left:3px solid #e74c3c}
+.stage{font-weight:700}
+.up{color:#27ae60}.down{color:#e74c3c}.neutral{color:#999}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.75em;font-weight:600}
+.tag-fp{background:#fde8e8;color:#c0392b}.tag-fn{background:#fef5e7;color:#e67e22}
+.summary{background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;padding:14px;margin-top:12px;font-size:.9em;line-height:1.6}
+</style></head><body>
+<!-- SOCIAL_PRODUCTS_NAV -->
+<div id="sp-home-btn" style="
+    position:fixed; top:16px; right:20px; z-index:9999;
+">
+    <a href="https://baibaitao.github.io/social_products/" style="
+        display:inline-flex; align-items:center; gap:6px;
+        padding:8px 16px; background:rgba(37,99,235,0.92); color:#fff;
+        border-radius:8px; text-decoration:none; font-size:14px;
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        box-shadow:0 2px 10px rgba(0,0,0,0.25);
+        transition:background 0.2s, transform 0.2s;
+    " onmouseover="this.style.background='rgba(30,64,175,0.95)';this.style.transform='scale(1.05)'"
+       onmouseout="this.style.background='rgba(37,99,235,0.92)';this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+</div>
+
+
+<h1>Prompt Ablation Report</h1>
+<p class="sub">
+<strong>实验:</strong> 删除第一套评分系统 (简单 5/4/3/2)，仅保留 L1-L4 评分体系<br>
+<strong>Golden Set:</strong> 433 cases &nbsp;|&nbsp; <strong>Date:</strong> 2026-06-17 &nbsp;|&nbsp; <strong>Runtime:</strong> ~45 min
+</p>
+
+<div class="card">
+<h2>三阶段 Metrics 对比</h2>
+<table>
+<tr><th>阶段</th><th>Precision</th><th>Recall</th><th>F1</th><th>Accuracy</th><th>FN</th><th>FP</th><th>说明</th></tr>
+<tr style="background:#f8f9fc"><td class="stage">① 原始 baseline</td><td>0.977</td><td>0.849</td><td>0.909</td><td>86.1%</td><td>53</td><td>7</td><td>原版 prompt + 原版 golden set</td></tr>
+<tr style="background:#e8f5e9"><td class="stage">② 修正 22 个 label</td><td>0.977</td><td>0.905</td><td>0.940</td><td>91.2%</td><td>31</td><td>7</td><td>原版 prompt + 修正 golden set</td></tr>
+<tr style="background:#fff3e0"><td class="stage">③ 删除第一套评分</td><td>0.932</td><td>0.923</td><td>0.928</td><td>89.1%</td><td>25</td><td>22</td><td>修改 prompt + 修正 golden set</td></tr>
+</table>
+<div class="summary">
+<strong>Label 修正 (① → ②):</strong> FN -22, FP 不变, F1 +0.031 — 主要收益。<br>
+<strong>Prompt 修改 (② → ③):</strong> FN -6, FP +15, F1 -0.012 — 效果为负，<strong>不建议采纳</strong>。<br>
+<strong>整体 (① → ③):</strong> Recall 84.9% → 92.3% (+7.4%), FN 53 → 25, 但 FP 7 → 22。
+</div>
+</div>
+
+<div class="card">
+<h2><span class="tag tag-fn">FN</span> 当前 False Negatives — 25 cases</h2>
+<table>
+<tr><th>Row</th><th>Score</th><th>Brand</th><th>Extracted Name</th><th>Post Title</th><th>LLM Reason</th></tr>
+<tr class="fn-row">
+  <td>24</td><td>2</td>
+  <td>Make Up For Ever</td><td title="HD Skin Perfecting Pressed Finishing Powder - Mini - Pressed Powder: Ultra-blurring &amp; Smoothing - Translucent - For fair to light tan skin tones MAKE UP FOREVER">HD Skin Perfecting Pressed Finishing Powder</td>
+  <td title="Love Story Star Sarah Pidgeon&#x27;s Springtime Makeup Routine | Beauty Secrets | Vogue">Love Story Star Sarah Pidgeon&#x27;s Springtime Makeup </td>
+  <td class="reason">Post names Make Up For Ever HD Pressed Powder, but catalog is HD Skin Perfecting Pressed Finishing Powder Mini; same brand/category yet different explicit product line/series.</td></tr>
+<tr class="fn-row">
+  <td>83</td><td>1</td>
+  <td>Seven Springs Farm Organi</td><td title="Azomite Granular - 44 lb Bag"></td>
+  <td title="How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)">How to Grow a Productive Garden in a Cardboard Box</td>
+  <td class="reason">Post mentions Azomite Trace Minerals 44lb but not Seven Springs Farm Organic; brand differs though product type aligns.</td></tr>
+<tr class="fn-row">
+  <td>87</td><td>0</td>
+  <td>Ashley Luxe</td><td title="Ashley Luxe Calden Boucle 3-Piece Modular Sectional with Chaise, Oyster">Calden Sectional</td>
+  <td title="@haileesteinfeld in the boucle that started it all. Go behind the scenes of her most unexpected look: a custom gown crafted from the plush boucle fabric of our Calden Sectional. #AshleyLuxe">@haileesteinfeld in the boucle that started it all</td>
+  <td class="reason">Non-shopping TikTok post about a custom gown inspired by Calden Sectional fabric; not recommending or endorsing purchase of the sectional.</td></tr>
+<tr class="fn-row">
+  <td>89</td><td>0</td>
+  <td>Hunter Industries</td><td title="Hunter PGP Adjustable Coverage Rotary Sprinkler, 2 Pack">PGP® Ultra</td>
+  <td title="PGP Ultra &amp; I-20: Same Nozzles, More Options">PGP Ultra &amp; I-20: Same Nozzles, More Options</td>
+  <td class="reason">Non-shopping promo/contest post; although it mentions PGP Ultra and I-20 rotors, the primary purpose is Rotor Revolution sweepstakes entries, not recommending this specific catalog product.</td></tr>
+<tr class="fn-row">
+  <td>90</td><td>0</td>
+  <td>Hunter</td><td title="Hunter I20 Rotor with Check Valve Shrub | I20-00">I-20 rotors</td>
+  <td title="PGP Ultra &amp; I-20: Same Nozzles, More Options">PGP Ultra &amp; I-20: Same Nozzles, More Options</td>
+  <td class="reason">Contest/promotion post (Rotor Revolution sweepstakes) rather than a purchase recommendation; despite naming Hunter I-20 rotors, non-shopping giveaway signal overrides.</td></tr>
+<tr class="fn-row">
+  <td>115</td><td>0</td>
+  <td>Other</td><td title="Luxury Palette - Charlotte Tilbury">Luxury Palette - Pillow Talk Dreams</td>
+  <td title="Oscars ready with @thetonyabrewer + @charlottetilbury 💄||||#GetTheLook||||SKINCARE||NEW! Magic Cream ||Magic Hydrator Mist ||Magic Serum Crystal Elixir ||Immediate Eye Revival Patches ||||COMPLEXION ||Pillow Talk Beauty Soulmates Palette in NEW! Rosewood ||NEW! Airbrush Flawless Blur Concealer - 4.5 ||Airbrush Flawless Foundation - 5W ||Hollywood Contour Wand - Fair ||Airbrush Flawless Finish Powder -1 + 2 ||Beauty Light Wand - Pillow Talk Original ||Unreal Blush Healthy Glow Stick - Rosy Glow ||Airbrush Flawless Setting Spray ||||EYES||Eyes To Mesmerise - Champagne ||Luxury Palette - Pillow Talk Dreams ||Rock ‘N’ Kohl Eyeliner - Smokey Bronze ||||BROWS||Brow Fix ||Brow Cheat - Natural Brown ||||LIPS ||NEW! Pillow Talk Blush Balm Lip Tints - Pillow Talk Medium ||Lip Cheat - Iconic Nude, Icon Baby ||||#KateHudson #CharlotteTilbury">Oscars ready with @thetonyabrewer + @charlottetilb</td>
+  <td class="reason">Catalog brand is listed as Other, but post product is Charlotte Tilbury Luxury Palette; L1 brand mismatch triggers hard mismatch.</td></tr>
+<tr class="fn-row">
+  <td>127</td><td>1</td>
+  <td>DIOR</td><td title="Dior Backstage Rosy Glow Blush Stick - Color-Reviving And Ph-Activated Blush Stick - 077 Candy">Candy Blush</td>
+  <td title="Blue, but make it cool💙 Products used: violettefr Yeux Paint — Bleu de Minuit chanelbeauty Denim Dream Quad Rouge Coco Flash Balm — Baby Blue urbandecaycosmetics Liquid Moondust — Rough Waves diorbeauty Candy Blush lillylashes Wild Child maccosmetics MACStack Elevated Mascara Comment SHOP and I’ll DM you all the products #makeup #beauty #eyeliner https://liketk.it/5Xlx8">Blue, but make it cool💙 Products used: violettefr </td>
+  <td class="reason">Post mentions Dior &#x27;Candy Blush&#x27;; catalog is Dior Backstage Rosy Glow Blush Stick 077 Candy. Brand matches but product line differs (blush vs blush stick/backstage line).</td></tr>
+<tr class="fn-row">
+  <td>131</td><td>3</td>
+  <td>Color Depositing Mask</td><td title="Super Gloss 5R Deep Red Intensive Glossing Treatment">XMONDO Hair Color</td>
+  <td title="People Tried My Hair Color and Didn’t Hold Back">People Tried My Hair Color and Didn’t Hold Back</td>
+  <td class="reason">Post endorses XMONDO hair color generally, but does not identify the specific Super Gloss 5R Deep Red product or shade.</td></tr>
+<tr class="fn-row">
+  <td>147</td><td>2</td>
+  <td>Apple</td><td title="EarPods (USB-C) - Apple">Apple wired headphones</td>
+  <td title="Inside Quenlin Blackwell’s Gucci Bag | In the Bag | Vogue">Inside Quenlin Blackwell’s Gucci Bag | In the Bag </td>
+  <td class="reason">Post mentions Apple wired headphones, but catalog is specific EarPods (USB-C); exact model/connector not identified and likely conflicts with generic wired headphones mention.</td></tr>
+<tr class="fn-row">
+  <td>156</td><td>2</td>
+  <td>DJI</td><td title="DJI Osmo Pocket 3 Creator Combo - CP.OS.00000302.01">djiosmopocket3</td>
+  <td title="#france🇫🇷 #paris #djiosmopocket3 #CapCut">#france🇫🇷 #paris #djiosmopocket3 #CapCut</td>
+  <td class="reason">Post title names DJI Osmo Pocket 3, matching brand and product line/series, but does not indicate the specific Creator Combo bundle; TikTok post lacks shopping-intent endorsement, so score is capped at 2.</td></tr>
+<tr class="fn-row">
+  <td>160</td><td>0</td>
+  <td>DJI</td><td title="DJI Osmo Pocket 3 Creator Combo Black">djiosmopocket3</td>
+  <td title="#france🇫🇷 #paris #djiosmopocket3 #CapCut">#france🇫🇷 #paris #djiosmopocket3 #CapCut</td>
+  <td class="reason">TikTok post lacks shopping intent; hashtag mentions DJI Osmo Pocket 3 only incidentally with no recommendation or product-focused content.</td></tr>
+<tr class="fn-row">
+  <td>163</td><td>2</td>
+  <td>Jordan</td><td title="Jordan 3 Retro &quot;Sail and Jade Aura&quot; Baby/Toddler Shoes">Air Jordan 3 &quot;Spring Is In The Air&quot;</td>
+  <td title="Air Jordan 3 &quot;Spring Is In The Air&quot;⁠||Dropping one week before Easter, this Retro channels the fun pastels of the holiday onto the timeless Air Jordan 3. Dropping in women&#x27;s and full kids sizes on March 28th.⁠||⁠||Head to our BIO for a closer look.⁠||⁠||📷️ @solebox">Air Jordan 3 &quot;Spring Is In The Air&quot;⁠||Dropping one</td>
+  <td class="reason">Post endorses Air Jordan 3 &#x27;Spring Is In The Air&#x27;; catalog is Jordan 3 Retro &#x27;Sail and Jade Aura&#x27; Baby/Toddler, same line but different named edition/colorway (L3/L4 conflict).</td></tr>
+<tr class="fn-row">
+  <td>165</td><td>2</td>
+  <td>Nike</td><td title="Nike Kobe IX Elite Low EM Protro Basketball Shoes in Red, Size: 10 | IH1401-600">Kobe 9 EM Protro</td>
+  <td title="Nike Basketball is dropping a new Kobe 9 EM Protro a month, steadily supplying ballers with new colorway options for hooping. Dropping this Summer is a &quot;Steam&quot; colorway that features a light pastel green against a clean white base. Are you a fan?⁠||⁠||Head to our BIO for a closer look.">Nike Basketball is dropping a new Kobe 9 EM Protro</td>
+  <td class="reason">Post endorses Nike Kobe 9 EM Protro in &#x27;Steam&#x27; colorway, but catalog is Kobe IX Elite Low EM Protro in red; explicit series/model and colorway conflict.</td></tr>
+<tr class="fn-row">
+  <td>170</td><td>2</td>
+  <td>Nike</td><td title="Nike G.T. Cut 4 Basketball Shoes, Men&#x27;s, M8.5/W10, Vivid Purp/Blue/Blue">Nike Zoom GT Cut 4</td>
+  <td title="This upcoming WNBA season marks the 30th campaign of the women&#x27;s league, and Nike is pulling out all the stops to celebrate this major milestone. A first look at an upcoming Nike Zoom GT Cut 4 has been revealed featuring celebratory details to commemorate this important moment in league history.⁠||⁠||A release is likely dropping this Summer during the WNBA season. Head to our BIO for full details.⁠||⁠||📷️ @prm.cotd">This upcoming WNBA season marks the 30th campaign </td>
+  <td class="reason">Post features Nike Zoom GT Cut 4 tied to the WNBA women’s league edition, while catalog is a standard men’s G.T. Cut 4 colorway; same line but special edition/gender context conflicts.</td></tr>
+<tr class="fn-row">
+  <td>183</td><td>0</td>
+  <td>Mammut</td><td title="Hiking Patrol x Mammut HS Hooded Jacket">debut collaborative collection</td>
+  <td title="@hikingpatrol and @mammut have officially unveiled their debut collaborative collection, merging Norwegian minimalism with Swiss alpine engineering 🏔️🇳🇴⁠||⁠||Guided by the &quot;Just Wander&quot; philosophy, the collection is an invitation to slow down and explore without the rush. ⁠||⁠||The pieces are defined by a neutral, earthy palette and discreet co-branding, notably moving the iconic Mammut logo to the back for a cleaner, more sophisticated silhouette. Designed for the &quot;modern explorer,&quot; the range prioritizes organic seamlines and integrated utility over loud technical aesthetics.⁠||⁠||The global launch is set for March 17 via Hiking Patrol and Mammut’s official webshops across Europe, China, Japan, and North America.⁠||Photo: Mammut/Hiking Patrol">@hikingpatrol and @mammut have officially unveiled</td>
+  <td class="reason">Non-shopping launch/collection announcement from media account; post names only a collaborative collection, not a specific product type/item, so no identifiable product match.</td></tr>
+<tr class="fn-row">
+  <td>193</td><td>3</td>
+  <td>Birch Lane™</td><td title="Eco Scallop Border Placemat (Set of 4) (Set of 4) (Set of 4) Color: Beige">scalloped placemats</td>
+  <td title="✨ Getting ready with @Wayfair for the Spring + Summer Entertaining season! 🌸 #WayfairPartner #Ad So many beautiful pieces - like this rattan drink holder and scalloped placemats you won’t want to miss! #Wayfair #Outdoor #WishYouWereHere||||🔗 follow + comment SHOP for links to be sent to your messages 💕||||Follow my LTK @Kinsey_Walsh on the @shop.LTK app to view this post and get my exclusive app-only content!||||@shop.ltk||https://liketk.it/61RZP">✨ Getting ready with @Wayfair for the Spring + Sum</td>
+  <td class="reason">Post endorses Wayfair and mentions scalloped placemats, but does not identify Birch Lane or the specific Eco Scallop Border Placemat line.</td></tr>
+<tr class="fn-row">
+  <td>218</td><td>0</td>
+  <td>titleist</td><td title="Titleist Official GT4 Driver - 9° - Left Hand">GT4</td>
+  <td title="Week 1️⃣ of GTS: All systems go.">Week 1️⃣ of GTS: All systems go.</td>
+  <td class="reason">Instagram post lacks shopping-intent endorsement and is a tour/equipment update; product mention is informational, not a purchase recommendation.</td></tr>
+<tr class="fn-row">
+  <td>220</td><td>1</td>
+  <td>nars cosmetics</td><td title="NARS Mini Radiant Creamy Concealer, Custard (Mini)">pot concealer</td>
+  <td title="Gluing down eyebrows 101 🙂‍↕️  Products used:  @Elmer&#x27;s US glue stick  @ONE SIZE BEAUTY loose powder  @NARS Cosmetics pot concealer">Gluing down eyebrows 101 🙂‍↕️  Products used:  @El</td>
+  <td class="reason">Post mentions NARS pot concealer, but catalog is NARS Radiant Creamy Concealer; same brand, different product line/form.</td></tr>
+<tr class="fn-row">
+  <td>237</td><td>0</td>
+  <td>gibson</td><td title="Epiphone Jerry Cantrell &quot;Wino&quot; Les Paul Custom Electric Guitar Wine Red">The Jerry Cantrell &quot;Wino&quot; Les Paul Custom</td>
+  <td title="The Jerry Cantrell &quot;Wino&quot; Les Paul Custom was created in partnership with Jerry to feature many of his personal touches. A Dark Wine Red finish over a plain maple top and 9-hole weight-relieved mahogany body, multi-ply binding, a Cantrell custom taper for a comfortable vintage feel, along with a bou">The Jerry Cantrell &quot;Wino&quot; Les Paul Custom was crea</td>
+  <td class="reason">Official post is from Epiphone, but catalog brand is gibson; L1 brand mismatch despite matching product title.</td></tr>
+<tr class="fn-row">
+  <td>311</td><td>3</td>
+  <td>Tupperware</td><td title="Tupperware Voila Glass Round Bakeware | Airtight Food Storage Dish">Tupperware VoilaTM Glass Baking Dish</td>
+  <td title="Give those odds and ends in your fridge a second life with this cozy clean-out-the-fridge veggie strata—an easy, no-waste bake that turns leftover bread and vegetables into something worth gathering around. 🍳🍞🥬||||Ingredients||3 cups stale bread, cubed or torn||Veggies (aim for 11⁄2–2 cups total)||Any mix of: Spinach/kale, peppers, mushrooms, onions, tomatoes, zucchini, broccoli, or leftover cooked vegetables. ||||Custard||4 large eggs||11⁄4 cups milk (or milk/cream blend)||3⁄4 tsp salt||1⁄4–1⁄2 tsp pepper||Optional: garlic powder, dried herbs, or seasoning odds and ends||||Instructions||Preheat your oven to 350°F (180°C).||Lightly grease your Tupperware VoilaTM Glass Baking Dish.||Sauté raw veggies until soft (skip if already cooked).||Inside the baking dish, layer bread first, veggies next, and cheese over the top.||In a medium bowl, whisk eggs, milk, and spices together to make the custard.||Pour custard evenly over the dish. Press lightly to help absorption. Let sit for 10 minutes.||Bake uncovered for 35–45 minutes. Center should be set and top lightly golden.||Rest for 10 minutes before serving.||||#TupperwareBrand #VoilaGlass #TupperwareRecipe #Strata">Give those odds and ends in your fridge a second l</td>
+  <td class="reason">Official Tupperware account and post endorses a specific Tupperware Voila glass baking dish, but the catalog product is the Round bakeware while the post only names the broader Voila Glass baking dish with no round variant specified.</td></tr>
+<tr class="fn-row">
+  <td>335</td><td>3</td>
+  <td>Herman Miller x HAY</td><td title="Eames Wire Chair, with Seat Pad">Eames Wire Chair</td>
+  <td title="With dipped-in-color hues and an airy silhouette, Eames Wire Chair brings a bold pop to any spring setting. Visit our link in bio to find modern furniture made for outdoor living.||||Photo by Alpha Smoot||||The Herman Miller x HAY collection is available in the Americas, Asia, Australia, and Africa from Herman Miller | Non-Herman Miller x HAY collection @EamesOffice furniture designs are available from @Vitra in Europe and the Middle East.">With dipped-in-color hues and an airy silhouette, </td>
+  <td class="reason">Post endorses Herman Miller Eames Wire Chair, but catalog item adds specific variant &#x27;with Seat Pad&#x27; not mentioned in post.</td></tr>
+<tr class="fn-row">
+  <td>350</td><td>0</td>
+  <td>Air Jordan</td><td title="Air 17 Unc Sneakers">“College Blue” Air Jordan 17</td>
+  <td title="BREAKING: “College Blue” Air Jordan 17 is expected to RETURN in 2027 for NBA All-Star Weekend! 🪄🔥 #25thAnniversary||Currently set for February 19th.||📝: @zsneakerheadz x @sneakerfiles ||—||Air Jordan 17 Retro||JA4259-100">BREAKING: “College Blue” Air Jordan 17 is expected</td>
+  <td class="reason">Non-shopping sneaker news/launch rumor post, not a purchase recommendation; even though Air Jordan 17 &#x27;College Blue/UNC&#x27; aligns closely, all products score 0 by intent gate.</td></tr>
+<tr class="fn-row">
+  <td>401</td><td>0</td>
+  <td></td><td title="1 qt. #P570-5 Romantic Moment Eggshell Enamel EcoMix Plant-Based Interior Paint &amp; Primer">Romantic Moment P570-5</td>
+  <td title="Give us your most unhinged ideas next Featured Color:  Romantic Moment P570-5">Give us your most unhinged ideas next Featured Col</td>
+  <td class="reason">Non-shopping TikTok post: brand account highlights a featured color only, without clear product recommendation/use or specific purchasable paint line endorsement.</td></tr>
+<tr class="fn-row">
+  <td>408</td><td>0</td>
+  <td>Hunter</td><td title="Hunter PGP Ultra Rotor Sprinkler Heads - 4 Pack - Includes Adjustment Tool">PGP® Ultra</td>
+  <td title="PGP Ultra’s Automatic Arc Return Explained">PGP Ultra’s Automatic Arc Return Explained</td>
+  <td class="reason">Non-shopping post focused on explaining a feature and promoting a sweepstakes; not a purchase recommendation despite mentioning Hunter PGP Ultra rotors.</td></tr>
+<tr class="fn-row">
+  <td>409</td><td>0</td>
+  <td></td><td title="Espoma Bone-meal Organic Granules Bulbs, Flowers, Vegetables Bone Meal 8 lb">bone meal</td>
+  <td title="2 SECRET FERTILIZERS For RECORD BREAKING Tomato Harvests!">2 SECRET FERTILIZERS For RECORD BREAKING Tomato Ha</td>
+  <td class="reason">Post focuses on Crab &amp; Lobster Shell Meal and Azomite as the two secret fertilizers; Espoma Bone Meal is only listed as a related featured product with no endorsement or discussion, so not a primary recommended product.</td></tr>
+
+</table>
+</div>
+
+<div class="card">
+<h2><span class="tag tag-fp">FP</span> 当前 False Positives — 22 cases</h2>
+<table>
+<tr><th>Row</th><th>Score</th><th>Brand</th><th>Extracted Name</th><th>Post Title</th><th>LLM Reason</th></tr>
+<tr class="fp-row">
+  <td>21</td><td>4</td>
+  <td>Dior</td><td title="Dior Makeup | Dior Forever Nude Bronze Glow | Color: Gold/Pink | Size: Os">summer bronzer and highlighter</td>
+  <td title="Is the NEW @Diorbeauty summer bronzer and highlighter Jeffree Star Approved?! 👀 #beautyreview #jeffreestar #diorbeauty #sephora #makeup   Shades: 032 Pink Bronze &amp; 003 Sun-Kissed glow illuminator">Is the NEW @Diorbeauty summer bronzer and highligh</td>
+  <td class="reason">Brand and product line align: post reviews Dior summer bronzer/highlighter and names shades 032 Pink Bronze &amp; 003 Sun-Kissed glow illuminator; catalog is Dior Forever Nude Bronze Glow. Variant/shade wording is not exact, so strong match not exact.</td></tr>
+<tr class="fp-row">
+  <td>36</td><td>5</td>
+  <td>Makeup By Mario</td><td title="Ethereal Eyes Eyeshadow Palette: Moonlight">Ethereal EyesTM The Original</td>
+  <td title="YOUR INFINITE BEAUTY||||Make Ethereal EyesTM The Original yours and create endless looks to reflect your infinite beauty.||||Shop now at makeupbymario.com and @sephora.">YOUR INFINITE BEAUTY||||Make Ethereal EyesTM The O</td>
+  <td class="reason">Official Makeup By Mario account names specific product line Ethereal Eyes and variant Moonlight; exact brand, product, and variant match.</td></tr>
+<tr class="fp-row">
+  <td>74</td><td>4</td>
+  <td>Titleist</td><td title="Titleist GT3 Fairway Wood, Right Hand, Men&#x27;s">GTS3 7-wood</td>
+  <td title="An in-hand look at the GTS3 7-wood Cameron Young added to his bag last week at @themasters. 👀">An in-hand look at the GTS3 7-wood Cameron Young a</td>
+  <td class="reason">Official Titleist account names a specific product: GT3 7-wood. Catalog is Titleist GT3 Fairway Wood; brand and product line/series align, but variant differs/unspecified (7-wood vs generic right-hand men&#x27;s).</td></tr>
+<tr class="fp-row">
+  <td>79</td><td>4</td>
+  <td>Hardell</td><td title="HARDELL Mini Cordless Rotary Tool with 230pcs Accessories"></td>
+  <td title="20 Must-Have Amazon Tools Under $30 (Surprisingly Useful!)">20 Must-Have Amazon Tools Under $30 (Surprisingly </td>
+  <td class="reason">Post explicitly recommends HARDELL Mini Cordless Rotary Tool; catalog matches brand and product line, but accessory count/variant is not specified in post.</td></tr>
+<tr class="fp-row">
+  <td>91</td><td>4</td>
+  <td>Hardell</td><td title="HARDELL Mini Cordless Rotary Tool with 230pcs Accessories">Mini Cordless Rotary Tool</td>
+  <td title="20 Must-Have Amazon Tools Under $30 (Surprisingly Useful!)">20 Must-Have Amazon Tools Under $30 (Surprisingly </td>
+  <td class="reason">Post explicitly recommends HARDELL Mini Cordless Rotary Tool; catalog matches brand and product line, but accessory count/variant is not specified in post and price conflicts with &#x27;under $30&#x27; claim.</td></tr>
+<tr class="fp-row">
+  <td>96</td><td>4</td>
+  <td>medicube</td><td title="medicube Collagen Night Wrapping Mask">Collagen mask</td>
+  <td title="What’s in my plane bag ✈️👛#||||Melatonin: @lemme ||Book: the Alchemist||Breath strips: @listerine||Had cream: @lovephilosophy ||Lip gloss: @politesocietybeauty ||Collagen mask: @medicube_global_official||Vegan collagen eye serum: @axisy_official">What’s in my plane bag ✈️👛#||||Melatonin: @lemme |</td>
+  <td class="reason">Instagram body lists and tags @medicube_global_official as a collagen mask she carries, which is a shopping-related product credit/use mention. Brand matches medicube and category/product line aligns as collagen mask; exact specific line &#x27;Night Wrapping Mask&#x27; is not stated.</td></tr>
+<tr class="fp-row">
+  <td>139</td><td>5</td>
+  <td>Pete &amp; Pedro</td><td title="Pete &amp; Pedro Rebel Eau de Parfum Fragrance Cologne For Men">REBEL</td>
+  <td title="Get ABS in 14 Days (Do This EXACT Plan)">Get ABS in 14 Days (Do This EXACT Plan)</td>
+  <td class="reason">Description explicitly promotes Pete &amp; Pedro REBEL cologne; catalog matches brand, product line, series/type, and men’s variant.</td></tr>
+<tr class="fp-row">
+  <td>140</td><td>4</td>
+  <td>Pete &amp; Pedro</td><td title="Pete &amp; Pedro ICON EDP in None at Nordstrom">ICON</td>
+  <td title="10 Things You Should Quietly Eliminate From Your Life (Tell No One)">10 Things You Should Quietly Eliminate From Your L</td>
+  <td class="reason">Description explicitly promotes Pete &amp; Pedro &#x27;ICON&#x27; cologne/travel sprayer offer; brand and product line align, but catalog variant/size is not specified.</td></tr>
+<tr class="fp-row">
+  <td>142</td><td>5</td>
+  <td>Nothing</td><td title="Nothing Phone 4a Pro (A069P) Global Model Dual Sim Unlocked - 5G 12GB+256GB / Silver">Nothing Phone 4A Pro</td>
+  <td title="I have a bad feeling about this...">I have a bad feeling about this...</td>
+  <td class="reason">Post specifically discusses and tears down the Nothing Phone 4a Pro; catalog is the same product line/model. Storage/color variant not stated in post, but core model aligns exactly.</td></tr>
+<tr class="fp-row">
+  <td>146</td><td>4</td>
+  <td>Beats</td><td title="Powerbeats Pro 2 - High-Performance Earbuds - Hyper Purple">Powebeats Pro 2</td>
+  <td title="@beatsbydre and Nike partner for the first time to drop the Powebeats Pro 2 in the iconic &quot;Neon&quot; colorway. For the first time in Beats history, the brand will share the branding by featuring the Swoosh on the right ear.⁠||⁠||Beats is owned by Apple, whose CEO Tim Cook is on the Nike Board Of Directors.⁠||⁠||Early access is open now, while a wider launch is scheduled on March 20th. Full details in our BIO.">@beatsbydre and Nike partner for the first time to</td>
+  <td class="reason">Post endorses Beats Powerbeats Pro 2; catalog is same product line/series, but colorway differs (post says Nike collab &#x27;Neon&#x27;, catalog is Hyper Purple).</td></tr>
+<tr class="fp-row">
+  <td>154</td><td>4</td>
+  <td>Meta Quest</td><td title="Meta Quest 3 512GB All-In-One Mixed Reality Headset - includes a 3-Month Trial of Meta Horizon+: USB-C &amp; Wi-Fi Connectivity">wizherd</td>
+  <td title="if i touch the floor, i quit youtube">if i touch the floor, i quit youtube</td>
+  <td class="reason">Shopping-related YouTube description includes affiliate recommendation for Meta Quest 3. Brand and product line match (Meta Quest 3 headset); catalog variant/bundle/storage differs or is not the exact one named.</td></tr>
+<tr class="fp-row">
+  <td>158</td><td>4</td>
+  <td>Insta360</td><td title="Insta360 X4 Air Standard Bundle || Graphite Black || No microSD Card">X4</td>
+  <td title="147 foot waterfall jump in Brazil! 🤯 Would you try this? Shot on @insta360 official X4 📍Rope Jump at Cachoeira da Fumaça, Brazil 🇧🇷  #waterfall #thrilling #brazil #travel #insta360">147 foot waterfall jump in Brazil! 🤯 Would you try</td>
+  <td class="reason">Post explicitly says it was shot on Insta360 X4; brand and product line/series align. Catalog is a specific bundle/color variant not mentioned in post.</td></tr>
+<tr class="fp-row">
+  <td>167</td><td>4</td>
+  <td>ANTA</td><td title="ANTA KAI 3 &#x27;432Hz&#x27; Basketball Shoes, Men&#x27;s, M8/W9.5, Purple/Orange">ANTA KAI 3</td>
+  <td title="@sneakerpolitics continues its 20th Anniversary celebration with a collaboration with Dallas Mavericks star Kyrie Irving and the ANTA KAI 3. Their &quot;Patchwork&quot; design reflects the idea that different communities, stitched together, can form something greater.⁠||⁠||The release begins on March 20th at the Fahim J. Minkah Community Park (33000 Highland Woods, Dallas, TX 75241) after a ribbon-cutting ceremony for the newly resurfaced court spearheaded by Kyrie and Politics. Remaining pairs will drop in-store at Sneaker Politics Dallas and online on March 21st.⁠||⁠||Head to our BIO for full details.">@sneakerpolitics continues its 20th Anniversary ce</td>
+  <td class="reason">Post specifically endorses the ANTA KAI 3; catalog is the same brand and product line/series. Variant differs (&#x27;Patchwork&#x27; in post vs &#x27;432Hz&#x27; Purple/Orange in catalog), so strong but not exact match.</td></tr>
+<tr class="fp-row">
+  <td>229</td><td>4</td>
+  <td>google</td><td title="Google Pixel Buds Pro - Carbon | Verizon">Flagship Earbuds</td>
+  <td title="I Tested Every Flagship Earbuds Combo So You Don&#x27;t Have To">I Tested Every Flagship Earbuds Combo So You Don&#x27;t</td>
+  <td class="reason">Post is a shopping-related comparison of flagship earbuds; catalog matches Google Pixel Buds Pro line. Variant Carbon is not confirmed in post.</td></tr>
+<tr class="fp-row">
+  <td>301</td><td>4</td>
+  <td>Cuisinart</td><td title="Cuisinart Automatic Grind &amp; Brew 12 Cup Coffee Maker">Cuisinart Custom Grind &amp; Brew</td>
+  <td title="Mastering the coffee shop classics right from your kitchen is the flex we&#x27;re here for 🤎 With the Cuisinart Custom Grind &amp; Brew, you get freshly ground beans for every single cup. ||||What coffee recipe is your DIY fave? We&#x27;d love to hear it! ☕||#icedcoffee #morningrituals #coffeerecipes">Mastering the coffee shop classics right from your</td>
+  <td class="reason">Official Cuisinart account names a specific Grind &amp; Brew coffee maker; catalog is the same Cuisinart Grind &amp; Brew line, but post says Custom Grind &amp; Brew while catalog is Automatic Grind &amp; Brew 12 Cup, so strong line/category match without exact variant/model.</td></tr>
+<tr class="fp-row">
+  <td>303</td><td>4</td>
+  <td>Cuisinart</td><td title="Cuisinart CompactMax™ 8-Qt Air Fryer">CompactMax™ 8-Qt Basket Air Fryer Pro</td>
+  <td title="Elevated Childhood Classics: Chicken Tenders">Elevated Childhood Classics: Chicken Tenders</td>
+  <td class="reason">Official Cuisinart account endorses a specific product line: CompactMax 8-Qt Air Fryer. Catalog matches brand and product line; post names Pro variant while catalog is non-Pro, so variant/series differs.</td></tr>
+<tr class="fp-row">
+  <td>305</td><td>4</td>
+  <td>Tupperware</td><td title="Ultimate Silicone Stand-Up Bag | Large">Ultimate Silicone Slim Bags</td>
+  <td title="The Ultimate Silicone Slim Bags are designed with a leakproof zipper closure that keeps everything sealed tight—even when tipped and tossed. ✨ Pack them in your lunch bag, prep ingredients ahead of time, or use them for sous vide cooking.||||Less mess. Less space. More possibilities. 🙌||||Shop Ultimate Silicone Bags!||||#TupperwareBrand #FoodStorage #NoFoodWaste #Sustainable">The Ultimate Silicone Slim Bags are designed with </td>
+  <td class="reason">Official Tupperware account endorses specific Ultimate Silicone Bags; catalog Ultimate Silicone Stand-Up Bag Large matches brand/product line, but post does not specify stand-up subtype or large size.</td></tr>
+<tr class="fp-row">
+  <td>374</td><td>4</td>
+  <td></td><td title="TaylorMade Qi4D MAX Driver, Right Hand, Men&#x27;s, Aluminum">Qi4D family</td>
+  <td title="Embrace the darkness. ⚫️ Our Shadowfall Collection brings an all-black finish to the Qi4D family, fairways, and P·790 irons. Explore the new collection on the TaylorMade website. #taylormade #golf #golftiktok">Embrace the darkness. ⚫️ Our Shadowfall Collection</td>
+  <td class="reason">Official TaylorMade account names the Qi4D family; catalog is TaylorMade Qi4D MAX Driver within that line. Specific MAX/right-hand/men&#x27;s variant not stated in post.</td></tr>
+<tr class="fp-row">
+  <td>392</td><td>4</td>
+  <td></td><td title="STANLEY FatMax 6 in. High Carbon Steel Multi Hand Saw 10 and 24 TPI 3 pc"></td>
+  <td title="20 New Amazon Tools You’ll Wish You Bought Sooner (2026)">20 New Amazon Tools You’ll Wish You Bought Sooner </td>
+  <td class="reason">Post explicitly features &#x27;FATMAX Multi-Material Saw&#x27;; catalog is a STANLEY FatMax multi hand saw. Brand/line align strongly, but exact model/specs are not confirmed.</td></tr>
+<tr class="fp-row">
+  <td>424</td><td>4</td>
+  <td>Nike</td><td title="Nike Kobe IX Elite Low EM Protro Basketball Shoes in Grey, Size: 3.5 | IH1401-001">kobe 9 em protro</td>
+  <td title="Once again, Nike remembers that fateful evening in June 1996 when the Charlotte Hornets traded away Kobe Bryant on draft night. The Kobe 9 EM Protro will launch on June 1st bearing the franchise&#x27;s purple and teal with a gradient upper.⁠||⁠||Hit the link in our BIO for a closer look.⁠||⁠||Nike Kobe 9 EM Protro⁠||Release Date: June 1st, 2026 ($190)">Once again, Nike remembers that fateful evening in</td>
+  <td class="reason">Brand and product line/series align: post names Nike Kobe 9 EM Protro; catalog is Nike Kobe IX Elite Low EM Protro. Variant/color differs or is unspecified in post vs catalog, so strong match not exact.</td></tr>
+<tr class="fp-row">
+  <td>425</td><td>4</td>
+  <td>adidas</td><td title="Kith x Handball Spezial &#x27;Classics Program - Amazon Green&#x27;">kith x messi for adidas football handball spezials</td>
+  <td title="@kith and @adidasfootball just built a whole collection around two decades of 🐐 activity.⁠||⁠||Built around @leomessi&#x27;s 20 years since his international debut and Kith’s 15th anniversary, the collection moves between pitch-ready kits and tailored lifestyle pieces without losing the football DNA. There’s everything from F50-inspired footwear and Handball Spezials to goalkeeper jerseys, wool tracksuits, and even Messi-signed trading cards hidden in random orders.⁠||⁠||The “Kith &amp; Messi for adidas Football” collection releases May 29 at Kith flagships and online via Kith and the Kith App. What’s the first piece you’re going for?⁠||Photo: Kith">@kith and @adidasfootball just built a whole colle</td>
+  <td class="reason">Post explicitly mentions Kith and adidas Football collection including Handball Spezials; catalog is an adidas Kith x Handball Spezial. Exact colorway/variant not mentioned.</td></tr>
+<tr class="fp-row">
+  <td>431</td><td>4</td>
+  <td>Prada</td><td title="Prada Metallic Leather High-heeled Sandals, Woman, Silver, Size 37">silver leather sandals</td>
+  <td title="Prada Ambassador Karina ahead of the 2026 Met Gala in New York City. ||||Prada Ambassador Karina wore a #Prada white satin dress featuring a tablier neckline embroidered with jet beads and silver crystals, paired with a black satin evening cape, silver leather sandals, Prada Fine Jewelry Couleur Vivante earrings in white gold, peridots, amethysts and diamonds, and a white satin embroidered clutch. ||||#PradaPeople #MetGala">Prada Ambassador Karina ahead of the 2026 Met Gala</td>
+  <td class="reason">Official Prada account names specific Prada silver leather sandals; catalog is Prada metallic/high-heeled silver women&#x27;s sandals. Brand and category align, but exact product line/model is not stated.</td></tr>
+
+</table>
+</div>
+
+</body></html>
