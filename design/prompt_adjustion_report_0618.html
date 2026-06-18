@@ -61,43 +61,43 @@ td.reason { max-width: 400px; word-break: break-word; }
 <p>Generated: 2026-06-18 16:55:23 | Total: 433 | MIN_SCORE: 4 (score &ge; 4 = PASS)</p>
 
 <div class="metrics">
-<div class="metric-card"><div class="value">89.1%</div><div class="label">Accuracy</div></div>
-<div class="metric-card"><div class="value">0.961</div><div class="label">Precision</div></div>
-<div class="metric-card"><div class="value">0.895</div><div class="label">Recall</div></div>
-<div class="metric-card"><div class="value">0.927</div><div class="label">F1 Score</div></div>
+<div class="metric-card"><div class="value">91.2%</div><div class="label">Accuracy</div></div>
+<div class="metric-card"><div class="value">0.962</div><div class="label">Precision</div></div>
+<div class="metric-card"><div class="value">0.922</div><div class="label">Recall</div></div>
+<div class="metric-card"><div class="value">0.942</div><div class="label">F1 Score</div></div>
 <div class="metric-card"><div class="value">433</div><div class="label">Total Cases</div></div>
 <div class="metric-card"><div class="value" style="color:#c62828">12</div><div class="label">FP</div></div>
-<div class="metric-card"><div class="value" style="color:#e65100">35</div><div class="label">FN</div></div>
+<div class="metric-card"><div class="value" style="color:#e65100">26</div><div class="label">FN</div></div>
 <div class="metric-card"><div class="value" style="color:#999">0</div><div class="label">Errors</div></div>
 </div>
 
 <h2>Confusion Matrix</h2>
 <table class="confusion">
 <tr><th></th><th>Predicted PASS (&ge;4)</th><th>Predicted FAIL (&lt;4)</th></tr>
-<tr><th>Actual PASS (GT=true)</th><td class="tp">TP = 297</td><td class="fn">FN = 35</td></tr>
+<tr><th>Actual PASS (GT=true)</th><td class="tp">TP = 306</td><td class="fn">FN = 26</td></tr>
 <tr><th>Actual FAIL (GT=false)</th><td class="fp">FP = 12</td><td class="tn">TN = 89</td></tr>
 </table>
 
 <h2>Score Distribution</h2>
-<table style="border-collapse:collapse"><tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 0</td><td><div style="background:#4a90d9;height:18px;width:53px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">42</span></td></tr>
+<table style="border-collapse:collapse"><tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 0</td><td><div style="background:#4a90d9;height:18px;width:48px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">40</span></td></tr>
 <tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 1</td><td><div style="background:#4a90d9;height:18px;width:10px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">8</span></td></tr>
-<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 2</td><td><div style="background:#4a90d9;height:18px;width:76px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">60</span></td></tr>
-<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 3</td><td><div style="background:#4a90d9;height:18px;width:17px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">14</span></td></tr>
-<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 4</td><td><div style="background:#4a90d9;height:18px;width:200px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">157</span></td></tr>
-<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 5</td><td><div style="background:#4a90d9;height:18px;width:193px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">152</span></td></tr>
+<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 2</td><td><div style="background:#4a90d9;height:18px;width:66px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">55</span></td></tr>
+<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 3</td><td><div style="background:#4a90d9;height:18px;width:14px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">12</span></td></tr>
+<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 4</td><td><div style="background:#4a90d9;height:18px;width:200px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">165</span></td></tr>
+<tr><td style="text-align:right;padding-right:8px;font-weight:bold">Score 5</td><td><div style="background:#4a90d9;height:18px;width:185px;border-radius:3px;display:inline-block"></div> <span style="font-size:12px">153</span></td></tr>
 </table>
 
 <h2>By Series</h2>
 <table class="breakdown">
 <tr><th>Series</th><th>Total</th><th>TP</th><th>TN</th><th>FP</th><th>FN</th><th>Accuracy</th></tr>
-<tr><td>unknown</td><td>433</td><td>297</td><td>89</td><td style="color:#c62828">12</td><td style="color:#e65100">35</td><td>89.1%</td></tr>
+<tr><td>unknown</td><td>433</td><td>306</td><td>89</td><td style="color:#c62828">12</td><td style="color:#e65100">26</td><td>91.2%</td></tr>
 
 </table>
 
 <h2>By Batch</h2>
 <table class="breakdown">
 <tr><th>Batch</th><th>Total</th><th>TP</th><th>TN</th><th>FP</th><th>FN</th><th>Accuracy</th></tr>
-<tr><td>unknown</td><td>433</td><td>297</td><td>89</td><td style="color:#c62828">12</td><td style="color:#e65100">35</td><td>89.1%</td></tr>
+<tr><td>unknown</td><td>433</td><td>306</td><td>89</td><td style="color:#c62828">12</td><td style="color:#e65100">26</td><td>91.2%</td></tr>
 
 </table>
 
@@ -633,8 +633,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>41</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">3</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>adityamadiraju</td>
 <td class="desc">My Signature Glam 2026 inspired by my Coachella nails 🤎✨  @anua_global Rice 70 Intensive Moisturizing Toner and Milk  @rhode skin Glazing Fluid  @Morphe Cosmetics Nano Brow  @SACHEU Beauty US Eyebrow and Freckle Pen  @Lunar Beauty🌙 Nude Prism Palette  @Makeup By Mario Eyeliner Very Black  @loréal paris usa Extentionist Mascara  @velourbeauty X Tensions Self Stick Lash Clusters  @TIRTIR Inc. Glow Prep Primer  @Rare Beauty Natural Matte Foundation  @Charlotte Tilbury Airbrush Concealer  @SARAH CREAL BEAUTY Just Like Paradise Cream Bronzer @ONE SIZE BEAUTY Ultra Pink Powder  Morphe Blush Trios Honeymoon suite  Rare Beauty Powder Bronzer  @Hourglass Cosmetics Unreal Radiant Glow Highlighter  Onesize Powder Melt  @YSL Beauty Lip Pencil shade 110  @L’Oréal Paris Blurrfection Lip Liner Mocha  @M·A·C Cosmetics Powder Kiss Matte shade Taken  @sephora Glossed shade Blesses  @DanessaMyricksBeauty Yummy Skin Setting Spray  #makeup #glam #makeuptransformation #coachellamakeup</td>
@@ -1231,8 +1231,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>87</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">0</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">5</td>
 <td>true</td>
 <td>ashleyofficial</td>
 <td class="desc">@haileesteinfeld in the boucle that started it all. Go behind the scenes of her most unexpected look: a custom gown crafted from the plush boucle fabric of our Calden Sectional. #AshleyLuxe</td>
@@ -4338,8 +4338,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>326</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">2</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>timbuk2</td>
 <td class="desc">Timbuk2 has been making your travels something to look forward to since 1989. ||||Clock out at the office and hit the airport. Our FreeStyle collection is made for smooth travels. ||||🔎 FreeStyle Carry-On in Marigold and Classic Messenger Bag in Black</td>
@@ -4455,8 +4455,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>335</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">3</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>hermanmiller</td>
 <td class="desc">With dipped-in-color hues and an airy silhouette, Eames Wire Chair brings a bold pop to any spring setting. Visit our link in bio to find modern furniture made for outdoor living.||||Photo by Alpha Smoot||||The Herman Miller x HAY collection is available in the Americas, Asia, Australia, and Africa from Herman Miller | Non-Herman Miller x HAY collection @EamesOffice furniture designs are available from @Vitra in Europe and the Middle East.</td>
@@ -4884,8 +4884,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>368</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">2</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>callawaygolf</td>
 <td class="desc">Celebrate the strength behind the title of Mom with our limited-edition SUPERMOM Golf Balls 🏆 For the women who do it all and make it look effortless, leading with confidence on the course and beyond. 🙌</td>
@@ -5209,8 +5209,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>393</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">2</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>ChopBusters</td>
 <td class="desc">20 Budget DIY Tools Under $100 You’ll Actually Use | Amazon Must-Haves</td>
@@ -5287,8 +5287,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>399</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">2</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>TheSorryGirls</td>
 <td class="desc">this awkward living room layout made me want to SCREAM | modern &amp; minimalist style</td>
@@ -5404,8 +5404,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>408</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">0</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>Hunter_Landscape_Irrigation</td>
 <td class="desc">PGP Ultra’s Automatic Arc Return Explained</td>
@@ -5469,8 +5469,8 @@ td.reason { max-width: 400px; word-break: break-word; }
 </tr>
 <tr>
 <td>413</td>
-<td><span class="badge badge-fn">FN</span></td>
-<td class="score score-fail">2</td>
+<td><span class="badge badge-pass">OK</span></td>
+<td class="score score-pass">4</td>
 <td>true</td>
 <td>TheMillennialGardener</td>
 <td class="desc">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</td>
