@@ -104,6 +104,944 @@ td.reason { max-width: 400px; word-break: break-word; }
 
 </div>
 
+
+
+
+
+<!-- LLM_CANNOT_SECTION_START -->
+
+<style>
+.lcd-wrap{margin:28px 0 8px;font-family:'Segoe UI',system-ui,sans-serif}
+.lcd-wrap h2.lcd-h{border-left:4px solid #c0392b;padding-left:10px;margin:22px 0 12px;font-size:1.15em;color:#222}
+.lcd-wrap h2.lcd-h.other{border-color:#888;color:#555}
+.lcd-summary{display:flex;gap:24px;align-items:flex-start;background:#fbfbfd;border:1px solid #eee;border-radius:10px;padding:16px 20px;margin-bottom:18px}
+.lcd-big{font-size:2.4em;font-weight:800;color:#c0392b;line-height:1;text-align:center}
+.lcd-big small{display:block;font-size:.3em;color:#888;font-weight:600;margin-top:6px}
+.lcd-summary table{border-collapse:collapse;font-size:.9em}
+.lcd-summary td,.lcd-summary th{padding:4px 14px;border-bottom:1px solid #eee;text-align:left}
+.lcd-note-block{font-size:.85em;color:#555;max-width:380px;line-height:1.6}
+.lcd-card{background:#fff;border:1px solid #eee;border-radius:10px;margin-bottom:12px;overflow:hidden;border-left:5px solid #c0392b}
+.lcd-card.cat-fix_prompt{border-left-color:#2980b9}
+.lcd-card.cat-fix_extraction{border-left-color:#8e44ad}
+.lcd-card.cat-fix_label{border-left-color:#27ae60}
+.lcd-card.cat-fix_catalog{border-left-color:#7f8c8d}
+.lcd-top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #f0f0f0;flex-wrap:wrap}
+.lcd-no{font-weight:800;font-size:1.05em}
+.lcd-badge{padding:2px 9px;border-radius:11px;font-size:.74em;font-weight:700}
+.lcd-tFP{background:#fde8e8;color:#c0392b}
+.lcd-tFN{background:#fef5e7;color:#d35400}
+.lcd-catb{background:#eef2f7;color:#445}
+.lcd-meta{font-size:.8em;color:#888;margin-left:auto}
+.lcd-links{display:inline-flex;gap:6px;align-items:center}
+.lcd-lk{font-size:.74em;font-weight:600;padding:2px 8px;border-radius:6px;text-decoration:none;white-space:nowrap}
+.lcd-lk.post{background:#e3f2fd;color:#1565c0}
+.lcd-lk.prod{background:#e8f5e9;color:#2e7d32}
+.lcd-lk.none{background:#f0f0f0;color:#aaa;font-weight:500}
+.lcd-lab .lcd-lk{margin-left:8px;text-transform:none;font-weight:600}
+.lcd-usernote{padding:10px 16px;background:#fffbe6;font-size:.9em;line-height:1.55}
+.lcd-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:12px 16px}
+.lcd-lab{font-size:.7em;text-transform:uppercase;color:#999;font-weight:700;margin:8px 0 2px}
+.lcd-val{font-size:.9em;line-height:1.5}
+.lcd-val a{color:#1976d2;text-decoration:none}
+.lcd-brand{color:#888;font-size:.85em}
+.lcd-post-text{background:#f7f8fb;border-radius:6px;padding:8px 10px;font-size:.84em;line-height:1.55;max-height:160px;overflow:auto;white-space:pre-wrap}
+@media(max-width:820px){.lcd-grid{grid-template-columns:1fr}}
+</style>
+
+<div class="lcd-wrap">
+  <h2 class="lcd-h">🔬 错误归因分析：LLM 判断失误的人工标注 + 分类（0623）</h2>
+  <div class="lcd-summary">
+    <div class="lcd-big">17<small>LLM 无法判断<br>/ 共 35 标注 case</small></div>
+    <table>
+      <tr><th>分类</th><th style="text-align:right">FP</th><th style="text-align:right">FN</th><th style="text-align:right">合计</th></tr>
+      <tr><td>LLM 无法判断</td><td style='text-align:right'>6</td><td style='text-align:right'>11</td><td style='text-align:right;font-weight:700'>17</td></tr><tr><td>可修复 · 改 Prompt</td><td style='text-align:right'>1</td><td style='text-align:right'>2</td><td style='text-align:right;font-weight:700'>3</td></tr><tr><td>可修复 · 提取更多特征词 (Product Extraction)</td><td style='text-align:right'>2</td><td style='text-align:right'>1</td><td style='text-align:right;font-weight:700'>3</td></tr><tr><td>可修复 · 改 Label</td><td style='text-align:right'>1</td><td style='text-align:right'>9</td><td style='text-align:right;font-weight:700'>10</td></tr><tr><td>非 LLM · Catalog/Case 数据问题</td><td style='text-align:right'>1</td><td style='text-align:right'>1</td><td style='text-align:right;font-weight:700'>2</td></tr><tr style='border-top:2px solid #ccc;font-weight:700'><td>合计</td><td style='text-align:right'>11</td><td style='text-align:right'>24</td><td style='text-align:right'>35</td></tr>
+    </table>
+    <div class="lcd-note-block">
+      <b>Metric：</b>本轮全量 433 case，FP=12 / FN=26（报告顶部）；其中已人工标注 <b>35</b> 个失误 case。<br>
+      <b>结论：</b>17 / 35 是 LLM 本质无法判断的（post 本身缺信息、同物异名、颜色/型号细微差别、纯文字带货等），靠改 prompt 或换模型都救不回；其余 18 个属可修复（prompt / label / extraction）或 catalog/case 数据问题。<br>
+      <span style="color:#888">来源：manuel_review_0623.tsv · 编号对应 goldencases.tsv 行号</span>
+    </div>
+  </div>
+  <h2 class="lcd-h">🔴 LLM 本质无法判断（17）</h2>
+  
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#67</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DXMtX2FFwQT/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.net-a-porter.com/en-us/shop/product/st-agni/clothing/midi/suede-skirt/46376663162884993" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">voguemagazine · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 post 中没法知道到底是哪款羊皮裙，肯定会一直为 false，除非 google shopping 第一个就是图中裙子；他只是介绍 st.agni 的羊皮裙而已，llm 无法判断</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DXMtX2FFwQT/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DXMtX2FFwQT/" target="_blank">While it has been eight years since Prince Harry and Meghan Markle last visited Australia as newlyweds, the Duchess&#x27;s style has not departed from her original tour uniform. From a sleeveless dress by @KarenGeeOfficial, to a monochrome pared-back moment in a suede @stagnistudio skirt and jacket, see more of Meghan&#x27;s outfits from the couple&#x27;s Australian tour at the link in our bio.</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">suede @stagnistudio skirt <span class="lcd-brand">ST. AGNI</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.net-a-porter.com/en-us/shop/product/st-agni/clothing/midi/suede-skirt/46376663162884993" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">ST. AGNI Suede Skirt - Women - Camel Skirts - S <span class="lcd-brand">ST. AGNI</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#36</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.makeupbymario.com/products/ethereal-eyes-eyeshadow-palette-moonlight-copy?variant=41785633865793&amp;country=US&amp;currency=USD&amp;glcountry=US" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">makeupbymario · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 目前看到只有他家粉底颜色不同会被归类于不同产品，没有参考意义，llm 无法判断</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DXZJoR4CptF/" target="_blank">YOUR INFINITE BEAUTY||||Make Ethereal EyesTM The Original yours and create endless looks to reflect your infinite beauty.||||Shop now at makeupbymario.com and @sephora.</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Ethereal EyesTM The Original <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.makeupbymario.com/products/ethereal-eyes-eyeshadow-palette-moonlight-copy?variant=41785633865793&amp;country=US&amp;currency=USD&amp;glcountry=US" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Ethereal Eyes Eyeshadow Palette: Moonlight <span class="lcd-brand">Makeup By Mario</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#74</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DXKgLP0AICb/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.dickssportinggoods.com/p/titleist-gt3-fairway-wood-24ttlmgt3tns1kblkfwy/24ttlmgt3tns1kblkfwy" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">titleist · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 GTS3 和 GT3 经典型号没法识别，llm 无法判断</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DXKgLP0AICb/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DXKgLP0AICb/" target="_blank">An in-hand look at the GTS3 7-wood Cameron Young added to his bag last week at @themasters. 👀</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">GTS3 7-wood <span class="lcd-brand">Titleist</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.dickssportinggoods.com/p/titleist-gt3-fairway-wood-24ttlmgt3tns1kblkfwy/24ttlmgt3tns1kblkfwy" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Titleist GT3 Fairway Wood, Right Hand, Men&#x27;s <span class="lcd-brand">Titleist</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#88</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=oFwS_bSbK0E" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.walmart.com/ip/Anova-Sous-Vide-Precision-Cooker-Wifi-1000W/674453641?wmlspartner=wlpa&amp;selectedSellerId=101016413" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">GugaFoods · youtube · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 典型的列举自己所有产品，并没有说会用到，但内容符合产品类型，无法区分是不是使用过，llm 无法判断</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=oFwS_bSbK0E" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=oFwS_bSbK0E" target="_blank">I Ignored this for 10yrs... The ROYAL JELLY Steak is Ready!</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">In this video I test aging steak in royal jelly, one of the most exotic bee products. See how it compares to honey on steak, how it affects flavor, tenderness, and crust, and whether this unusual cooking experiment actually works. Insane steak recipes, and unique cooking ideas always!||||Get products now available at every Walmart https://linktr.ee/shop.guga||Buy my cook book: https://linktr.ee/shop.guga||||* Become a MEMBER of GUGAFOODS *||https://www.youtube.com/channel/UCfE5Cz44GlZVyoaYTHJbuZw/join||-----------------------------------------------||SUBSCRIBE to this Channel||https://www.youtube.com/gugafoods?sub_confirmation=1||----------------------------------------------- ||Subscribe to my Sous Vide Cooking Channel||https://www.youtube.com/SousVideEverything?sub_confirmation=1||-----------------------------------------------||Subscribe to my NEW Channel||https://www.youtube.com/channel/UCnB5HTIi44wDBD56KeT2hNA?sub_confirmation=1||-----------------------------------------------||* Guga MERCH *||Shirts and More: https://gugamerch.com/||-----------------------------------------------||My SOCIAL MEDIA, Let&#x27;s connect!||TikTok: https://www.tiktok.com/@gugafoods||Instagram: https://www.instagram.com/gugafoods/||Facebook: https://www.facebook.com/gugafoods/||-----------------------------------------------||* MAIL TIME Want to send something?||13876 SW 56th Street (№128)||Miami FL 33175||||* Premium Beef from Riverbend Ranch *||Visit: https://www.riverbendranch.com/guga||Use Code “GUGA” for $10 off your first order! Shipping is free.||For A Personal Touch Call: 208-918-4244 ||21 Day Aged Prime and Choice Steaks, TELL THEM GUGA SENT YOU!||||* My Knives *||Every Knives I use is here: https://dalstrong.com/?ref=Guga||||* My Wireless Thermometer *||Meat thermometers: https://bit.ly/43Mc9zH||||* TORCHES OPTIONS *||FLAMETHOWER: https://grillblazer.com/?ref=Guga||Use code &quot;Guga&quot; for 10% off||Small Torch: http://amzn.to/2BWYvv1||||* OFTEN USED EQUIPMENT *||Cast Iron Plates: https://amzn.to/2rAevPp||My Salt: https://amzn.to/2tofZgN||Heat Gloves: https://amzn.to/2HSQwoI||Flamethrower: https://amzn.to/2QCRcPi||Mini Food Processor: https://amzn.to/2Hca58b||Steak Cast Iron Plates: http://amzn.to/2FCTYQc||BBQ Large Tongs: https://amzn.to/2Utcrsr||Burger Mold: https://amzn.to/2JMh6xW||Tongs Tweezers: https://amzn.to/2M6v3Gm||Food Grade Gloves: http://amzn.to/2lTd8H4||||* BBQ Equipment *||Best Portable Grill: https://amzn.to/2HUWEww||My Stove: https://amzn.to/2DBwP2C||Charcoal: https://amzn.to/2uK95G2||Fire Starter: http://amzn.to/2F1OFJ2||Smoke Gun: http://amzn.to/2frGzyO||Smoke Dome: http://amzn.to/2xAHgj7||Weber Grill: http://amzn.to/2mXaIbp ||Slow N Sear: https://amzn.to/2uNwd6p||Heat Resistant Glove: http://amzn.to/2EZGPnk||||* Sous Vide Equipment *||Joule Sous Vide Circulator: http://amzn.to/2mXdzRI||Anova Precision Cooker WiFi: http://amzn.to/2mi76T3||Sous Vide Container: http://amzn.to/2merrsb||Sous Vide Container Cover: http://amzn.to/2mbpTxt||Cheap Suction Sealer: http://amzn.to/2mtj1Oi||Suction Bags: http://amzn.to/2mXfSUO||Bag Holder: http://amzn.to/2vjBYp5||Mini Weight: http://amzn.to/2nF3Q2Q||Grate Inside Container: http://amzn.to/2pKCxIS (mine is 10x15)||Steak Rack System: http://amzn.to/2qu0eAK (Choose the right size for you)||||**************************************************||* The link below has EVERYTHING I USE *||https://www.amazon.com/shop/sousvideeverything||**************************************************||||* VIDEO EQUIPMENT *||Main Camera: http://amzn.to/2imsWSi||2nd Camera: http://amzn.to/2iqkxxb||Slow Motion Camera: http://amzn.to/2jTt8J8||Drone: http://amzn.to/2jSbK7G||Pocket Drone: http://amzn.to/2Aw0NQZ||Gimbal: http://amzn.to/2ilc3HU||Main Lens: http://amzn.to/2AzKumn||Zoom Lens: http://amzn.to/2BMF7k8||Large Travel Camera: http://amzn.to/2ntMidD||Microphone: http://amzn.to/2jVU3UC ||Slider: http://amzn.to/2imtPdA||Tripod &amp; Fluid Head: http://amzn.to/2mXhkGs ||Voice Over Mic: http://amzn.to/2n69j1h||Acoustic Isolation: http://amzn.to/2mMWaxV||||* My Music *||http://share.epidemicsound.com/wJ8n7||||* If you have any questions please leave a comment below and I will reply. Thank you so much for watching see you on the next video! :-) ||||* We are a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn fees by linking to Amazon.com and affiliated sites.</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">(empty) <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.walmart.com/ip/Anova-Sous-Vide-Precision-Cooker-Wifi-1000W/674453641?wmlspartner=wlpa&amp;selectedSellerId=101016413" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Anova Sous Vide Precision Cooker Wifi | 1000w <span class="lcd-brand">Anova Culinary</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#359</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@faithkilla0116/video/7630105789901851918" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.pacsun.com/john-galt/white-tiffany-tank-top-5975966.html?store={store_code}&amp;country=US&amp;currency=USD" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">faithkilla0116 · tiktok · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 吊带裙的范围太广，印花并没有描述清楚，所以这个没法用 llm 做区分</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@faithkilla0116/video/7630105789901851918" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@faithkilla0116/video/7630105789901851918" target="_blank">#tiktokshopcreatorpicks #tiffanytank #johngalt #cute</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">#tiffanytank #johngalt</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">tiffanytank <span class="lcd-brand">johngalt</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.pacsun.com/john-galt/white-tiffany-tank-top-5975966.html?store={store_code}&amp;country=US&amp;currency=USD" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">John Galt Women&#x27;s White Tiffany Tank Top <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#392</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=f8vArVppqzQ" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.acehardware.com/p/2109098?x429=true" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">ChopBusters · youtube · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 llm 不清楚这两款产品究竟是什么类型的，名字上没法区分</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=f8vArVppqzQ" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=f8vArVppqzQ" target="_blank">20 New Amazon Tools You’ll Wish You Bought Sooner (2026)</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">#AmazonTools #NewTools #BestTools #AmazonFinds #MustHaveTools #CoolTools #PowerTools #DIYTools #WoodworkingTools #GarageTools #HomeImprovement #TrendingNow #ToolReview #AmazonGadgets #2026tools||||## 20 New Tools On Amazon You Should Buy Right Now||||Discover **20 new and trending tools on Amazon** that are gaining attention right now. From **innovative gadgets and power tools to smart DIY and workshop gear**, these tools can help make your projects faster, easier, and more efficient. Whether you&#x27;re a **DIY enthusiast, woodworker, contractor, or home improvement fan**, these Amazon finds are worth checking out.||||Watch till the end to find your **next must-have tool**.||||---||||## Timestamps||||00:00 - Intro||00:25 - Log Wizard Debarker #ad [https://amzn.to/44TZQlb](https://amzn.to/44TZQlb)||00:49 - Expansion Tool Head #ad [https://amzn.to/45pQWMl](https://amzn.to/45pQWMl) , [https://www.zurn.com/products/pex/plumbing/expansion/expansion-tools/qelhd](https://www.zurn.com/products/pex/plumbing/expansion/expansion-tools/qelhd)||1:12 - Pruning Saw #ad [https://amzn.to/3LayUXK](https://amzn.to/3LayUXK)||1:36 - Eastwood Tubing Notcher #ad [https://amzn.to/49qHQAq](https://amzn.to/49qHQAq)||2:02 - Conduit Benders #ad [https://amzn.to/49cZbws](https://amzn.to/49cZbws)||2:25 - RoofSnake #ad [https://amzn.to/4pnYxSF](https://amzn.to/4pnYxSF)||2:48 - Stak Rack #ad [https://amzn.to/3MYh6zC](https://amzn.to/3MYh6zC)||3:18 - Air Spray Gun #ad [https://amzn.to/4qyXHng](https://amzn.to/4qyXHng) , [https://totalpowertools.in/products/Total-Spray-Gun-TAT11001-p381370621?srsltid=AfmBOop-Fkoqek7b_H0F9JMXHfm3oRDrVXfuhc1EzkheZyJlWXZbBZ6U](https://totalpowertools.in/products/Total-Spray-Gun-TAT11001-p381370621?srsltid=AfmBOop-Fkoqek7b_H0F9JMXHfm3oRDrVXfuhc1EzkheZyJlWXZbBZ6U)||3:47 - Braking Grinder #ad [https://amzn.to/49zz8Rs](https://amzn.to/49zz8Rs)||4:07 - Flash Line 3 #ad [https://montolit.com/en/product/flash-line-fl3-large-format-tile-cutter/](https://montolit.com/en/product/flash-line-fl3-large-format-tile-cutter/)||4:33 - Heat Gun #ad [https://amzn.to/4skhBUz](https://amzn.to/4skhBUz)||4:59 - Stud Welding System #ad [https://amzn.to/493yYSi](https://amzn.to/493yYSi) , [http://MidwestFasteners.com](http://MidwestFasteners.com)||5:29 - Steam Cleaner #ad [https://www.diteq.com/162216](https://www.diteq.com/162216)||5:49 - Gas Grabber #ad [https://amzn.to/3Lmdnvb](https://amzn.to/3Lmdnvb)||6:10 - Pipe Nipple Extractor &amp; Thread Remover #ad [https://amzn.to/49giS6v](https://amzn.to/49giS6v)||6:36 - Drill Winch #ad [https://amzn.to/4smTxk0](https://amzn.to/4smTxk0)||7:03 - DoorJack #ad [https://amzn.to/3KYL2uR](https://amzn.to/3KYL2uR)||7:24 - Buck Arch #ad [https://amzn.to/3MWROBX](https://amzn.to/3MWROBX)||7:48 - Motoflashline #ad [https://montolit.com/en/product/moto-flash-line-2-sh-motorized-system-for-dry-cutting/](https://montolit.com/en/product/moto-flash-line-2-sh-motorized-system-for-dry-cutting/)||8:15 - FATMAX Multi-Material Saw #ad [https://amzn.to/3YkOqTK](https://amzn.to/3YkOqTK)||||---||||**Disclaimer:** This video contains affiliate links. As an Amazon Associate, I may earn a commission from qualifying purchases at no extra cost to you.||||SEO: new tools on amazon, best amazon tools, amazon tools 2026, trending amazon tools, cool tools, must have tools, diy tools, woodworking tools, garage tools, amazon gadgets, power tools, innovative tools</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">(empty) <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.acehardware.com/p/2109098?x429=true" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">STANLEY FatMax 6 in. High Carbon Steel Multi Hand Saw 10 and 24 TPI 3 pc <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#83</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.7springsfarm.com/products/azomite-granular-44-lb-bag?variant=39386613907661" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">TheMillennialGardener · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 应该是 pass</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=fPo7lS5qpQA" target="_blank">How to Grow a Productive Garden in a Cardboard Box (Shocking Results!)</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">Do you want to start a garden or increase the size of your garden, but you&#x27;re unable to build expensive raised garden beds? Never fear! In this video, I share how to grow a productive garden in a cardboard box. I made an instant raised bed out of an Amazon box and tracked its progress from start to finish, with amazing results! You will not believe how well vegetables grew in this cardboard box raised garden bed.||||• The I use the following products* most often for growing vegetables:||Outdoor Potting Mix: https://amzlink.to/az0iNoewlgid3||Organic Outdoor Potting Mix: https://amzlink.to/az01nvwFG8ocU||Coco Coir, Large Brick (10 LB): https://amzlink.to/az0jx9X29JqCd||Perlite (4 CU FT): https://amzlink.to/az0LLPXV8MMnq||Watering Wand: https://amzlink.to/az0O3ZfEhftZ8||Alaska Fish Fertilizer [5-1-1] (Gallon): https://amzlink.to/az0Jhw8liNoe3||True Organic All Purpose Fertilizer [5-4-5]: https://amzlink.to/az0lVAel6Wss7||Espoma PlantTone [5-3-3] (36lb): https://amzlink.to/az0gylQKIH3hO||Espoma PlantTone [5-3-3] (50lb): https://amzlink.to/az0dh0dYaye1l||Organic Bone Meal (8lb): https://amzlink.to/az05b9eediHpy||Organic Blood Meal (3lbs): https://amzlink.to/az0jNeCruTl6a||Crab &amp; Lobster Shell Meal (4lb): https://amzlink.to/az0LtijP1fn7p||Azomite Trace Minerals (44lb): https://amzlink.to/az0iu3dLSptN7||Jack&#x27;s All Purpose [20-20-20] (1.5lb): https://amzlink.to/az0JG0Dv6Da0h||Jack&#x27;s All Purpose [20-20-20] (25lb): https://amzlink.to/az0F6FgxdhKjO||Jack&#x27;s Blossom Booster [10-30-20] (25lb): https://amzlink.to/az08lv7ZJFnUu||Weed Barrier: https://amzlink.to/az0SKEHO2Kg9E||Pruning Snips: https://amzlink.to/az0tPwwuBt0YX||Insect Netting: https://amzlink.to/az0ZdeiIJWHMw||Shade Cloth: https://amzlink.to/az01boLJy9JNI||•• Full Amazon Store: https://amzlink.to/az0yli4Cz0iXX||||TABLE OF CONTENTS||0:00    Introduction||0:38    Free Raised Bed Experiment||1:40    Building and Filling the Bed||2:43    Fertilizer and Soil Amendments||3:32    Planting the Garden Bed||4:44    Raised Garden Bed Orientation||5:23    Garden Bed Check-In||6:21    Final Results - Incredible!||8:35    Lessons Learned||11:07  Adventures With Dale||||If you have any questions about raised bed gardening, growing a vegetable garden at home, how to grow fruit trees or the things I grow in my raised bed vegetable garden and edible landscaping food forest, are looking for more gardening tips and tricks and garden hacks, have questions about vegetable gardening and organic gardening in general, or want to share DIY and &quot;how to&quot; garden tips and gardening hacks of your own, please leave a comment!||||*******||MY WEBSITE||https://www.themillennialgardener.com/||||*******||VISIT MY AMAZON STORE FOR PRODUCTS I USE MOST OFTEN IN MY GARDEN*||https://amzlink.to/az0yli4Cz0iXX||||*******||CUSTOM MERCH!||https://shop.spreadshirt.com/themillennialgardener||||*******||SUBSCRIBE TO MY 2ND CHANNEL!||https://www.youtube.com/c/2MinuteGardenTips||||*******||SOCIAL MEDIA||→ INSTAGRAM https://www.instagram.com/millennialgardener/||→ X (@NCGardening) https://x.com/NCGardening||||*******||ABOUT MY GARDEN||Location: Southeastern NC, Brunswick County (Wilmington area)||Zone 8B, 34.1°N Latitude||||*******||*As an Amazon Associate, I earn from qualifying purchases.||© The Millennial Gardener||||#gardening #garden #raisedbeds #vegetablegardening #vegetablegarden</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">(empty) <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.7springsfarm.com/products/azomite-granular-44-lb-bag?variant=39386613907661" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Azomite Granular - 44 lb Bag <span class="lcd-brand">Seven Springs Farm Organic</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#127</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@victorialyn/video/7627130205106146574" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.dior.com/en_us/beauty/products/dior-backstage-rosy-glow-blush-stick-E000000446.html" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">victorialyn · tiktok · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 这个应该是误判，这种奇奇怪怪的颜色不好鉴定</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@victorialyn/video/7627130205106146574" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@victorialyn/video/7627130205106146574" target="_blank">Blue, but make it cool💙 Products used: violettefr Yeux Paint — Bleu de Minuit chanelbeauty Denim Dream Quad Rouge Coco Flash Balm — Baby Blue urbandecaycosmetics Liquid Moondust — Rough Waves diorbeauty Candy Blush lillylashes Wild Child maccosmetics MACStack Elevated Mascara Comment SHOP and I’ll DM you all the products #makeup #beauty #eyeliner https://liketk.it/5Xlx8</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Candy Blush <span class="lcd-brand">diorbeauty</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.dior.com/en_us/beauty/products/dior-backstage-rosy-glow-blush-stick-E000000446.html" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Dior Backstage Rosy Glow Blush Stick - Color-Reviving And Ph-Activated Blush Stick - 077 Candy <span class="lcd-brand">DIOR</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#163</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.nike.com/t/air-jordan-3-retro-sail-and-jade-aura-mens-shoes-kZBhO53Z/IF4396-100" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">sneakernews · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 同颜色不同叫法，没法判断</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DV3uxIakuNX/" target="_blank">Air Jordan 3 &quot;Spring Is In The Air&quot;⁠||Dropping one week before Easter, this Retro channels the fun pastels of the holiday onto the timeless Air Jordan 3. Dropping in women&#x27;s and full kids sizes on March 28th.⁠||⁠||Head to our BIO for a closer look.⁠||⁠||📷️ @solebox</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Air Jordan 3 &quot;Spring Is In The Air&quot; <span class="lcd-brand">Jordan</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.nike.com/t/air-jordan-3-retro-sail-and-jade-aura-mens-shoes-kZBhO53Z/IF4396-100" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Jordan 3 Retro &quot;Sail and Jade Aura&quot; Baby/Toddler Shoes <span class="lcd-brand">Jordan</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#266</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=oWNp1vg-4a4" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.drbronner.com/products/peppermint-organic-lip-balms?variant=36027946893476&amp;srsltid=AfmBOopcG6pIdetor69AP8cxTBs-Tg_ARgZ5P2nDSqzFK0fOUfecfbTgsN0" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">BobbyParrish · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 post 本身并没有出现这个产品，纯属文字带货；他提到的具体内容写在 &quot;Here&#x27;s everything I covered&quot;</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=oWNp1vg-4a4" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=oWNp1vg-4a4" target="_blank">Top NEW Costco Finds You Need To BUY Now!</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">Join Thrive Market &amp; get 30% off your 1st order &amp; a FREE gift: http://thrivemarket.com/Bobby #thrivemarketpartner||||April was so big at Costco, I found 10 MORE items that I needed to share. Some of my favorite new finds of the month: a Spanish EVOO worth buying in bulk, A2 organic milk, and a maple syrup with two ingredients that is going to replace whatever is in your pantry right now. Plus one gummy product you need to put back on the shelf.||||Here&#x27;s everything I covered:||Siete Blue Corn Tortilla Chips||Siete Churro Strips||Gruns Gummies||Centennial Spanish EVOO||Guillermo&#x27;s Salsa||That&#x27;s It Fruitola||Point Reyes Blue Cheese||Runamok Vanilla Bean Maple Syrup||Organic A2 Milk||Siete Cookies||5-Piece Tongs Cooking Set||||Download the Bobby Approved App||iTunes app store: https://apps.apple.com/us/app/bobby-approved/id1571725006||||Google Play: https://play.google.com/store/apps/details?id=com.bobbyapproved&amp;hl=en_US&amp;gl=US||||Subscribe for more grocery rankings and 2026 store guides: https://www.youtube.com/@BobbyParrish||||My Thrive Market Faves:||Kiki Milk||Seven Sunday&#x27;s Cereal ||Really raw honey||4th &amp; Heart ghee||Thrive brand unflavored collagen peptides||Native forest simple &amp; Thrive brand organic coconut milk||Bob&#x27;s paleo baking flour||Thrive regeneratively grown virgin coconut oil||Thrive brand organic coconut flakes||Thrive sea salt potato chips in avocado oil||Siete queso puffs and queso potato chips||Thrive keto granola||Cappello&#x27;s pasta &amp; pizza crust||Tahini from Soon brand||Thrive brand maple sugar||Thrive brand date syrup||Celtic sea salt, fine ground||Siete red enchilada sauce||Jovial organic gluten free mac &amp; cheese||||Snacks: ||Simple Mills chocolate chip cookies &amp; graham crackers||Siete cookies, all varieties||Thrive brand sea salt avocado oil chips||Unreal dark chocolate coconut bars  ||Lesser evil popcorn, only the original flavor||Soley fruit jerky ||Evolved keto cups||||Personal Care &amp; Household:||Ecos dish soap, free &amp; clear||Planet 2x he ultra laundry detergent||Dr bronners castile bar soap||Badger Sun, after sun, &amp; bug spray||Dr bronners toothpaste||Acure ultra hydrating shampoo||Acure hair conditioner||Weleda hand &amp; body skin food||Thrive Rosey dishwasher detergent pods||Bulldog shave cream||Dr bronners lip balm</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Dr. Bronner&#x27;s Peppermint Organic Lip Balm <span class="lcd-brand">Dr. Bronner&#x27;s</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.drbronner.com/products/peppermint-organic-lip-balms?variant=36027946893476&amp;srsltid=AfmBOopcG6pIdetor69AP8cxTBs-Tg_ARgZ5P2nDSqzFK0fOUfecfbTgsN0" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Dr. Bronner&#x27;s Peppermint - Organic Lip Balms - .15 oz <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#131</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=DAbAvTl2ygE" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://xmondohair.com/products/5r-deep-red-color-depositing-super-gloss?variant=46469382701223&amp;scid=scplp&amp;tw_source=google&amp;tw_adid=757761875647&amp;tw_campaign=22670420080&amp;tw_kwdid=aud-2087987479142:pla-300711978879&amp;gad_source=1&amp;gad_campaignid=22670420080&amp;gbraid=0AAAAACRFF6190RSX0tJQSWw9KDG01D0vw" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">BradMondo · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 这一条他也没说什么具体型号，就当推广产品了，其实可以 pass</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=DAbAvTl2ygE" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=DAbAvTl2ygE" target="_blank">People Tried My Hair Color and Didn’t Hold Back</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">Hi beautiful. Today I&#x27;m reacting to people trying my XMONDO Hair Color for the very first time. Some of these reviews are brutally honest… and some of these transformations honestly shocked me.||||As a professional hairdresser, I’m breaking down what went right, what went wrong, and how these creators got their results using XMONDO Color. From vibrant transformations to unexpected results, we’re watching real people dye their hair and giving my honest reactions.||||Let’s see if the internet actually likes my hair color…||||Shop XMONDO Hair:||Website: https://bit.ly/3ORSQMC||Amazon: https://shorturl.at/xop69||UK: https://www.beautybay.com/l/xmondohair/||Sally Beauty Store Locator: https://shorturl.at/IFLGF||||TikTok: https://www.tiktok.com/@bradmondonyc||XMONDO Instagram: https://www.instagram.com/xmondohair/||||Birdee https://www.youtube.com/watch?v=JEvijOLA2WQ||taylorpedersen https://www.youtube.com/watch?v=xC0UJLeS780||Serthing https://www.youtube.com/watch?v=BfLhmfbc4vc||Katelyn King https://www.youtube.com/watch?v=HB1AKi8iNYU||sophialacorte https://www.tiktok.com/@sophialacorte/video/7587523575322594591||ash.e.e https://www.tiktok.com/@ash.e.e/video/7569672551492898079?q=ashley%20elliot%20xmondo&amp;t=1772125198095</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">XMONDO Hair Color <span class="lcd-brand">XMONDO</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://xmondohair.com/products/5r-deep-red-color-depositing-super-gloss?variant=46469382701223&amp;scid=scplp&amp;tw_source=google&amp;tw_adid=757761875647&amp;tw_campaign=22670420080&amp;tw_kwdid=aud-2087987479142:pla-300711978879&amp;gad_source=1&amp;gad_campaignid=22670420080&amp;gbraid=0AAAAACRFF6190RSX0tJQSWw9KDG01D0vw" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Super Gloss 5R Deep Red Intensive Glossing Treatment <span class="lcd-brand">Color Depositing Mask</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#195</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=Scpa7jwywfo" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://business.walmart.com/ip/deevoka-Silicone-Faucet-Extender-Faucet-Cover-for-Kids-Baby-Children-Blue/5623166872?wmlspartner=wmbpla&amp;selectedSellerId=101576076" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">Tool_Items · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 杂牌产品推不推都行，但产品应该是一个产品</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=Scpa7jwywfo" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=Scpa7jwywfo" target="_blank">Tool Items - Silicone Faucet Extender</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Silicone Faucet Extender <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://business.walmart.com/ip/deevoka-Silicone-Faucet-Extender-Faucet-Cover-for-Kids-Baby-Children-Blue/5623166872?wmlspartner=wmbpla&amp;selectedSellerId=101576076" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Deevoka Silicone Faucet Extender Faucet Cover for Kids Baby Children Blue <span class="lcd-brand">Deevoka</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#199</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=icNbg0NERtY" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.bedbathandbeyond.com/c/bedroom-furniture/nightstands?t=24405&amp;featuredproduct=43263331&amp;featuredoption=90809926&amp;ci_sku=46352435-000-000&amp;cnc=US" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">MaviGadgets · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 描述不够丰富 llm 判断不出来，他们不是一个产品</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=icNbg0NERtY" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=icNbg0NERtY" target="_blank">Wireless Smart Side Table 📌</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">📌 This smart side table has built-in wireless charging, Bluetooth speakers, and USB ports all hidden inside a clean modern design. Just set your phone on top and it starts charging — no cables, no clutter, no ugly charging stations ruining your setup.||Looks like premium furniture, works like a tech hub. Perfect for bedrooms, living rooms, home offices, or anywhere you want style and function in one piece.||💬 Bedroom or living room — where would you put this?||🔗 Shop thousands of trending gadgets at Mavigadget.com||💰 Earn commissions — affiliate.mavigadget.com||🏪 Sell your products — partner.mavigadget.com||smart side table, wireless charging table, bluetooth speaker table, smart furniture, modern side table, bedside table with charger, tech furniture, wireless charging nightstand, best smart home gadgets, usb charging table, living room gadgets||#SmartTable #WirelessCharging #SmartHome #Mavigadget #CoolGadgets</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">smart side table <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.bedbathandbeyond.com/c/bedroom-furniture/nightstands?t=24405&amp;featuredproduct=43263331&amp;featuredoption=90809926&amp;ci_sku=46352435-000-000&amp;cnc=US" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Sunset Orange Smart Bedside Table with Wireless Charging <span class="lcd-brand">DEVERA</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#285</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@dannyandaly/video/7629054740084673806" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.t-mobile.com/business/cell-phone/tcl-nxtpaper-70-pro?sku=610214725608" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">dannyandaly · tiktok · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 就是这个产品，应该忽略合约机这个条件</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@dannyandaly/video/7629054740084673806" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@dannyandaly/video/7629054740084673806" target="_blank">#ad #TCLPartner This is one of the most practical phone upgrades I’ve seen in a while. Loving my NXTPAPER 70 Pro from  @TCL USA</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">NXTPAPER 70 Pro from  @TCL USA</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">NXTPAPER 70 Pro <span class="lcd-brand">TCL</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.t-mobile.com/business/cell-phone/tcl-nxtpaper-70-pro?sku=610214725608" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">TCL NXTPAPER 70 Pro SI | T-Mobile for Business (+ plan) <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#89</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=BUzuMQeoEg8" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://business.walmart.com/ip/Hunter-PGP-ADJ-Rotor-2-Pack/2606003841?wmlspartner=wmbpla&amp;selectedSellerId=101317326" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">Hunter_Landscape_Irrigation · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 太专业了，没法判断是不是同一个产品；另外 post 中包含抽奖信息但不能说 post 就是关于抽奖的</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=BUzuMQeoEg8" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=BUzuMQeoEg8" target="_blank">PGP Ultra &amp; I-20: Same Nozzles, More Options</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">PGP® Ultra and I-20 rotors are built to work together, sharing the same nozzle options to give you maximum flexibility in the field.||||That means fewer SKUs to manage, easier adjustments on site, and more efficient system design and installation.||||Whether you are designing a system or making changes in the field, you get consistent performance you can rely on.||||And now, every case you purchase or design plan you submit featuring rotors earns you entries in the Rotor Revolution, your chance to win premium prizes, including a Formula One Grand Prix Experience in Las Vegas.||More cases. More entries. More chances to win.||April 1 to June 30, 2026||hunter.info/rr26</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">PGP® Ultra <span class="lcd-brand">Hunter</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://business.walmart.com/ip/Hunter-PGP-ADJ-Rotor-2-Pack/2606003841?wmlspartner=wmbpla&amp;selectedSellerId=101317326" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Hunter PGP Adjustable Coverage Rotary Sprinkler, 2 Pack <span class="lcd-brand">Hunter Industries</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#156</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.dell.com/en-us/shop/dji-osmo-pocket-3-creator-combo/apd/ad466792/camera-photo-video?tfcid=54833114" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">ayypatrick · tiktok · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 摄像头的这种宣传视频，介绍信息少了点，如果硬说不是广告也可以</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">#france🇫🇷 #paris #djiosmopocket3 #CapCut</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">djiosmopocket3 <span class="lcd-brand">DJI</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.dell.com/en-us/shop/dji-osmo-pocket-3-creator-combo/apd/ad466792/camera-photo-video?tfcid=54833114" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">DJI Osmo Pocket 3 Creator Combo - CP.OS.00000302.01 <span class="lcd-brand">DJI</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-llm_cannot">
+      <div class="lcd-top">
+        <span class="lcd-no">#160</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">LLM 无法判断</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.rei.com/product/235383/dji-osmo-pocket-3-creator-combo?CAWELAID=120217890017587476" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">ayypatrick · tiktok · golden=true</span>
+      </div>
+      <div class="lcd-usernote">📝 摄像头的这种宣传视频，介绍信息少了点，如果硬说不是广告也可以</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@ayypatrick/video/7618184783004323102" target="_blank">#france🇫🇷 #paris #djiosmopocket3 #CapCut</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">djiosmopocket3 <span class="lcd-brand">DJI</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.rei.com/product/235383/dji-osmo-pocket-3-creator-combo?CAWELAID=120217890017587476" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">DJI Osmo Pocket 3 Creator Combo Black <span class="lcd-brand">DJI</span></div>
+        </div>
+      </div>
+    </div>
+  <h2 class="lcd-h other">⚪ 其余可修复 / 非 LLM 问题（18）</h2>
+  
+    <div class="lcd-card cat-fix_prompt">
+      <div class="lcd-top">
+        <span class="lcd-no">#133</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Prompt</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DV_tu99EWJ7/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.ulta.com/p/uomo-born-in-roma-purple-melancholia-eau-de-toilette-pimprod2057500?sku=2653812&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200003408126" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">kristy.sarah · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 男士香水和女士香水的区别，因为男士的特别加了 uomo，搞得和女士香水是一个系列似的</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DV_tu99EWJ7/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DV_tu99EWJ7/" target="_blank">solo dates &gt; getting my mood right with the new @valentino.beauty born in roma purple melancholia💜 #valentinobeautypartner #borninromapurple #borninroma #fragrance</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">born in roma purple melancholia <span class="lcd-brand">valentino.beauty</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.ulta.com/p/uomo-born-in-roma-purple-melancholia-eau-de-toilette-pimprod2057500?sku=2653812&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200003408126" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Valentino Uomo Born in Roma Purple Melancholia Eau de Toilette <span class="lcd-brand">Valentino</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_prompt">
+      <div class="lcd-top">
+        <span class="lcd-no">#126</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Prompt</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@alexyoumazzo/video/7628691997607382286" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.sephora.com/product/unreal-blush-P516850?country_switch=us&amp;lang=en?skuId=2868016" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">alexyoumazzo · tiktok · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 应该改prompt</b> — 📝 这个是 extract 抽出来的是单品，但 products 抽出来的是合集，这个应该可以从 prompt 中杜绝</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@alexyoumazzo/video/7628691997607382286" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@alexyoumazzo/video/7628691997607382286" target="_blank">all good life updates for nowww :)) you guys know i’ve been going through it for the last 4 months fr  @Rael Collagen PDRN Hydrogel Mask @Farmacy Beauty Honey Cloud Moisturizer  @loréal paris usa Faux Brow, Infallible Setting Spray @ColourPop Cosmetics Brow Boss, Matte About Hue Palette, Crème Gel Liner Wildcat  @Colorescience Sunforgettable Shield Flex &amp; Glow SPF 50  @Rare Beauty Warm Wishes Cream Bronzer Stick, Perfect Strokes Matte Liquid Liner, Warm Wishes Soft Matte Powder Bronzer, Liquid Luminizer Champagne   @Patrick Ta Beauty Soft Blur Brightening Hydrating Concealer, Eye Illusion Eyeshadow Duo In Your Dreams  @Huda Beauty Easy Bake Blurring Loose Baking &amp; Setting Powder Cherry Blossom  @HouseOfLashes Iconic @Charlotte Tilbury Unreal Blush Pretty Glow, Lip Cheat Pillow Talk  @Half Magic by Donni Davy Crystal Butter Cinnawitch  @Jadora Secret Wig Hazel Use my code AlexYou100 for 100 off your next wig :)</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Unreal Blush Pretty Glow <span class="lcd-brand">Charlotte Tilbury</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.sephora.com/product/unreal-blush-P516850?country_switch=us&amp;lang=en?skuId=2868016" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Charlotte Tilbury Unreal Lip + Cheek Glow Blush Stick with Hyaluronic Acid Rosy Glow 0.31 oz/9 mL <span class="lcd-brand">Charlotte Tilbury</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_prompt">
+      <div class="lcd-top">
+        <span class="lcd-no">#164</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Prompt</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.goat.com/sneakers/gt-future-fire-fz5590-800?sizing=13.5" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">hypebeast · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 调整prompt忽略preorder</b> — 📝 preorder 的应该不考虑，毕竟能在 serpapi 里买到的肯定不是 preorder 的</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DWFloM8kzZA/" target="_blank">Debuting last year, the @nike GT Future was making waves when it was first seen on the feet of Wale, bringing back that feeling of Foamposite nostalgia as well as those notable sneaker fit pics by the DMV native himself.⁠||⁠||Fast-forward to today, the shoe has seen a number of colorways releasing, including coveted ones like the &quot;Warning Label&quot; for All-Star, &quot;Galaxy Aura,&quot; &quot;Fire,&quot; and more.⁠||⁠||Now, a new iteration in collaboration with the return of the Swooshman is landing and its releasing for pre-order on March 20 for $210.⁠||⁠||Photo: Nike⁠||⁠</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">GT Future &quot;Fire&quot; <span class="lcd-brand">Nike</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.goat.com/sneakers/gt-future-fire-fz5590-800?sizing=13.5" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Nike GT Future &#x27;Fire&#x27; <span class="lcd-brand">Nike</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_extraction">
+      <div class="lcd-top">
+        <span class="lcd-no">#167</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">可修复 · 提取更多特征词 (Product Extraction)</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DWAXdt1kn0E/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.dickssportinggoods.com/p/anta-kai-3-432hz-basketball-shoes-25antabaskk3432htzqdy/25antabaskk3432htzqdy?sku=27944472" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">sneakernews · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 尝试提取更多特征词</b> — 📝 Patchwork 的关键词没有提出来，导致产品不对</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DWAXdt1kn0E/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DWAXdt1kn0E/" target="_blank">@sneakerpolitics continues its 20th Anniversary celebration with a collaboration with Dallas Mavericks star Kyrie Irving and the ANTA KAI 3. Their &quot;Patchwork&quot; design reflects the idea that different communities, stitched together, can form something greater.⁠||⁠||The release begins on March 20th at the Fahim J. Minkah Community Park (33000 Highland Woods, Dallas, TX 75241) after a ribbon-cutting ceremony for the newly resurfaced court spearheaded by Kyrie and Politics. Remaining pairs will drop in-store at Sneaker Politics Dallas and online on March 21st.⁠||⁠||Head to our BIO for full details.</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">ANTA KAI 3 <span class="lcd-brand">ANTA</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.dickssportinggoods.com/p/anta-kai-3-432hz-basketball-shoes-25antabaskk3432htzqdy/25antabaskk3432htzqdy?sku=27944472" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">ANTA KAI 3 &#x27;432Hz&#x27; Basketball Shoes, Men&#x27;s, M8/W9.5, Purple/Orange <span class="lcd-brand">ANTA</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_extraction">
+      <div class="lcd-top">
+        <span class="lcd-no">#425</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">可修复 · 提取更多特征词 (Product Extraction)</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DYyOXKUIKaT/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.goat.com/sneakers/kith-x-handball-spezial-classics-program-amazon-green-ih2623?sizing=12.0" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">hypebeast · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 尝试提取更多特征词</b> — 📝 Product extraction 漏掉了 messi</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DYyOXKUIKaT/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DYyOXKUIKaT/" target="_blank">@kith and @adidasfootball just built a whole collection around two decades of 🐐 activity.⁠||⁠||Built around @leomessi&#x27;s 20 years since his international debut and Kith’s 15th anniversary, the collection moves between pitch-ready kits and tailored lifestyle pieces without losing the football DNA. There’s everything from F50-inspired footwear and Handball Spezials to goalkeeper jerseys, wool tracksuits, and even Messi-signed trading cards hidden in random orders.⁠||⁠||The “Kith &amp; Messi for adidas Football” collection releases May 29 at Kith flagships and online via Kith and the Kith App. What’s the first piece you’re going for?⁠||Photo: Kith</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">kith x messi for adidas football handball spezials <span class="lcd-brand">adidas</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.goat.com/sneakers/kith-x-handball-spezial-classics-program-amazon-green-ih2623?sizing=12.0" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Kith x Handball Spezial &#x27;Classics Program - Amazon Green&#x27; <span class="lcd-brand">adidas</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_extraction">
+      <div class="lcd-top">
+        <span class="lcd-no">#170</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 提取更多特征词 (Product Extraction)</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DVrIQfUgpgJ/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.dickssportinggoods.com/p/nike-g-tcut-4-launch-basketball-shoes-25nikabaskgtct4lncpeg/25nikabaskgtct4lncpeg?sku=27663310" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">sneakernews · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 调整product extraction</b> — 📝 产品的关键字并没有错误，少了一个特定关键字 wnba，没有抽出来；如果抽出来大概率会匹配到该产品</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DVrIQfUgpgJ/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DVrIQfUgpgJ/" target="_blank">This upcoming WNBA season marks the 30th campaign of the women&#x27;s league, and Nike is pulling out all the stops to celebrate this major milestone. A first look at an upcoming Nike Zoom GT Cut 4 has been revealed featuring celebratory details to commemorate this important moment in league history.⁠||⁠||A release is likely dropping this Summer during the WNBA season. Head to our BIO for full details.⁠||⁠||📷️ @prm.cotd</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Nike Zoom GT Cut 4 <span class="lcd-brand">Nike</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.dickssportinggoods.com/p/nike-g-tcut-4-launch-basketball-shoes-25nikabaskgtct4lncpeg/25nikabaskgtct4lncpeg?sku=27663310" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Nike G.T. Cut 4 Basketball Shoes, Men&#x27;s, M8.5/W10, Vivid Purp/Blue/Blue <span class="lcd-brand">Nike</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#96</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DVocC_yCI61/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.ulta.com/p/collagen-night-wrapping-mask-pimprod2053542?sku=2645360&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200003342230" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">andreaespadatv · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 其实是符合内容的，只是 post 没提出来：mask 中包含 night mask，按 l4-l1 级别分类是符合预期的；只有下面小版本有问题，可能需要标出来 mask 和 night mask 有大区别</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DVocC_yCI61/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DVocC_yCI61/" target="_blank">What’s in my plane bag ✈️👛#||||Melatonin: @lemme ||Book: the Alchemist||Breath strips: @listerine||Had cream: @lovephilosophy ||Lip gloss: @politesocietybeauty ||Collagen mask: @medicube_global_official||Vegan collagen eye serum: @axisy_official</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Collagen mask <span class="lcd-brand">medicube</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.ulta.com/p/collagen-night-wrapping-mask-pimprod2053542?sku=2645360&amp;cmpid=PS_Bing&amp;utm_medium=paid_search&amp;utm_source=bing&amp;CAWELAID=330000200003342230" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">medicube Collagen Night Wrapping Mask <span class="lcd-brand">medicube</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#24</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.makeupforever.com/us/en/face/powder/hd-skin-perfecting-pressed-finishing-powder---mini-MI000039551.html?color=0.1&amp;size=4.5g" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">Vogue · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 这里的 mini 版和标准版不是一个东西，mini 版少了 5 个颜色</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=OhfA1Aw97Bw" target="_blank">Love Story Star Sarah Pidgeon&#x27;s Springtime Makeup Routine | Beauty Secrets | Vogue</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">&quot;Love Story&quot; star Sarah Pidgeon shows us her fun springtime beauty routine. While she gets ready, Sarah, who portrays Carolyn Bessette in FX&#x27;s &quot;Love Story,&quot; talks about the process of becoming a blonde, being onstage in the hit Broadway play &quot;Stereophonic,&quot; dealing with psoriasis, and the curious reason she takes selfies after a cry session.||||Shop Sarah Pidgeon’s beauty routine, below.||||Bioderma Sensibio H2O Micellar Water: https://cna.st/st/KmXiPMr ||iS Clinical Cleansing Complex: https://cna.st/st/ogD2l8e ||iS Clinical Warming Honey Cleanser: https://cna.st/st/Mu8Giiy ||MBR CytoLine Eyecare Cream 100: https://cna.st/st/bZdcYo5 ||Rhode Peptide Eye Patches: https://cna.st/st/LAEJWg1 ||Therabody TheraFace Depuffing Wand: https://cna.st/st/3LYE0I7 ||May Lindstrom The Blue Cocoon Facial Concentrate: https://cna.st/st/jqpAeJW ||Dr. Dan&#x27;s Cortibalm Lip Balm: https://cna.st/st/foVfMjo ||iS Clinical Pro-Heal Serum Advance+: https://cna.st/st/FQdVbga ||Bioeffect EGF Serum: https://cna.st/st/TYgs1kI ||iS Clinical Reparative Moisture Emulsion: https://cna.st/st/4xMoPeg ||EltaMD UV Clear Face Sunscreen: https://cna.st/st/ZB9EKpF ||Kosas Revealer Super Concealer: https://cna.st/st/eqrBXwU ||Lisa Eldridge Seamless Skin Enhancing Tint: https://cna.st/st/kxEezr3 ||Dior Forever Skin Contour Stick: https://cna.st/st/62i1p0i ||Rhode Pocket Blush: https://cna.st/st/svA38ea ||Chanel Les Beiges Sun-Kissed Powder: https://cna.st/st/zXLsPbX ||Peripera Freckle Pen: https://cna.st/st/XRR34rz ||Rhode Peptide Lip Shape: https://cna.st/st/KRl4zYV ||Rom&amp;nd Juicy Lasting Tint: https://cna.st/st/ZMfnVT4 ||Make Up For Ever HD Pressed Powder: https://cna.st/st/nS6cRF1 ||Rhode Peptide Lip Tint: https://cna.st/st/p6W6BVl ||Dove Antiperspirant Deodorant Stick: https://cna.st/st/8TymrMh ||Tata Harper Hydrating Floral Essence: https://cna.st/st/El6UNl4 ||DedCool Xtra Milk Eau de Parfum: https://cna.st/st/BZT8CUI ||Crown Affair The Oil Hair Oil: https://cna.st/st/EtV9nPo ||||Want to shop even more celeb-loved products? Visit The Beauty Secrets Shop: https://www.vogue.com/beauty-secrets||||When you buy something through our retail links, we earn an affiliate commission.||||||Director: Gabrielle Reich||DP: Dominik Czaczyk||Editor: Sara Rao||||Associate Producer: Lea Donenberg||Production Assistant: Marquis Wooten||Line Producer: Natasha Soto-Albors||Production Manager: Kristen Helmick||Production Coordinator: Tanía Jones||||Post Production Supervisor: Alexa Deutsch||Post Production Coordinator: Holly Frew||Supervising Editor: Kameron Key||Assistant Editor: Justin Symonds||Filmed at: Waldorf Astoria Beverly Hills ||||Still haven’t subscribed to Vogue on YouTube? ►► http://bit.ly/vogueyoutubesub||Get the best of Vogue delivered right in your inbox ►► https://bit.ly/3xAZyQg||Subscribe to the magazine ►► http://vogue.com/subscribe_yt||Download the Vogue App ►► https://apps.apple.com/us/app/vogue-runway-more/id289380413||Check out &#x27;The Run-Through with Vogue&#x27; podcast  ►► https://swap.fm/l/vogue-trt-youtube|| ||Vogue YouTube Channels:||||British Vogue: https://www.youtube.com/@britishvogue||Vogue Taiwan: https://www.youtube.com/@voguetvtaiwan||Vogue France: https://www.youtube.com/@VogueFrance||Vogue India: https://www.youtube.com/@VogueIndia||Vogue Japan: https://www.youtube.com/@VogueJapan||Vogue México y Latinoamérica: https://www.youtube.com/@VogueMexicoyLatinoamerica||Vogue Germany: https://www.youtube.com/@VogueGermany||Vogue Italia: https://www.youtube.com/@VogueItalia||Vogue Spain: https://www.youtube.com/@VogueSpain||||ABOUT VOGUE||Vogue is the authority on fashion news, culture trends, beauty coverage, videos, celebrity style, and fashion week updates.</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">HD Skin Perfecting Pressed Finishing Powder <span class="lcd-brand">Make Up For Ever</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.makeupforever.com/us/en/face/powder/hd-skin-perfecting-pressed-finishing-powder---mini-MI000039551.html?color=0.1&amp;size=4.5g" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">HD Skin Perfecting Pressed Finishing Powder - Mini - Pressed Powder: Ultra-blurring &amp; Smoothing - Translucent - For fair to light tan skin tones MAKE UP FOREVER <span class="lcd-brand">Make Up For Ever</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#311</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DW9K0MLAe_V/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.tupperware.com/products/tupperware-voila-glass-round?variant=44742093865132" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">tupperwareusca · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 原型的和矩形的差距应该是可以过的，这个只是商家宣传贴而已</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DW9K0MLAe_V/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DW9K0MLAe_V/" target="_blank">Give those odds and ends in your fridge a second life with this cozy clean-out-the-fridge veggie strata—an easy, no-waste bake that turns leftover bread and vegetables into something worth gathering around. 🍳🍞🥬||||Ingredients||3 cups stale bread, cubed or torn||Veggies (aim for 11⁄2–2 cups total)||Any mix of: Spinach/kale, peppers, mushrooms, onions, tomatoes, zucchini, broccoli, or leftover cooked vegetables. ||||Custard||4 large eggs||11⁄4 cups milk (or milk/cream blend)||3⁄4 tsp salt||1⁄4–1⁄2 tsp pepper||Optional: garlic powder, dried herbs, or seasoning odds and ends||||Instructions||Preheat your oven to 350°F (180°C).||Lightly grease your Tupperware VoilaTM Glass Baking Dish.||Sauté raw veggies until soft (skip if already cooked).||Inside the baking dish, layer bread first, veggies next, and cheese over the top.||In a medium bowl, whisk eggs, milk, and spices together to make the custard.||Pour custard evenly over the dish. Press lightly to help absorption. Let sit for 10 minutes.||Bake uncovered for 35–45 minutes. Center should be set and top lightly golden.||Rest for 10 minutes before serving.||||#TupperwareBrand #VoilaGlass #TupperwareRecipe #Strata</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Tupperware VoilaTM Glass Baking Dish <span class="lcd-brand">Tupperware</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.tupperware.com/products/tupperware-voila-glass-round?variant=44742093865132" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Tupperware Voila Glass Round Bakeware | Airtight Food Storage Dish <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#185</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=mwuHwAkhLJg" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.bhphotovideo.com/c/product/1827936-REG/tomtoc_t13m1d1_navigator_t13_accessory_pouch_2_4l.html?ap=y&amp;smp=y" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">alysmalls · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 这个没有错，reject 是对的</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=mwuHwAkhLJg" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=mwuHwAkhLJg" target="_blank">My MOST-USED TRAVEL ESSENTIALS are ON SALE Right Now!</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">Amazon’s spring sale is on—here are the travel essentials I actually use (and love) that are finally on sale right now ✈️ ||► Link to all items here: ||https://www.amazon.com/shop/alysmalls/list/3I7WHYZKFZUUZ?ref_=aipsflist ||||►Link to Canada site here: https://www.amazon.ca/shop/alysmalls/list/3FZIAVUP7PF6Y?ref_=aipsflist ||||► Individual Items Listed Here 👇||||Aluminum Luggage: https://amzn.to/4syJDvm ||||White Packing Cubes: https://amzn.to/4ca2t6e ||||Packing Cubes (that open all the way): https://amzn.to/4ca2t6e ||||Tripped Toiletry Bag: https://amzn.to/40X1VKP ||||Tomtoc backpack: https://amzn.to/4tgFVXf ||||Tomtoc tech pouch: https://amzn.to/4dQsSY1 ||||Bluetooth adapter: https://amzn.to/4bDM5Ld || ||Purple ear buds: https://amzn.to/4sOQd0X ||||Insta306 Camera: https://amzn.to/4tkxKcB ||||Airplane pillow: https://amzn.to/4vdcCqu ||||Hair dryer brush (for Europe): https://amzn.to/484uJ7V ||||Sandals: https://amzn.to/41AF4Vs ||||Sun hat: https://amzn.to/4v3qnIi ||||Hat clip: https://amzn.to/4t9BpJX ||||Clipa: https://amzn.to/4bEPzNA ||||► Buy Me a Coffee?||If you found this helpful and would like to support me, you can &#x27;buy me a coffee&#x27; (thank you!!!!)||https://buymeacoffee.com/alysmalls||||//||||► Booking a trip soon?||» My Free Travel Resources &amp; Toolkit: https://likewhereyouregoing.com/ultimate-travel-resources-guide/ ||» Best flight deals: https://www.dailydrop.com/pro?via=aly-smalls||» Travel Insurance: https://www.travelinsurance.com/?utm_source=pap&amp;a_aid=68a63003141aa||» I book all my tours on Viator: https://viator.tp.st/UkezLrSc||» Where I find hotel deals: https://plannin.com/?refId=alysmalls||» Best Universal Travel Adapter: https://amzn.to/45J48fk ||||#travelessentials #amazonfinds #travelluggage ||||Facebook Page: ||https://www.facebook.com/likewhereyouregoing/||||Instagram: ||https://www.instagram.com/alysmalls_yt/||||//||||Some of my videos contain affiliate links meaning I may make a small commission if you make a qualifying purchase. I only share products, services and experiences I use, love and trust. As an Amazon Associate, I earn from qualifying purchases.||||Business inquiries: ||info@alysmalls.com</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Packing Cubes (that open all the way) <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.bhphotovideo.com/c/product/1827936-REG/tomtoc_t13m1d1_navigator_t13_accessory_pouch_2_4l.html?ap=y&amp;smp=y" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">tomtoc Navigator-T13 Accessory Pouch (2.4L) <span class="lcd-brand">tomtoc</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#416</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DWmGwZolTBW/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.perigold.com/Four-Hands--Norwood-Upholstered-Low-Profile-Platform-Bed-FHNF1325-L12-K~P002101225.html?refid=MX{AdID}-P002101225_1255254894_1255254896&amp;device={device}&amp;ptid={CriterionId}&amp;targetid={TargetID}&amp;network={network}&amp;PiID%5B%5D=1255254894&amp;PiID%5B%5D=1255254896" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">fourhandsfurniture · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 应该改标为false</b> — 📝 这个是产品的不同导致的</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DWmGwZolTBW/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DWmGwZolTBW/" target="_blank">The votes are in 🗳️ and your March favorites did not disappoint.⁠||||Think bold silhouettes, timeless textures, and pieces that turn a house into a moment.⁠||⁠||Swipe through the winners and tell us—did your pick make the cut? 👀⁠||⁠||Pictured: ⁠||Viora Chair⁠||Nella Coffee Table⁠||Halston Chair⁠||Or</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">Mitchell Bed</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Mitchell Bed <span class="lcd-brand"></span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.perigold.com/Four-Hands--Norwood-Upholstered-Low-Profile-Platform-Bed-FHNF1325-L12-K~P002101225.html?refid=MX{AdID}-P002101225_1255254894_1255254896&amp;device={device}&amp;ptid={CriterionId}&amp;targetid={TargetID}&amp;network={network}&amp;PiID%5B%5D=1255254894&amp;PiID%5B%5D=1255254896" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Mitchell Upholstered Bed Size: King Color: Surrey Camel <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#161</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DV1ej5CkiIB/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://stockx.com/air-jordan-3-retro-teyana-taylor-a-rose-from-harlem-womens?country=US&amp;currencyCode=USD&amp;size=5.5W&amp;utm_source=bing&amp;utm_medium=cpc&amp;utm_campaign=od_sneakers_highcm_%28us%29newcustomer&amp;utm_campaignid=21802225648&amp;content=770378268658&amp;keyword=&amp;utm_content=184357885859&amp;gad_source=1&amp;gad_campaignid=21802225648&amp;gclid=CjwKCAjwyMnNBhBNEiwA-Kcgu_L_u3mDiNfmi0cuH3mL-3W6p2PVvGtRurqM9vw4KdKh3o79abpcmRoCaR4QAvD_BwE" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">hypebeast · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 同样是 catalog 品牌标错的问题</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DV1ej5CkiIB/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DV1ej5CkiIB/" target="_blank">&quot;A rose in Harlem&quot; 🌹⁠||⁠||Here&#x27;s your best look at @teyanataylor&#x27;s collaborative Air Jordan 3 &quot;Concrete Rose.&quot;⁠||⁠||The new collaboration is a masterclass in visual contrast and premium execution, looking like a work of art as it moves away from traditional color blocking and dresses the AJ3 with a muted green leather mimicking the rose&#x27;s stem as it bursts out of the concrete-like midsole with vines wrapping around your feet, beautifully mirroring the concept of strength built under immense pressure. ⁠||⁠||Swipe through to check out the detailed shots.⁠||Photo: @nike</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Air Jordan 3 &quot;Concrete Rose&quot; <span class="lcd-brand">Jordan</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://stockx.com/air-jordan-3-retro-teyana-taylor-a-rose-from-harlem-womens?country=US&amp;currencyCode=USD&amp;size=5.5W&amp;utm_source=bing&amp;utm_medium=cpc&amp;utm_campaign=od_sneakers_highcm_%28us%29newcustomer&amp;utm_campaignid=21802225648&amp;content=770378268658&amp;keyword=&amp;utm_content=184357885859&amp;gad_source=1&amp;gad_campaignid=21802225648&amp;gclid=CjwKCAjwyMnNBhBNEiwA-Kcgu_L_u3mDiNfmi0cuH3mL-3W6p2PVvGtRurqM9vw4KdKh3o79abpcmRoCaR4QAvD_BwE" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Jordan 3 RetroTeyana Taylor Concrete Rose (Women&#x27;s) <span class="lcd-brand">Other</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#237</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DW61aWriQcP/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.guitarcenter.com/Epiphone/Jerry-Cantrell-Wino-Les-Paul-Custom-Electric-Guitar-Wine-Red-1500000359247.gc?template=0y7n73MAL4Km" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">epiphone · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 同样是 catalog 品牌标错</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DW61aWriQcP/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DW61aWriQcP/" target="_blank">The Jerry Cantrell &quot;Wino&quot; Les Paul Custom was created in partnership with Jerry to feature many of his personal touches. A Dark Wine Red finish over a plain maple top and 9-hole weight-relieved mahogany body, multi-ply binding, a Cantrell custom taper for a comfortable vintage feel, along with a bou</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">The Jerry Cantrell &quot;Wino&quot; Les Paul Custom <span class="lcd-brand">Epiphone</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.guitarcenter.com/Epiphone/Jerry-Cantrell-Wino-Les-Paul-Custom-Electric-Guitar-Wine-Red-1500000359247.gc?template=0y7n73MAL4Km" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Epiphone Jerry Cantrell &quot;Wino&quot; Les Paul Custom Electric Guitar Wine Red <span class="lcd-brand">gibson</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#220</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.tiktok.com/@brynnemarieeee/video/7623188688654191902" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.narscosmetics.com/USA/custard-mini-radiant-creamy-concealer/0607845058120.html?utm_source=bing+shopping&amp;utm_medium=organic" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">Elmer · tiktok · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 包装不同，一个 pot 一个 tube</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.tiktok.com/@brynnemarieeee/video/7623188688654191902" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.tiktok.com/@brynnemarieeee/video/7623188688654191902" target="_blank">Gluing down eyebrows 101 🙂‍↕️  Products used:  @Elmer&#x27;s US glue stick  @ONE SIZE BEAUTY loose powder  @NARS Cosmetics pot concealer</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">pot concealer <span class="lcd-brand">NARS Cosmetics</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.narscosmetics.com/USA/custard-mini-radiant-creamy-concealer/0607845058120.html?utm_source=bing+shopping&amp;utm_medium=organic" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">NARS Mini Radiant Creamy Concealer, Custard (Mini) <span class="lcd-brand">nars cosmetics</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#301</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DXM6sShD1et/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.cuisinart.com/automatic-grind-brew-12-cup-coffee-maker/DGB-400NAS.html" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">cuisinart · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 custom 型号和 automatic 不同</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DXM6sShD1et/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DXM6sShD1et/" target="_blank">Mastering the coffee shop classics right from your kitchen is the flex we&#x27;re here for 🤎 With the Cuisinart Custom Grind &amp; Brew, you get freshly ground beans for every single cup. ||||What coffee recipe is your DIY fave? We&#x27;d love to hear it! ☕||#icedcoffee #morningrituals #coffeerecipes</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">Cuisinart Custom Grind &amp; Brew</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Cuisinart Custom Grind &amp; Brew <span class="lcd-brand">Cuisinart</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.cuisinart.com/automatic-grind-brew-12-cup-coffee-maker/DGB-400NAS.html" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Cuisinart Automatic Grind &amp; Brew 12 Cup Coffee Maker <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_label">
+      <div class="lcd-top">
+        <span class="lcd-no">#303</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">可修复 · 改 Label</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.youtube.com/watch?v=m7TpeVyTkGA" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.cuisinart.com/compactmax-8-qt-air-fryer/AIR-210.html" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">cuisinart · youtube · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 改label</b> — 📝 小型号不对</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.youtube.com/watch?v=m7TpeVyTkGA" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.youtube.com/watch?v=m7TpeVyTkGA" target="_blank">Elevated Childhood Classics: Chicken Tenders</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">We are elevating childhood classics with these Truffle Hot Honey Chicken Tenders. Using the Cuisinart Air Fryer, achieve that perfect golden panko crunch in just 15 minutes without any deep frying. Drizzled with hot honey and black truffle oil, this sweet and savory combination is about to move from the Kids Menu to becoming your favorite weeknight dinner. ||||Let us know which classic dish we should upgrade next in the comments 🍯||||CompactMax™ 8-Qt Basket Air Fryer Pro: https://www.cuisinart.com/compactmax-8-qt-basket-air-fryer-pro/AIR-212.html ||||#AirFryerRecipes #ChickenTenders #Cuisinart #CookingAtHome #ComfortFood</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">CompactMax™ 8-Qt Basket Air Fryer Pro <span class="lcd-brand">Cuisinart</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.cuisinart.com/compactmax-8-qt-air-fryer/AIR-210.html" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Cuisinart CompactMax™ 8-Qt Air Fryer <span class="lcd-brand"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_catalog">
+      <div class="lcd-top">
+        <span class="lcd-no">#424</span>
+        <span class="lcd-badge lcd-tFP">FP</span>
+        <span class="lcd-badge lcd-catb">非 LLM · Catalog/Case 数据问题</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DYh_y6Bk0qh/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://www.nike.com/t/kobe-ix-elite-low-em-protro-basketball-shoes-KFJiXrkW/IH1401-001" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">sneakernews · instagram · golden=false</span>
+      </div>
+      <div class="lcd-usernote">📝 这个应该是 case 的问题，llm 没法判断是不是儿童鞋</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DYh_y6Bk0qh/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DYh_y6Bk0qh/" target="_blank">Once again, Nike remembers that fateful evening in June 1996 when the Charlotte Hornets traded away Kobe Bryant on draft night. The Kobe 9 EM Protro will launch on June 1st bearing the franchise&#x27;s purple and teal with a gradient upper.⁠||⁠||Hit the link in our BIO for a closer look.⁠||⁠||Nike Kobe 9 EM Protro⁠||Release Date: June 1st, 2026 ($190)</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">kobe 9 em protro <span class="lcd-brand">nike</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://www.nike.com/t/kobe-ix-elite-low-em-protro-basketball-shoes-KFJiXrkW/IH1401-001" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Nike Kobe IX Elite Low EM Protro Basketball Shoes in Grey, Size: 3.5 | IH1401-001 <span class="lcd-brand">Nike</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcd-card cat-fix_catalog">
+      <div class="lcd-top">
+        <span class="lcd-no">#115</span>
+        <span class="lcd-badge lcd-tFN">FN</span>
+        <span class="lcd-badge lcd-catb">非 LLM · Catalog/Case 数据问题</span>
+        <span class="lcd-links"><a class="lcd-lk post" href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank">🔗 Post link</a><a class="lcd-lk prod" href="https://bluemercury.com/products/charlotte-tilbury-luxury-palette?currency=USD&amp;variant=41320007204939&amp;stkn=fd64f261e640&amp;srsltid=AfmBOoo92g64NjvOJc9wN2sHWHDm6XAZzCEgbBUxt67kiVyg6FM_JOig18c" target="_blank">🛒 Product link</a></span>
+        <span class="lcd-meta">katehudson · instagram · golden=true</span>
+      </div>
+      <div class="lcd-usernote"><b>Handle: 减少 brand 误判</b> — 📝 catalog 的品牌名字产生的问题，catalog 标记为 other；应该多关注完整产品名是否出现，减少 brand 由于错误名称产生的误判，但这不是 llm 的错</div>
+      <div class="lcd-grid">
+        <div>
+          <div class="lcd-lab">Post Title <a class="lcd-lk post" href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank">🔗 Post link</a></div>
+          <div class="lcd-val"><a href="https://www.instagram.com/p/DV7lx0XDHFI/" target="_blank">Oscars ready with @thetonyabrewer + @charlottetilbury 💄||||#GetTheLook||||SKINCARE||NEW! Magic Cream ||Magic Hydrator Mist ||Magic Serum Crystal Elixir ||Immediate Eye Revival Patches ||||COMPLEXION ||Pillow Talk Beauty Soulmates Palette in NEW! Rosewood ||NEW! Airbrush Flawless Blur Concealer - 4.5 ||Airbrush Flawless Foundation - 5W ||Hollywood Contour Wand - Fair ||Airbrush Flawless Finish Powder -1 + 2 ||Beauty Light Wand - Pillow Talk Original ||Unreal Blush Healthy Glow Stick - Rosy Glow ||Airbrush Flawless Setting Spray ||||EYES||Eyes To Mesmerise - Champagne ||Luxury Palette - Pillow Talk Dreams ||Rock ‘N’ Kohl Eyeliner - Smokey Bronze ||||BROWS||Brow Fix ||Brow Cheat - Natural Brown ||||LIPS ||NEW! Pillow Talk Blush Balm Lip Tints - Pillow Talk Medium ||Lip Cheat - Iconic Nude, Icon Baby ||||#KateHudson #CharlotteTilbury</a></div>
+          <div class="lcd-lab">Post Description</div>
+          <div class="lcd-post-text">(empty)</div>
+        </div>
+        <div>
+          <div class="lcd-lab">Extracted (from post)</div>
+          <div class="lcd-val">Luxury Palette - Pillow Talk Dreams <span class="lcd-brand">Charlotte Tilbury</span></div>
+          <div class="lcd-lab">Catalog (matched product) <a class="lcd-lk prod" href="https://bluemercury.com/products/charlotte-tilbury-luxury-palette?currency=USD&amp;variant=41320007204939&amp;stkn=fd64f261e640&amp;srsltid=AfmBOoo92g64NjvOJc9wN2sHWHDm6XAZzCEgbBUxt67kiVyg6FM_JOig18c" target="_blank">🛒 Product link</a></div>
+          <div class="lcd-val">Luxury Palette - Charlotte Tilbury <span class="lcd-brand">Other</span></div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- LLM_CANNOT_SECTION_END -->
+
 <table class="results">
 <tr>
 <th>#</th><th>Status</th><th>Score</th><th>Expected</th>
